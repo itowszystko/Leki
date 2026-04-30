@@ -1,0 +1,330 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);font-size:13px;color:var(--color-text-primary)}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;padding-bottom:8px;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:1rem}
+.tab{padding:6px 13px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);cursor:pointer;font-size:12px;background:transparent;color:var(--color-text-secondary)}
+.tab.active{background:var(--color-background-secondary);color:var(--color-text-primary);font-weight:500}
+.panel{display:none}.panel.active{display:block}
+.scroll{overflow:auto;max-height:540px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md)}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{padding:5px 8px;background:var(--color-background-secondary);font-weight:500;font-size:10px;color:var(--color-text-secondary);border-bottom:0.5px solid var(--color-border-tertiary);text-align:left;position:sticky;top:0;z-index:2}
+td{padding:5px 8px;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top;line-height:1.45}
+tr:hover td{background:var(--color-background-secondary)}
+.b{display:inline-block;padding:1px 7px;border-radius:8px;font-size:10px;font-weight:500;white-space:nowrap}
+.s1{background:#FCEBEB;color:#A32D2D}
+.s2{background:#FAEEDA;color:#854F0B}
+.s3{background:#E6F1FB;color:#0C447C}
+.s4{background:#EAF3DE;color:#3B6D11}
+.s5{background:#F1EFE8;color:#5F5E5A}
+.bc{background:#FCEBEB;color:#A32D2D}
+.bw{background:#FAEEDA;color:#854F0B}
+.bg{background:#EAF3DE;color:#3B6D11}
+.bi{background:#E6F1FB;color:#0C447C}
+.bn{background:#F1EFE8;color:#5F5E5A}
+.row-f{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
+.row-f input,.row-f select{font-size:12px;padding:5px 9px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary)}
+.row-f input{flex:1;min-width:140px}
+.hier-row{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);margin-bottom:6px;overflow:hidden}
+.hier-head{display:flex;align-items:center;gap:10px;padding:8px 12px;cursor:pointer}
+.hier-head:hover{background:var(--color-background-secondary)}
+.hier-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0}
+.hier-body{padding:0 12px 10px;font-size:11px;color:var(--color-text-secondary);line-height:1.6;border-top:0.5px solid var(--color-border-tertiary)}
+.hier-body ul{margin:4px 0 0 14px}
+.hier-body li{margin-bottom:2px}
+.do{color:var(--color-text-success);font-weight:500}
+.dont{color:var(--color-text-danger);font-weight:500}
+.lumen-visual{display:flex;gap:6px;margin:12px 0;flex-wrap:wrap}
+.lumen-box{border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:8px 10px;min-width:120px;flex:1}
+.lumen-box .lh{font-size:11px;font-weight:500;margin-bottom:5px;padding-bottom:4px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.lumen-box .li{font-size:10px;color:var(--color-text-secondary);line-height:1.6}
+.cnt{font-size:11px;color:var(--color-text-secondary);margin-bottom:8px}
+@media(prefers-color-scheme:dark){
+.s1{background:#501313;color:#F7C1C1}.s2{background:#412402;color:#FAC775}
+.s3{background:#042C53;color:#B5D4F4}.s4{background:#173404;color:#C0DD97}
+.s5{background:#2C2C2A;color:#B4B2A9}
+.bc{background:#501313;color:#F7C1C1}.bw{background:#412402;color:#FAC775}
+.bg{background:#173404;color:#C0DD97}.bi{background:#042C53;color:#B5D4F4}
+.bn{background:#2C2C2A;color:#B4B2A9}
+}
+</style>
+
+<h2 style="position:absolute;width:1px;height:1px;overflow:hidden">Hierarchia lumenów OIT — priorytety podania i zasady dostępu naczyniowego wg ESICM</h2>
+
+<div class="tabs">
+  <button class="tab active" onclick="show('hier')">Hierarchia</button>
+  <button class="tab" onclick="show('table')">Tabela leków</button>
+  <button class="tab" onclick="show('lumen')">Planowanie lumenów</button>
+  <button class="tab" onclick="show('cond')">Warunkowo razem</button>
+</div>
+
+<div id="p-hier" class="panel active" style="padding-top:4px"></div>
+<div id="p-table" class="panel">
+  <div class="row-f">
+    <input type="text" id="tq" placeholder="Szukaj leku..." oninput="filterTable()">
+    <select id="ts" onchange="filterTable()">
+      <option value="">Wszystkie poziomy</option>
+      <option value="1">Poziom 1 — świętość</option>
+      <option value="2">Poziom 2 — własny lumen</option>
+      <option value="3">Poziom 3 — warunkowo osobno</option>
+      <option value="4">Poziom 4 — łączyć można</option>
+      <option value="5">Poziom 5 — najmniej problemat.</option>
+    </select>
+    <select id="tp" onchange="filterTable()">
+      <option value="">Wszystkie formy</option>
+      <option value="ciągły">Wlew ciągły</option>
+      <option value="bolus">Bolus</option>
+      <option value="oba">Oba</option>
+    </select>
+  </div>
+  <div class="cnt" id="tcnt"></div>
+  <div class="scroll"><table><thead><tr>
+    <th style="min-width:140px">Lek</th>
+    <th>Poziom</th>
+    <th>Forma podania</th>
+    <th style="min-width:90px">Nigdy</th>
+    <th style="min-width:180px">Uzasadnienie / klucz</th>
+    <th style="min-width:160px">Lumen / uwaga</th>
+  </tr></thead><tbody id="tbody"></tbody></table></div>
+</div>
+
+<div id="p-lumen" class="panel">
+  <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:10px">Model CVC 4-lumenowego (standard OIT) + linia obwodowa. Przypisz leki do lumenów.</div>
+  <div id="lumen-plan"></div>
+</div>
+
+<div id="p-cond" class="panel"><div id="cond-content"></div></div>
+
+<script>
+const DRUGS = [
+  {n:"Ampicylina",nr:1,cat:"abx",lvl:3,form:"ciągły",never:"Bolus zbyt szybki (ból żylny pH~10)",key:"Inaktywacja przez aminoglikozydy w tej samej linii. Sekwencyjnie z przepłukaniem.",lumen:"Osobno od aminoglikozydów. Może dzielić z innymi beta-laktamami.",cond:"Może dzielić lumen z ceftriaksonem (nie jednocześnie)"},
+  {n:"Amp+sulbaktam",nr:2,cat:"abx",lvl:3,form:"ciągły",never:"G5 (sulbaktam niestabilny)",key:"Jak ampicylina. Oddzielnie od aminoglikozydów.",lumen:"Osobno od aminoglikozydów.",cond:"Sekwencyjnie z innymi beta-laktamami po przepłukaniu"},
+  {n:"Pip+tazobaktam",nr:3,cat:"abx",lvl:2,form:"ciągły",never:"Razem z amikacyną (inaktywacja natychmiastowa)",key:"Pip+taz inaktywuje aminoglikozydy. Osobna linia od amikacyny absolutnie.",lumen:"Własny lumen lub linia wolna od aminoglikozydów.",cond:"Może być z innymi beta-laktamami (bez aminoglikozydów)"},
+  {n:"Ceftriakson",nr:4,cat:"abx",lvl:1,form:"ciągły",never:"NIGDY z Ca²⁺ — żaden kontakt w linii",key:"Śmiertelne wytrącenie soli Ca-ceftriaksonowej (FDA Black Box). Osobna linia od wapnia absolutnie.",lumen:"DEDYKOWANA LINIA od wapnia. Bezwzględnie.",cond:"Tylko po wypłukaniu linii (≥20 ml NaCl) jeśli sekwencyjnie"},
+  {n:"Meropenem",nr:5,cat:"abx",lvl:3,form:"ciągły",never:"G5 >1h (degradacja), NaHCO₃ w linii",key:"Stabilność w G5 ograniczona do 1h (temp. pokojowa). Klinicznie: obniża VPA 60–100% przez interakcję FK — niezależną od linii (monitoring VPA niezależnie od drogi podania).",lumen:"Może dzielić z innymi antybiotykami (nie z NaHCO₃). FK interakcja z VPA nie jest powodem do separacji linii.",cond:"Monitoring VPA przy jednoczesnym stosowaniu meropenemu — niezależnie od konfiguracji lumenów"},
+  {n:"Vankomycyna",nr:6,cat:"abx",lvl:2,form:"ciągły",never:"Szybki bolus (Red Man Syndrome) — min 60 min na 1g",key:"Stężenie >5 mg/ml + szybki przepływ = Red Man. Nefrotoks. z aminoglikozydami.",lumen:"Własny lumen lub osobno od amikacyny.",cond:"Y-site z pip+taz — dane sprzeczne. Bezpieczniej osobno."},
+  {n:"Amikacyna",nr:7,cat:"abx",lvl:1,form:"ciągły",never:"NIGDY przez tę samą linię co beta-laktamy",key:"Inaktywacja przez wszystkie beta-laktamy w kontakcie. Własny lumen — absolutnie.",lumen:"DEDYKOWANA LINIA. Nigdy z beta-laktamami.",cond:"Nigdy warunkowo z beta-laktamami — tylko absolutnie osobno"},
+  {n:"Klindamycyna",nr:8,cat:"abx",lvl:1,form:"ciągły",never:"BOLUS — ryzyko NZK. Szybki wlew. Rozcieńczenie <6 mg/ml",key:"Szybkie IV → zatrzymanie krążenia i oddychania. Pompa wymagana.",lumen:"Własna linia pompowa. Bez współdzielenia.",cond:"Nie ma warunkowego — tylko dedykowana linia"},
+  {n:"TMP+SMX",nr:9,cat:"abx",lvl:3,form:"ciągły",never:"NaCl przy pH <8 (krystalizacja), szybki bolus",key:"pH 9,5–10,5 — wytrąca kwaśne leki. Wolny wlew.",lumen:"Osobno od leków kwaśnych.",cond:"Może dzielić z innymi zasadowymi lekami"},
+  {n:"Tigecyklina",nr:10,cat:"abx",lvl:3,form:"ciągły",never:"Ekspozycja na światło (bezwzględnie)",key:"Fotolabilna — osłona folią przez cały czas wlewu.",lumen:"Osobno. Ochrona przed światłem.",cond:"Może dzielić lumen z lekami fotostabilnymi"},
+  {n:"Fosfomycyna",nr:11,cat:"abx",lvl:3,form:"ciągły",never:"G5 (brak danych), z aminoglikozydami",key:"Duże ładunki Na⁺. pH 9–11.",lumen:"Osobno od aminoglikozydów.",cond:"Może dzielić z beta-laktamami"},
+  {n:"Flukonazol",nr:12,cat:"grzyb",lvl:4,form:"ciągły",never:"Szybki wlew (>200 mg/h)",key:"FK: silna inhibicja CYP3A4 — midazolam/fentanyl rosną 3–5x. Gotowy woreczek.",lumen:"Może dzielić lumen — uważaj na CYP3A4.",cond:"Y-site z wanko, mid — fizycznie OK (pamiętaj o FK)"},
+  {n:"Kaspofungina",nr:13,cat:"grzyb",lvl:2,form:"ciągły",never:"G5/G10 — niezgodność. Bolus.",key:"Tylko NaCl. Flush G5 przez tę linię = utrata leku.",lumen:"Własna linia NaCl. Bez G5.",cond:"Można dzielić z lekami w NaCl"},
+  {n:"Mykafungina",nr:14,cat:"grzyb",lvl:4,form:"ciągły",never:"Brak bezwzgl. (unikać mieszania bezpośredniego)",key:"Szersza kompatybilność niż kaspofungina.",lumen:"Może dzielić lumen.",cond:"Y-site z vanco, flukon — OK"},
+  {n:"Noradrenalina",nr:15,cat:"kardio",lvl:1,form:"ciągły",never:"BOLUS. Wspólna linia z NaHCO₃, furos., esomeprazolem",key:"Inaktywacja przez alkalia. Opóźnienie dawki = dead space / przepływ. Własny port CVC.",lumen:"WŁASNY PORT CVC. Preferowany dystalny.",cond:"Nigdy warunkowo z NaHCO₃"},
+  {n:"Adrenalina",nr:16,cat:"kardio",lvl:1,form:"ciągły",never:"NaHCO₃ w tej samej linii (inaktywacja). Poza NZK — nie bolus",key:"Jak noradrenalina. NZK: bolus IV/IO dopuszczalny.",lumen:"WŁASNY PORT CVC.",cond:"W NZK — bolus przez dowolną linię"},
+  {n:"Dopamina",nr:17,cat:"kardio",lvl:1,form:"ciągły",never:"Bolus. NaHCO₃ w linii. Furosemid w linii.",key:"Wlew ciągły z titrowaną dawką μg/kg/min.",lumen:"WŁASNY PORT CVC.",cond:"Y-site z dobutaminą — OK"},
+  {n:"Dobutamina",nr:18,cat:"kardio",lvl:2,form:"ciągły",never:"Bolus. Furosemid w linii (wytrącenie). NaHCO₃.",key:"Wlew ciągły. Niezgodna z furosemidem w tej samej linii (wytrącenie).",lumen:"Własny port lub dzielony z noradrenaliną Y-site (dane Trissel's).",cond:"Y-site z nora — OK przy monitorowaniu hemodynamicznym"},
+  {n:"Digoksyna",nr:19,cat:"kardio",lvl:2,form:"bolus",never:"Szybkie IV (bradykardia, NZK). Plastik bez saturacji.",key:"Wąski indeks terapeutyczny. Adsorpcja do plastiku — szkło!",lumen:"Własna linia, najlepiej szklana.",cond:""},
+  {n:"Metoprolol",nr:20,cat:"kardio",lvl:4,form:"bolus",never:"Szybki bolus (bradykardia, blok AV)",key:"Wolne IV 1–2 min. Monitorowanie HR/BP.",lumen:"Może dzielić lumen z lekami neutralnymi.",cond:"Y-site z większością leków — OK"},
+  {n:"Amiodaron",nr:21,cat:"kardio",lvl:1,form:"ciągły",never:"NaCl (wytrącenie). Standardowy PVC. Bez osłony świetlnej.",key:"G5+pojemnik szklany/non-PVC+folia aluminiowa. QT addytywne z haloperydolem.",lumen:"WŁASNY PORT. G5 non-PVC. Absolutnie osobno.",cond:"W NZK — bolus przez dowolną linię (sytuacja ratunkowa)"},
+  {n:"Nitrogliceryna",nr:22,cat:"kardio",lvl:1,form:"ciągły",never:"PVC (utrata 50–80% dawki). Bolus.",key:"TYLKO non-PVC, szklany pojemnik. Adsorpcja do PVC klinicznie istotna.",lumen:"WŁASNY PORT non-PVC.",cond:""},
+  {n:"Urapidyl",nr:23,cat:"kardio",lvl:3,form:"oba",never:"pH >8 w linii (wytrącenie)",key:"Bolus 25 mg dopuszczalny. Niezgodny z zasadowymi lekami.",lumen:"Osobno od NaHCO₃, esomeprazolu.",cond:"Może dzielić lumen z lekami o pH 5–7"},
+  {n:"Furosemid",nr:24,cat:"kardio",lvl:2,form:"oba",never:"Przez tę samą linię co katecholaminy, midazolam, haloperydol, dobutamina",key:"pH 9 — wytrąca każdy kwaśny lek natychmiastowo.",lumen:"Własny lumen lub osobno od leków kwaśnych.",cond:"Może dzielić z innymi zasadowymi (NaHCO₃, esomeprazol — ostrożnie)"},
+  {n:"Torasemid",nr:25,cat:"kardio",lvl:3,form:"oba",never:"Przez tę samą linię co leki kwaśne",key:"Jak furosemid — pH zasadowy.",lumen:"Osobno od leków kwaśnych.",cond:"Może dzielić z furosemidem (nie jednocześnie)"},
+  {n:"Nimodypina",nr:26,cat:"kardio",lvl:1,form:"ciągły",never:"PVC (adsorpcja + DEHP). Bolus. Standardowy zestaw.",key:"Specjalny zestaw non-PVC producenta. Przez CVC (drażliwa dla żył).",lumen:"WŁASNA LINIA non-PVC od producenta. CVC.",cond:""},
+  {n:"Lewosimendan",nr:27,cat:"kardio",lvl:2,form:"ciągły",never:"Mieszanie z innymi lekami w pojemniku",key:"Brak danych Y-site z większością leków OIT. Osobno.",lumen:"Własny lumen.",cond:""},
+  {n:"Cerebrolysin",nr:28,cat:"neuro",lvl:3,form:"ciągły",never:"Mieszanie z aminokwasami IV, emulsjami lipidów",key:"Podawać osobno. Brak danych Y-site.",lumen:"Osobny lumen.",cond:""},
+  {n:"Fenytoina",nr:29,cat:"neuro",lvl:1,form:"ciągły",never:"G5 (natychmiastowe kryształy). Bolus >50 mg/min. Przez PVC. Jakikolwiek lek w tej samej linii.",key:"pH 10–12 = wytrąca się z KAŻDYM lekiem. Asystolia przy >50 mg/min.",lumen:"ABSOLUTNIE DEDYKOWANA LINIA. NaCl tylko.",cond:"Nigdy — tylko własna linia"},
+  {n:"Kwas walproinowy",nr:30,cat:"neuro",lvl:3,form:"ciągły",never:"Jednoczesna terapia karbapenemem (FK — nie fizyczna niezgodność)",key:"Karbapenemy obniżają VPA 60–100%. FK niezależna od linii.",lumen:"Osobno od meropenemu (FK).",cond:"Może dzielić z lekami neutralnymi pH"},
+  {n:"Lewetyracetam",nr:31,cat:"neuro",lvl:5,form:"ciągły",never:"Brak bezwzgl. (unikać bezpośredniego mieszania)",key:"Jeden z najbardziej kompatybilnych leków IV.",lumen:"Może dzielić lumen z większością leków.",cond:"Y-site z wanko, nora, mid — OK"},
+  {n:"Propofol 2%",nr:32,cat:"sed",lvl:1,form:"ciągły",never:"NaCl (zerwanie emulsji). Aminoglikozydy w linii. Bolus szybki (PRIS). Aseptyka — wymiana co 12h.",key:"Emulsja — dedykowana linia. Bolus tylko titrowany (indukcja). Pożywka bakteryjna.",lumen:"DEDYKOWANA LINIA. Żaden inny lek przez tę linię.",cond:""},
+  {n:"Midazolam",nr:33,cat:"sed",lvl:3,form:"ciągły",never:"Przez tę samą linię co furosemid, NaHCO₃, amiodaron (wytrącenie)",key:"Kwaśny (pH 3,5). W strzykawce z fentanylem/morfiną — OK.",lumen:"Osobno od leków zasadowych.",cond:"Strzykawka z fentanylem lub morfiną — standardowa OIT"},
+  {n:"Diazepam",nr:34,cat:"sed",lvl:1,form:"bolus",never:"NaCl (wytrącenie). PVC (utrata 80–90%). Rozcieńczony w worku.",key:"Nierozcieńczony lub G5. Tylko szkło/non-PVC.",lumen:"WŁASNA LINIA szklana/non-PVC.",cond:""},
+  {n:"Lorazepam",nr:35,cat:"sed",lvl:3,form:"bolus",never:"Szybki bolus (apnea). Długi kontakt z PVC.",key:"Mniejsza adsorpcja do PVC niż diazepam. Rozcieńczyć 1:1.",lumen:"Osobna linia lub Y-site krótki.",cond:"Y-site z kompatybilnymi lekami — ograniczone dane"},
+  {n:"Fentanyl",nr:36,cat:"sed",lvl:4,form:"ciągły",never:"Szybki bolus dużej dawki (rigid chest syndrome)",key:"W strzykawce z midazolamem — standardowa sedacja OIT.",lumen:"Może dzielić z midazolamem, morfiną.",cond:"Strzykawka z midazolamem — klasyczne połączenie OIT"},
+  {n:"Sufentanyl",nr:37,cat:"sed",lvl:4,form:"ciągły",never:"Duplikacja z fentanylem (agonizm receptorowy)",key:"Strzykawka z midazolamem — standardowe połączenie.",lumen:"Strzykawka z midazolamem.",cond:""},
+  {n:"Morfina",nr:38,cat:"sed",lvl:4,form:"ciągły",never:"Szybki bolus (histaminoliberacja, hipotensja)",key:"Szeroka kompatybilność. Histaminoliberacja przy szybkim bolusie.",lumen:"Może dzielić lumen z wieloma lekami.",cond:"Y-site z nora, deks — OK"},
+  {n:"Metamizol",nr:39,cat:"obj",lvl:3,form:"ciągły",never:"Rozcieńczony >1h przed podaniem (degradacja). Szybki bolus (hipotensja).",key:"Rozcieńczyć bezpośrednio przed. Stabilność 1h.",lumen:"Osobno. Reaktywny chemicznie.",cond:""},
+  {n:"Metoklopramid",nr:40,cat:"obj",lvl:4,form:"bolus",never:"Przez linię furosemidu (wytrącenie)",key:"Kwaśny — unikać kontaktu z zasadowymi.",lumen:"Może dzielić lumen z neutralnymi lekami.",cond:""},
+  {n:"Esomeprazol",nr:41,cat:"obj",lvl:2,form:"oba",never:"Przez linię z katecholaminami, midazolamem (wytrącenie pH 9–10)",key:"pH 9–10 — wytrąca wszystkie kwaśne leki w dead space trójnika.",lumen:"Własny lumen lub z innymi zasadowymi.",cond:"Z NaHCO₃ (oba zasadowe) — można sekwencyjnie"},
+  {n:"Acetylocysteina",nr:42,cat:"obj",lvl:3,form:"ciągły",never:"Przez tę samą linię co amikacyna (wytrącenie tiolowe), CaCl₂",key:"Grupy tiolowe — inaktywacja aminoglikozydów.",lumen:"Osobno od amikacyny i CaCl₂.",cond:""},
+  {n:"CaCl₂",nr:43,cat:"obj",lvl:1,form:"oba",never:"NIGDY przez linię z ceftriaksonem — żaden kontakt",key:"Śmiertelne wytrącenie z ceftriaksonem. Wytrącenie z fosforanami.",lumen:"ABSOLUTNIE OSOBNA LINIA od ceftriaksonu.",cond:"Nigdy warunkowo z ceftriaksonem"},
+  {n:"NaHCO₃",nr:44,cat:"obj",lvl:1,form:"oba",never:"Przez linię z katecholaminami (inaktywacja natychmiastowa). Z G5.",key:"Inaktywuje katecholaminy, beta-laktamy. Silnie zasadowy.",lumen:"WŁASNA LINIA. Nigdy wspólna z presyjnymi.",cond:""},
+  {n:"Etamsylat",nr:45,cat:"obj",lvl:5,form:"bolus",never:"Zasadowe leki w linii",key:"Stosunkowo bezpieczny. Kwaśny — unikać kontaktu z NaHCO₃.",lumen:"Może dzielić lumen z neutralnymi.",cond:"Y-site z wieloma — OK"},
+  {n:"Kw. traneksamowy",nr:46,cat:"obj",lvl:4,form:"ciągły",never:"Przez linię z penicylinami (niezgodność opisywana)",key:"10 min podania 1g. Szeroka kompatybilność.",lumen:"Może dzielić lumen.",cond:""},
+  {n:"Hydrokortyzon",nr:47,cat:"obj",lvl:4,form:"bolus",never:"Przez linię z heparyną (wytrącenie)",key:"Szeroka kompatybilność. Rozcieńczyć tuż przed.",lumen:"Może dzielić lumen z wieloma.",cond:"Y-site z nora, fent — OK"},
+  {n:"Deksametazon",nr:48,cat:"obj",lvl:4,form:"bolus",never:"Przez linię z fenytoiną (wytrącenie)",key:"Dobra kompatybilność Y-site.",lumen:"Może dzielić lumen.",cond:"Y-site z mid, mort, nora — OK"},
+  {n:"Haloperydol",nr:49,cat:"obj",lvl:2,form:"bolus",never:"Przez linię z furosemidem (wytrącenie). Z amiodароnem (QT).",key:"pH 3,5 — wytrąca z zasadowymi. QT z amiodароnem → TdP.",lumen:"Własny lumen lub osobno od furosemidu/amiodaronu.",cond:"Nigdy z amiodароnem — QT"},
+  {n:"Hepa-Merz",nr:50,cat:"obj",lvl:3,form:"ciągły",never:"Mieszanie bezpośrednie — brak danych Y-site",key:"Brak danych kompatybilności. Podawać osobno.",lumen:"Osobno.",cond:""},
+  {n:"Kanavit",nr:51,cat:"obj",lvl:3,form:"ciągły",never:"Ekspozycja na światło (fotodegradacja). Szybki bolus (anafilaksja).",key:"Osłona absolutnie wymagana. Powolny wlew.",lumen:"Osobno. Osłona świetlna.",cond:""},
+  {n:"Monofer",nr:52,cat:"obj",lvl:2,form:"ciągły",never:"G5 (wytrącenie). Przez linię z CaCl₂.",key:"Tylko NaCl 0,9%. Flush G5 = utrata leku.",lumen:"Własna linia NaCl.",cond:""},
+  {n:"Runapriq",nr:53,cat:"obj",lvl:3,form:"ciągły",never:"Brak danych — podawać osobno",key:"Lek sierocy — brak danych kompatybilności.",lumen:"Absolutnie dedykowana linia.",cond:""},
+  {n:"Deksametazon TZF",nr:54,cat:"obj",lvl:4,form:"bolus",never:"Jak Dexaven — fenytoina w linii",key:"Identyczny z Dexaven w kontekście linii.",lumen:"Może dzielić lumen.",cond:""},
+  {n:"Glicerol",nr:55,cat:"obj",lvl:5,form:"ciągły",never:"Brak bezwzgl.",key:"Szeroka kompatybilność.",lumen:"Może dzielić lumen.",cond:""},
+  {n:"Neurovit B",nr:56,cat:"obj",lvl:3,form:"ciągły",never:"Ekspozycja na światło (B1, B12 fotolabilne)",key:"Osłona wymagana. Podawać osobno.",lumen:"Osobno. Osłona.",cond:""},
+  {n:"Insulina",nr:57,cat:"obj",lvl:3,form:"ciągły",never:"Bez saturacji zestawu. Przez linię z NaHCO₃.",key:"Adsorpcja do PVC 20–30%. Saturacja zestawu 50 ml przed podł.",lumen:"Osobna linia PVC (po saturacji).",cond:""},
+  {n:"Laktuloza",nr:58,cat:"obj",lvl:5,form:"ciągły",never:"Podanie IV nie jest standardową praktyką kliniczną",key:"Laktuloza stosowana doustnie lub przez sondę NG. Brak standardowych wskazań do podania IV.",lumen:"Nie dotyczy — nie podaje się IV.",cond:""},
+  {n:"Fibryga",nr:59,cat:"hemato",lvl:1,form:"ciągły",never:"JAKIKOLWIEK inny lek przez tę linię",key:"Czynniki krzepnięcia — inaktywacja przy kontakcie z każdym lekiem.",lumen:"ABSOLUTNIE DEDYKOWANA LINIA. Tylko dedykowany rozpuszczalnik.",cond:"Nigdy warunkowo"},
+  {n:"Octaplex",nr:60,cat:"hemato",lvl:1,form:"ciągły",never:"JAKIKOLWIEK inny lek. Max 8 ml/min.",key:"Jak Fibryga.",lumen:"ABSOLUTNIE DEDYKOWANA LINIA.",cond:"Nigdy warunkowo"},
+  {n:"Teofilina",nr:61,cat:"oddech",lvl:2,form:"ciągły",never:"Bolus szybki (arytmia, drgawki, zgon). Przez linię z NAC/wit.C.",key:"Wąski indeks terapeutyczny. Dawka ładująca ≥30 min przez pompę.",lumen:"Własna linia. EKG monitoring.",cond:""},
+  {n:"Salbutamol",nr:62,cat:"oddech",lvl:4,form:"ciągły",never:"Przez linię z NaHCO₃",key:"Kwaśny — unikać kontaktu z zasadowymi.",lumen:"Może dzielić z neutralnymi.",cond:""},
+  {n:"Albumina 20%",nr:63,cat:"inne",lvl:3,form:"ciągły",never:"Mieszanie z fenytoiną, diazepamem (wiązanie białkowe)",key:"Wiąże fenytoinę, diazepam → zmiana FK. Dedykowany zestaw.",lumen:"Osobna linia lub własny port.",cond:""},
+  {n:"Bupiwakaina",nr:64,cat:"inne",lvl:1,form:"ciągły",never:"IV BOLUS — ZAWSZE. NZK oporne na resuscytację.",key:"Wyłącznie zewnątrzoponowa/obwodowa. IV = śmierć. Intralipid 20% w pobliżu.",lumen:"NIGDY IV. Nie ma zastosowania w kontekście CVC.",cond:""},
+  {n:"Fondaparynuks",nr:65,cat:"inne",lvl:4,form:"bolus",never:"Brak danych Y-site z większością",key:"Zasadniczo s.c. Jeśli IV — osobna linia.",lumen:"Osobna linia IV.",cond:""},
+];
+
+const LVL_NAMES = {
+  1:"Świętość — bezwzgl. dedykowana linia",
+  2:"Własny lumen — wymagany",
+  3:"Warunkowo osobno — separacja od konkretnych leków",
+  4:"Można łączyć — z rozwagą",
+  5:"Najmniej problematyczny — szeroka kompatybilność"
+};
+const LVL_CLS = {1:"s1",2:"s2",3:"s3",4:"s4",5:"s5"};
+const FORM_CLS = {bolus:"bg",ciągły:"bi",oba:"bw"};
+
+const HIER_DATA = [
+  {lvl:1,color:"#A32D2D",bg:"#FCEBEB",title:"Poziom 1 — świętość",subtitle:"Absolutnie dedykowana linia. Żaden inny lek. Nigdy.",drugs:["Ceftriakson (od CaCl₂)","Amikacyna (od beta-laktamów)","Klindamycyna (bolus = NZK)","Noradrenalina","Adrenalina","Dopamina","Amiodaron (G5+non-PVC)","Nitrogliceryna (non-PVC)","Nimodypina (zestaw producenta)","Propofol 2% (emulsja, aseptyka)","Diazepam (szkło, non-PVC)","Fenytoina (NaCl only, EKG)","CaCl₂ (od ceftriaksonu)","NaHCO₃ (od katecholamin)","Fibryga / Octaplex (czynniki krzepnięcia)","Bupiwakaina (NIE IV — nigdy)"],why:["Śmiertelne wytrącenia (ceft+Ca, feny+G5)","Inaktywacja natychmiastowa (katecholaminy+NaHCO₃)","Zerwanie emulsji (propofol)","NZK przy bolusie (klindamycyna, fenytoina)","Utrata 50–90% dawki przez adsorpcję (NTG, diazepam)","Absolutna izolacja czynników krzepnięcia"]},
+  {lvl:2,color:"#854F0B",bg:"#FAEEDA",title:"Poziom 2 — własny lumen wymagany",subtitle:"Osobna linia — ze względu na materiał, szybkość, lub wąski indeks.",drugs:["Pip+tazobaktam (od aminoglikozydów)","Vankomycyna (od amikacyny, min 60 min/1g)","Digoksyna (szkło, wąski indeks)","Kaspofungina (NaCl — nie G5)","Dobutamina (od furosemidu — wytrącenie)","Furosemid (od leków kwaśnych)","Lewosimendan (brak danych Y-site)","Esomeprazol (pH 9–10, kwaśne leki)","Haloperydol (od furosemidu, amiodaronu)","Monofer (tylko NaCl)","Teofilina (wąski indeks, pompa)"],why:["Wąski indeks terapeutyczny","Niezgodność z konkretną grupą leków","Problem materiałowy (nośnik, PVC)","Ryzyko QT lub hemodynamiczne przy przyspieszeniu"]},
+  {lvl:3,color:"#185FA5",bg:"#E6F1FB",title:"Poziom 3 — warunkowo osobno",subtitle:"Separacja wymagana od konkretnych leków. Może dzielić z innymi.",drugs:["Ampicylina, Amp+sulbaktam (od aminoglikozydów)","TMP+SMX (od kwaśnych leków)","Tigecyklina (osłona świetlna)","Fosfomycyna (od aminoglikozydów)","Meropenem (od NaHCO₃, VPA-monitoring)","Urapidyl (od pH>8)","Torasemid (od kwaśnych)","Cerebrolysin (od aminokwasów IV)","Kwas walproinowy (monitoring VPA przy karbapenemach)","Lorazepam (krótki Y-site)","Midazolam (od furos./NaHCO₃)","Metamizol (świeże przygotowanie)","Acetylocysteina (od amikacyny, CaCl₂)","Kanavit (osłona świetlna)","Insulina (saturacja zestawu)","Neurovit B (osłona świetlna)","Albumina 20% (od fenytoiny, diazepamu)","Hepa-Merz, Runapriq (brak danych — ostrożność)"],why:["Niezgodność z konkretną grupą (nie z wszystkimi)","Problem fotostabilności","Wymóg świeżego przygotowania","Brak danych Y-site"]},
+  {lvl:4,color:"#3B6D11",bg:"#EAF3DE",title:"Poziom 4 — można łączyć z rozwagą",subtitle:"Szerokie Y-site. Pamiętaj o interakcjach FK przy flukonazolu.",drugs:["Flukonazol (pamiętaj FK: mid, fent↑)","Mykafungina","Metoprolol","Fentanyl (strzykawka z mid)","Sufentanyl (strzykawka z mid)","Morfina","Metoklopramid","Kwas traneksamowy","Hydrokortyzon","Deksametazon / Dexaven TZF","Salbutamol (od NaHCO₃)","Fondaparynuks"],why:["Szerokie dane Y-site w Trissel's","Kompatybilne z wieloma lekami OIT","Uwaga na interakcje FK (flukonazol–CYP3A4)"]},
+  {lvl:5,color:"#5F5E5A",bg:"#F1EFE8",title:"Poziom 5 — najmniej problematyczne",subtitle:"Najszersza kompatybilność. Można łączyć bez większych ograniczeń.",drugs:["Lewetyracetam","Etamsylat","Glicerol"],why:["Brak istotnych niezgodności fizycznych","Neutralne pH","Szeroka kompatybilność Y-site potwierdzona"]},
+];
+
+function show(id){
+  ['hier','table','lumen','cond'].forEach(x=>document.getElementById('p-'+x).classList.remove('active'));
+  document.getElementById('p-'+id).classList.add('active');
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['hier','table','lumen','cond'][i]===id));
+  if(id==='table') renderTable();
+  if(id==='lumen') renderLumen();
+  if(id==='cond') renderCond();
+}
+
+function renderHier(){
+  document.getElementById('p-hier').innerHTML = HIER_DATA.map((h,i)=>`
+    <div class="hier-row">
+      <div class="hier-head" onclick="toggleH(${i})">
+        <div class="hier-num" style="background:${h.bg};color:${h.color}">${h.lvl}</div>
+        <div style="flex:1">
+          <div style="font-weight:500;font-size:13px">${h.title}</div>
+          <div style="font-size:11px;color:var(--color-text-secondary)">${h.subtitle}</div>
+        </div>
+        <div style="font-size:11px;color:var(--color-text-secondary)">${h.drugs.length} leków</div>
+        <div id="hArr${i}" style="font-size:14px;color:var(--color-text-secondary);margin-left:6px">+</div>
+      </div>
+      <div class="hier-body" id="hBody${i}" style="display:none">
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px">
+          <div style="flex:1;min-width:200px">
+            <div style="font-size:10px;font-weight:500;color:var(--color-text-secondary);margin-bottom:4px">LEKI W TEJ GRUPIE</div>
+            <ul>${h.drugs.map(d=>`<li>${d}</li>`).join('')}</ul>
+          </div>
+          <div style="flex:1;min-width:160px">
+            <div style="font-size:10px;font-weight:500;color:var(--color-text-secondary);margin-bottom:4px">UZASADNIENIE</div>
+            <ul>${h.why.map(w=>`<li>${w}</li>`).join('')}</ul>
+          </div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleH(i){
+  const b=document.getElementById('hBody'+i);
+  const a=document.getElementById('hArr'+i);
+  const open=b.style.display==='none';
+  b.style.display=open?'block':'none';
+  a.textContent=open?'−':'+';
+}
+
+function renderTable(){
+  filterTable();
+}
+
+function filterTable(){
+  const q=(document.getElementById('tq').value||'').toLowerCase();
+  const s=document.getElementById('ts').value;
+  const p=document.getElementById('tp').value;
+  const rows=DRUGS.filter(d=>{
+    return (!q||d.n.toLowerCase().includes(q)) &&
+      (!s||String(d.lvl)===s) &&
+      (!p||d.form===p||p==='oba');
+  });
+  document.getElementById('tcnt').textContent='Wyświetlono: '+rows.length+' leków';
+  document.getElementById('tbody').innerHTML=rows.map(d=>`
+    <tr>
+      <td style="font-weight:500">${d.nr}. ${d.n}</td>
+      <td><span class="b ${LVL_CLS[d.lvl]}">${d.lvl} — ${['','Świętość','Własny lumen','Warunkowo','Można łączyć','Najmniej probl.'][d.lvl]}</span></td>
+      <td><span class="b ${FORM_CLS[d.form]}">${d.form}</span></td>
+      <td style="font-size:10px;color:var(--color-text-danger)">${d.never}</td>
+      <td style="font-size:10px">${d.key}</td>
+      <td style="font-size:10px;color:var(--color-text-secondary)">${d.lumen}</td>
+    </tr>`).join('');
+}
+
+const LUMEN_PLAN = [
+  {id:"A",name:"Lumen A — dystalny (ciśnienie, presyjne)",color:"#FCEBEB",tc:"#A32D2D",
+   must:["Noradrenalina (wlew ciągły)","Adrenalina (wlew ciągły)","LUB Dopamina / Dobutamina"],
+   avoid:["NaHCO₃","Furosemid","Esomeprazol — inaktywacja/wytrącenie"],
+   note:"Lumen dystalny — najkrótszy czas do pacjenta. TYLKO presyjne. Zero innych leków przez ten port."},
+  {id:"B",name:"Lumen B — proksymalny (antybiotyki)",color:"#E6F1FB",tc:"#0C447C",
+   must:["Antybiotyki sekwencyjnie: pip+taz / ceftriakson / meropenem","Wankomycyna (osobno od amikacyny)","Antygrzybicze"],
+   avoid:["Amikacyna przez ten sam lumen co pip+taz/ceftriakson","CaCl₂ przez ten sam lumen co ceftriakson"],
+   note:"Antybiotyki sekwencyjnie z przepłukaniem 20 ml NaCl między podaniami. Amikacyna przez osobną linię lub obwodową."},
+  {id:"C",name:"Lumen C — medialny (sedacja)",color:"#FAEEDA",tc:"#854F0B",
+   must:["Midazolam+fentanyl (strzykawka)","LUB Propofol (WYŁĄCZNIE ten lumen — absolutnie)","Morfina / sufentanyl"],
+   avoid:["Furosemid, NaHCO₃, esomeprazol przez lumen propofolu","Cokolwiek przez lumen propofolu — propofol = własna linia"],
+   note:"Jeśli propofol — ten lumen jest WYŁĄCZNIE dla propofolu. Inne leki muszą przejść na inne lumeny."},
+  {id:"D",name:"Lumen D — proksymalny (leki objawowe / pobieranie krwi)",color:"#EAF3DE",tc:"#3B6D11",
+   must:["Hydrokortyzon, deksametazon","Metoklopramid, ondansetron","Bolus jednorazowe (furosemid, etamsylat, kw. traneksamowy)","Insulina (po saturacji zestawu)"],
+   avoid:["Furosemid i midazolam jednocześnie — wytrącenie","Esomeprazol i leki kwaśne jednocześnie"],
+   note:"Lumen 'ogólny'. Pobieranie krwi możliwe (wstrzymaj wlewy). Bolus sekwencyjne z przepłukaniem."},
+  {id:"E",name:"Osobna linia obwodowa / dodatkowy CVC lumen",color:"#F1EFE8",tc:"#5F5E5A",
+   must:["Amikacyna (NIGDY przez lumen z beta-laktamami)","Amiodaron (G5, non-PVC, folia)","Nitrogliceryna (non-PVC specjalny)","NaHCO₃ (gdy potrzebny jednocześnie z presyjnymi)","Fenytoina (absolutnie własna, NaCl only)","CaCl₂ (gdy ceftriakson w innych lumenach)","Fibryga / Octaplex (gdy podawane)","Nimodypina (zestaw producenta)"],
+   avoid:["Jakikolwiek wspólny port z liniami wyżej"],
+   note:"Gdy brak lumenów CVC: linia obwodowa dla amikacyny, amiodaron przez osobny CVC. Każdy z tych leków wymaga własnej dedykowanej drogi."},
+];
+
+function renderLumen(){
+  document.getElementById('lumen-plan').innerHTML = LUMEN_PLAN.map(l=>`
+    <div class="lumen-box" style="border-color:${l.color};margin-bottom:8px">
+      <div class="lh" style="color:${l.tc}">${l.id}: ${l.name}</div>
+      <div style="font-size:10px;font-weight:500;color:var(--color-text-secondary);margin-bottom:3px">Przypisz tutaj:</div>
+      <div class="li">${l.must.map(m=>`+ ${m}`).join('<br>')}</div>
+      <div style="font-size:10px;font-weight:500;color:var(--color-text-danger);margin-top:5px;margin-bottom:2px">Unikaj:</div>
+      <div style="font-size:10px;color:var(--color-text-danger)">${l.avoid.map(a=>`− ${a}`).join('<br>')}</div>
+      <div style="font-size:10px;color:var(--color-text-secondary);margin-top:5px;font-style:italic">${l.note}</div>
+    </div>`).join('');
+}
+
+const COND_DATA = [
+  {a:"Midazolam",b:"Fentanyl",how:"Strzykawka (standardowe stężenia OIT)",caveat:"Sprawdź stężenia. Addytywna depresja oddechowa. FK: flukonazol podnosi oba.",ok:true},
+  {a:"Midazolam",b:"Sufentanyl",how:"Strzykawka (standardowe OIT)",caveat:"Jak wyżej.",ok:true},
+  {a:"Midazolam",b:"Morfina",how:"Y-site / strzykawka",caveat:"Standardowe stężenia. Addytywna sedacja.",ok:true},
+  {a:"Noradrenalina",b:"Dobutamina",how:"Y-site G5/NaCl",caveat:"Monitorowanie BP/HR. Nie mieszać w tym samym pojemniku.",ok:true},
+  {a:"Noradrenalina",b:"Midazolam",how:"Y-site (wg Trissel's)",caveat:"Krótki kontakt. Dane potwierdzające.",ok:true},
+  {a:"Noradrenalina",b:"Morfina",how:"Y-site",caveat:"Wg Trissel's — zgodne.",ok:true},
+  {a:"Noradrenalina",b:"Fentanyl",how:"Y-site",caveat:"Wg Trissel's — zgodne.",ok:true},
+  {a:"Noradrenalina",b:"Deksametazon",how:"Y-site",caveat:"Wg Trissel's — zgodne.",ok:true},
+  {a:"Lewetyracetam",b:"Wankomycyna",how:"Y-site NaCl",caveat:"Ograniczone dane — brak doniesień o niezgodności.",ok:true},
+  {a:"Lewetyracetam",b:"Midazolam",how:"Y-site NaCl",caveat:"Dane pozytywne.",ok:true},
+  {a:"Lewetyracetam",b:"Morfina",how:"Y-site",caveat:"Dane pozytywne.",ok:true},
+  {a:"Flukonazol",b:"Wankomycyna",how:"Y-site",caveat:"Fizycznie OK. Pamiętaj: flukonazol podnosi midazolam/fentanyl przez CYP3A4.",ok:true},
+  {a:"Flukonazol",b:"Mykafungina",how:"Y-site NaCl/G5",caveat:"Fizycznie OK.",ok:true},
+  {a:"Deksametazon",b:"Fentanyl",how:"Y-site",caveat:"Wg Trissel's.",ok:true},
+  {a:"Deksametazon",b:"Midazolam",how:"Y-site",caveat:"Wg Trissel's.",ok:true},
+  {a:"Morfina",b:"Deksametazon",how:"Y-site",caveat:"OK.",ok:true},
+  {a:"Hydrokortyzon",b:"Fentanyl",how:"Y-site",caveat:"Ograniczone dane — brak niezgodności.",ok:true},
+  {a:"Vankomycyna + pip+taz",b:"Y-site",how:"DANE SPRZECZNE",caveat:"Trissel's: OK przy standardowych stężeniach. Inne źródła: zmętnienie po czasie. Bezpieczniej osobno.",ok:false},
+  {a:"Propofol",b:"Midazolam",how:"Y-site krótki",caveat:"Część źródeł dopuszcza. Inne: niezgodne. Bezpieczniej — osobna linia propofolu.",ok:false},
+  {a:"Amiodaron",b:"Morfina",how:"Y-site G5",caveat:"Brak danych o wytrąceniu. Ale oba wymagają specjalnych warunków. Ostrożnie.",ok:false},
+];
+
+function renderCond(){
+  document.getElementById('cond-content').innerHTML = `
+    <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:10px">Zielone = dane potwierdzające Y-site. Czerwone = dane sprzeczne lub wątpliwe.</div>
+    <div class="scroll"><table><thead><tr>
+      <th>Lek A</th><th>Lek B</th><th>Scenariusz</th><th>Zastrzeżenia</th><th>Ocena</th>
+    </tr></thead><tbody>
+    ${COND_DATA.map(c=>`<tr>
+      <td style="font-weight:500">${c.a}</td>
+      <td style="font-weight:500">${c.b}</td>
+      <td style="font-size:10px">${c.how}</td>
+      <td style="font-size:10px">${c.caveat}</td>
+      <td><span class="b ${c.ok?'bg':'bc'}">${c.ok?'OK warunkowo':'Sprzeczne dane'}</span></td>
+    </tr>`).join('')}
+    </tbody></table></div>`;
+}
+
+renderHier();
+renderTable();
+</script>

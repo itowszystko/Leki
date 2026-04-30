@@ -1,0 +1,662 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);font-size:13px;color:var(--color-text-primary);background:transparent}
+.wrap{padding:0.5rem 0}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:1rem;border-bottom:0.5px solid var(--color-border-tertiary);padding-bottom:8px}
+.tab{padding:6px 13px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);cursor:pointer;font-size:12px;background:transparent;color:var(--color-text-secondary)}
+.tab.active{background:var(--color-background-secondary);color:var(--color-text-primary);border-color:var(--color-border-primary);font-weight:500}
+.panel{display:none}.panel.active{display:block}
+.scroll{overflow:auto;max-height:560px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md)}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{padding:5px 7px;background:var(--color-background-secondary);font-weight:500;font-size:10px;color:var(--color-text-secondary);border-bottom:0.5px solid var(--color-border-tertiary);position:sticky;top:0;z-index:3;white-space:nowrap}
+td{padding:5px 7px;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top;line-height:1.4}
+tr:hover td{background:var(--color-background-secondary)}
+.b{display:inline-block;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:500;white-space:nowrap}
+.ok{background:#EAF3DE;color:#3B6D11}.no{background:#FCEBEB;color:#A32D2D}
+.cond{background:#FAEEDA;color:#854F0B}.nd{background:#F1EFE8;color:#5F5E5A}
+.conf{background:#E6F1FB;color:#0C447C}
+.hi{background:#FCEBEB;color:#A32D2D}.med{background:#FAEEDA;color:#854F0B}.lo{background:#EAF3DE;color:#3B6D11}
+.row-search{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
+.row-search input,.row-search select{font-size:12px;padding:5px 9px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary)}
+.row-search input{flex:1;min-width:140px}
+.crit-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 13px;margin-bottom:7px}
+.crit-card.d{border-left:3px solid #E24B4A}.crit-card.w{border-left:3px solid #EF9F27}.crit-card.i{border-left:3px solid #378ADD}
+.crit-pair{font-weight:500;font-size:12px;margin-bottom:3px}
+.crit-body{font-size:11px;color:var(--color-text-secondary);line-height:1.5}
+.crit-body b{color:var(--color-text-primary);font-weight:500}
+.chips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
+.chip{padding:3px 9px;border:0.5px solid var(--color-border-secondary);border-radius:8px;font-size:11px;cursor:pointer;background:transparent;color:var(--color-text-secondary)}
+.chip.on{background:var(--color-background-secondary);color:var(--color-text-primary);font-weight:500}
+.prio-section{margin-bottom:1.5rem}
+.prio-h{font-size:12px;font-weight:500;margin-bottom:6px;padding-bottom:4px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.prio-item{font-size:11px;padding:5px 8px;border-radius:var(--border-radius-md);margin-bottom:4px;background:var(--color-background-secondary);line-height:1.5}
+.prio-item .pair{font-weight:500}
+.legend{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px;font-size:11px;align-items:center}
+/* matrix */
+.matrix-wrap{overflow:auto;max-height:540px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md)}
+.matrix-wrap table{width:auto;min-width:100%}
+.matrix-wrap th{font-size:9px;padding:3px 4px;min-width:28px;max-width:28px;writing-mode:vertical-lr;transform:rotate(180deg);white-space:nowrap;height:90px;vertical-align:bottom}
+.matrix-wrap td{font-size:9px;padding:2px 3px;text-align:center;min-width:28px;max-width:28px;cursor:pointer}
+.matrix-wrap .rn{writing-mode:horizontal-tb;transform:none;height:auto;min-width:90px;max-width:110px;text-align:left;font-size:9px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.m-ok{background:#EAF3DE;color:#3B6D11}.m-no{background:#FCEBEB;color:#A32D2D}
+.m-cond{background:#FAEEDA;color:#854F0B}.m-nd{background:#F1EFE8;color:#5F5E5A}
+.m-conf{background:#E6F1FB;color:#0C447C}.m-self{background:var(--color-background-secondary)}
+@media(prefers-color-scheme:dark){
+.ok{background:#173404;color:#C0DD97}.no{background:#501313;color:#F7C1C1}
+.cond{background:#412402;color:#FAC775}.nd{background:#2C2C2A;color:#B4B2A9}
+.conf{background:#042C53;color:#B5D4F4}
+.hi{background:#501313;color:#F7C1C1}.med{background:#412402;color:#FAC775}.lo{background:#173404;color:#C0DD97}
+.m-ok{background:#173404;color:#C0DD97}.m-no{background:#501313;color:#F7C1C1}
+.m-cond{background:#412402;color:#FAC775}.m-nd{background:#2C2C2A;color:#B4B2A9}
+.m-conf{background:#042C53;color:#B5D4F4}.m-self{background:#2C2C2A}
+}
+</style>
+<div class="wrap">
+<h2 class="sr-only">Pełna macierz kompatybilności leków IV — OIT</h2>
+<div class="tabs">
+<button class="tab active" onclick="show('matrix')">Macierz wizualna</button>
+<button class="tab" onclick="show('pairs')">Wszystkie pary</button>
+<button class="tab" onclick="show('critical')">Krytyczne kombinacje</button>
+<button class="tab" onclick="show('priority')">Priorytetyzacja ryzyka</button>
+</div>
+
+<div id="p-matrix" class="panel active"></div>
+<div id="p-pairs" class="panel">
+  <div class="row-search">
+    <input type="text" id="pairQ" placeholder="Szukaj leku A lub B..." oninput="renderPairs()">
+    <select id="pairRes" onchange="renderPairs()">
+      <option value="">Wszystkie</option>
+      <option value="NIE">Niezgodne</option>
+      <option value="WARUNKOWO">Warunkowo</option>
+      <option value="TAK">Zgodne</option>
+      <option value="ND">Brak danych</option>
+      <option value="SPRZECZNE">Sprzeczne dane</option>
+    </select>
+    <select id="pairCert" onchange="renderPairs()">
+      <option value="">Pewność: wszystkie</option>
+      <option value="H">Wysoka</option>
+      <option value="M">Umiarkowana</option>
+      <option value="L">Niska</option>
+    </select>
+  </div>
+  <div class="legend">
+    <span class="b ok">Zgodne</span><span class="b no">Niezgodne</span><span class="b cond">Warunkowo</span><span class="b nd">Brak danych</span><span class="b conf">Sprzeczne</span>
+    <span style="margin-left:6px;font-size:10px;color:var(--color-text-secondary)">Pewność: </span>
+    <span class="b hi">Wysoka</span><span class="b med">Umiarkowana</span><span class="b lo">Niska</span>
+  </div>
+  <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:8px" id="pairCount"></div>
+  <div class="scroll"><table><thead><tr><th>Lek A</th><th>Lek B</th><th>Wynik</th><th>Pewność</th><th>Scenariusz</th><th>Mechanizm / uwaga</th></tr></thead><tbody id="pairsBody"></tbody></table></div>
+</div>
+
+<div id="p-critical" class="panel">
+  <div class="chips" id="critChips"></div>
+  <div class="row-search">
+    <input type="text" id="critQ" placeholder="Szukaj w krytycznych kombinacjach..." oninput="renderCrit()">
+    <select id="critLevel" onchange="renderCrit()">
+      <option value="">Wszystkie poziomy</option>
+      <option value="d">Krytyczne</option>
+      <option value="w">Ostrzeżenie</option>
+      <option value="i">Informacyjne</option>
+    </select>
+  </div>
+  <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:8px" id="critCount"></div>
+  <div id="critList"></div>
+</div>
+
+<div id="p-priority" class="panel"><div id="prioContent"></div></div>
+</div>
+
+<script>
+const DRUGS = [
+  "Ampicylina","Amp+sulbaktam","Pip+tazobaktam","Ceftriakson","Meropenem","Vankomycyna","Amikacyna","Klindamycyna","TMP+SMX","Tigecyklina",
+  "Fosfomycyna","Flukonazol","Kaspofungina","Mykafungina","Noradrenalina","Adrenalina","Dopamina","Dobutamina","Digoksyna","Metoprolol",
+  "Amiodaron","Nitrogliceryna","Urapidyl","Furosemid","Torasemid","Nimodypina","Lewosimendan","Cerebrolysin","Fenytoina","Kwas walproin.",
+  "Lewetyracetam","Propofol","Midazolam","Diazepam","Lorazepam","Fentanyl","Sufentanyl","Morfina","Metamizol","Metoklopramid",
+  "Esomeprazol","Acetylocysteina","CaCl2","NaHCO3","Etamsylat","Kw.traneksam.","Hydrokortyzon","Deksametazon","Haloperidol","Hepa-Merz",
+  "Kanavit","Monofer","Glicerol","NeurovitB","Insulina","Laktuloza","Fibryga","Octaplex","Teofilina","Salbutamol",
+  "Albumina 20%","Bupiwakaina","Fondaparynuks"
+];
+const N = DRUGS.length;
+
+// result codes: 0=nd, 1=ok, 2=cond, 3=no, 4=conf
+// pairs defined explicitly; rest = nd
+// Format: [idxA, idxB, result, certainty(H/M/L), scenario, note]
+// Certainty: H=published data high confidence, M=moderate, L=limited
+
+const PAIRS_RAW = [
+// === BETA-LAKTAMY między sobą ===
+[0,1, 2,"M","Osobne linie/Y-site","Ampicylina i amp+sulb nie powinny być mieszane — nakładające się spektrum i różna stabilność pH"],
+[0,2, 3,"H","Wszystkie scenariusze","Wzajemna antagonizacja spektrum klinicznego + potencjalna interakcja pH w linii. Osobne linie."],
+[0,3, 2,"M","Y-site (krótki)","Możliwe w Y-site przy krótkim czasie kontaktu. Obie substancje degradują w pH >10."],
+[0,4, 2,"M","Y-site","Różne pH (amp~10, meropen~8). Mieszanie w worku — unikać."],
+[1,2, 3,"M","Worki/strzykawki","Sulbaktam może interferować chemicznie z tazobaktamem w wyższych stężeniach."],
+[1,3, 2,"M","Y-site","Krótki kontakt Y-site akceptowalny. Nie mieszać w worku."],
+[1,4, 2,"M","Y-site","Podobnie jak amp — krótki Y-site akceptowalny."],
+[2,3, 4,"H","Y-site","SPRZECZNE DANE: Trissel's podaje zgodność Y-site przy określonych stężeniach; inne publikacje opisują zmętnienie. UNIKAĆ wspólnej linii."],
+[2,4, 2,"H","Osobne linie/Y-site monitorowany","Fizycznie możliwe Y-site przy rozcieńczeniu, nie w worku."],
+[3,4, 3,"H","Wszystkie","Ceftriakson + meropenem — antagonizm kliniczny (PBP competition) + ryzyko fizyczne przy wyższych stężeniach."],
+// === AMINOGLIKOZYDY z beta-laktamami ===
+[0,6, 3,"H","Wszystkie scenariusze","Ampicylina inaktywuje amikacynę chemicznie. Nigdy w tej samej linii."],
+[1,6, 3,"H","Wszystkie scenariusze","Jak wyżej — amp+sulb inaktywuje amikacynę."],
+[2,6, 3,"H","Wszystkie scenariusze","Pip+taz inaktywuje amikacynę. FDA/Trissel: NIEZGODNE. Klinicznie: utrata aktywności nawet przy podaniu w krótkich odstępach przez tę samą linię."],
+[3,6, 3,"H","Wszystkie scenariusze","Ceftriakson + amikacyna: wytrącenie + inaktywacja. Osobna linia + przepłukanie."],
+[4,6, 2,"M","Y-site krótki","Meropenem + amikacyna: dane Y-site ograniczone. Krótki kontakt akceptowalny; nie mieszać w worku."],
+[5,6, 3,"H","Fizyczna + kliniczna","Vankomycyna + amikacyna: nefrotoksyczność addytywna (klinicznie KRYTYCZNA) + możliwe wytrącenie przy wysokich stężeniach."],
+// === VANKOMYCYNA ===
+[5,2, 4,"H","Y-site","SPRZECZNE: niektóre źródła (Trissel's) podają zgodność Y-site pip+taz + vanco przy określonych stężeniach; inne opisują zmętnienie po >1h. KONFL."],
+[5,3, 3,"M","Wszystkie","Wytrącenie ceftriakson+wanko możliwe przy wyższych stężeniach."],
+[5,7, 2,"M","Y-site","Klindamycyna + wanko: Y-site akceptowalne. Nie mieszać w worku (różne pH)."],
+[5,30, 2,"M","Y-site","Wanko + lewetyracetam: Y-site — dane ograniczone, ale brak doniesień o niezgodności."],
+[5,32, 3,"M","Worek/strzykawka","Midazolam (pH 3,5) + wanko (pH 3–4): teoretycznie zgodne pH, ale dane Y-site zmienne. Unikać mieszania."],
+[5,36, 2,"M","Y-site","Wanko + morfina: Y-site zgodne wg Trissel's przy standardowych stężeniach."],
+[5,46, 3,"M","Worki","Wanko + hydrokortyzon: wytrącenie opisywane. Osobne linie."],
+// === KLINDAMYCYNA ===
+[7,14, 3,"H","Wszystkie","Klindamycyna + noradrenalina: brak danych na Y-site, różne pH. Osobne linie jako zasada."],
+[7,23, 3,"M","Worki","Klindamycyna (pH 6,5) + furosemid (pH 9): wytrącenie możliwe."],
+[7,32, 3,"M","Worki","Klindamycyna + midazolam: różne pH, unikać mieszania."],
+// === TMP+SMX ===
+[8,0, 3,"H","Wszystkie","TMP+SMX (pH 9,5–10,5) + ampicylina (pH ~10): ryzyko krystalizacji siarczanów przy pH <8 po zmieszaniu."],
+[8,14, 2,"L","Y-site","TMP+SMX + noradrenalina: brak solidnych danych. OSTROŻNIE."],
+[8,23, 3,"H","NaCl i G5","TMP+SMX + furosemid: wytrącenie siarczanów w pH mieszanym. Osobne linie."],
+[8,29, 3,"M","Wszystkie","TMP+SMX + kwas walproinowy: interferencja metaboliczna (TMP blokuje glukuronidację VPA)."],
+[8,32, 3,"M","Worki","TMP+SMX zasadowy + midazolam kwaśny: wytrącenie."],
+// === TIGECYKLINA ===
+[9,0, 3,"M","Worki","Tigecyklina zasadowa pH + ampicylina — unikać mieszania."],
+[9,2, 2,"L","Y-site (krótki)","Brak danych bezpośrednich. Tigecyklina + pip+taz: możliwy Y-site bardzo krótki."],
+[9,14, 0,"L","—","Brak wiarygodnych danych na Y-site."],
+[9,21, 3,"M","Wszystkie","Tigecyklina + nitrogliceryna: brak danych + obie wymagają ochrony przed światłem. Osobne linie."],
+// === FOSFOMYCYNA ===
+[10,5, 2,"M","NaCl","Fosfomycyna pH 9–11 + wanko: możliwe Y-site. Nie mieszać w worku (wysoke pH fosfomycyny degr. wanko)."],
+[10,20, 3,"M","Wszystkie","Fosfomycyna + amiodaron: fosfomycyna zasadowa, amiodaron tylko G5 — niezgodność nośnika i pH."],
+[10,43, 3,"H","Wszystkie","Fosfomycyna + NaHCO3: oba silnie zasadowe + duże ładunki Na. Kumulacja Na, brak danych o fizycznej zgodności."],
+[10,6, 3,"H","Wszystkie","Fosfomycyna inaktywuje aminoglikozydy in vitro przy kontakcie (grupy fosfonowe). Osobne linie."],
+// === FLUKONAZOL ===
+[11,14, 2,"M","Y-site","Flukonazol + noradrenalina: dane Y-site ograniczone. Ostrożnie."],
+[11,20, 3,"H","Wszystkie","Flukonazol + amiodaron: ADDYTYWNE RYZYKO QT. Nie kliniczna niezgodność fizyczna, ale farmakodynamiczna KRYTYCZNA."],
+[11,48, 3,"H","Kliniczna","Flukonazol + haloperidol: QT addytywne. Nigdy jednocześnie bez monitoringu EKG."],
+[11,5, 2,"M","Y-site","Flukonazol + wanko: Y-site zgodność opisana w Trissel's przy standardowych stężeniach."],
+[11,32, 2,"M","Y-site","Flukonazol + midazolam: Y-site OK. Klinicznie: flukonazol SILNIE hamuje CYP3A4 → stężenie midazolamu wzrasta kilkukrotnie!"],
+[11,35, 2,"M","Klinicznie ostrzegawcze","Flukonazol + fentanyl: Y-site OK. Klinicznie: inhibicja CYP3A4 → wzrost stężenia fentanylu."],
+// === KASPOFUNGINA ===
+[12,11, 2,"M","NaCl","Kaspofungina + flukonazol: Y-site w NaCl OK. Nie w G5."],
+[12,5, 2,"M","NaCl Y-site","Kaspofungina + wanko: NaCl Y-site — brak doniesień o niezgodności."],
+[12,20, 3,"H","G5 nośnik","Kaspofungina TYLKO NaCl — każdy lek podawany tylko w G5 = niezgodny nośnikowo."],
+[12,14, 0,"L","—","Brak danych Y-site kasp+nora."],
+// === MYKAFUNGINA ===
+[13,11, 2,"M","NaCl/G5 Y-site","Mykafungina + flukonazol: Y-site kompatybilne."],
+[13,5, 2,"M","NaCl Y-site","Mykafungina + wanko: Y-site OK."],
+[13,20, 3,"M","Kliniczna","Mykafungina + amiodaron: brak fizycznych danych, ale oba QT-prolongators. Ostrożność."],
+// === KATECHOLAMINY ===
+[14,15, 2,"M","G5/NaCl Y-site","Noradrenalina + adrenalina: Y-site możliwe. Klinicznie: addytywna wazokonstr./arytmia."],
+[14,16, 2,"M","G5/NaCl Y-site","Noradrenalina + dopamina: Y-site OK."],
+[14,17, 2,"H","G5/NaCl Y-site","Noradrenalina + dobutamina: Y-site wg Trissel's zgodne."],
+[14,43, 3,"H","Wszystkie","Noradrenalina + NaHCO3: INAKTYWACJA katecholaminy. Krytyczne."],
+[14,23, 3,"H","Wszystkie","Noradrenalina + furosemid: różne pH. Furosemid pH 9 inaktywuje katecholaminy."],
+[14,20, 3,"H","Wszystkie","Noradrenalina + amiodaron: różne nośniki (nora G5/NaCl, amiodaron TYLKO G5) + pH conflict."],
+[14,32, 2,"M","Y-site","Noradrenalina + midazolam: Y-site opisane jako zgodne w Trissel's."],
+[14,36, 2,"M","Y-site","Noradrenalina + morfina: Y-site OK."],
+[14,35, 2,"M","Y-site","Noradrenalina + fentanyl: Y-site OK."],
+[14,47, 2,"M","Y-site","Noradrenalina + deksametazon: Y-site zgodne."],
+[14,5, 2,"M","G5 Y-site","Noradrenalina + wanko: Y-site w G5 — brak doniesień. Ostrożność."],
+[15,43, 3,"H","Wszystkie","Adrenalina + NaHCO3: inaktywacja. Krytyczne."],
+[15,16, 2,"M","Y-site","Adrenalina + dopamina: Y-site OK przy standardowych stężeniach."],
+[15,23, 3,"H","Wszystkie","Adrenalina + furosemid: inaktywacja katecholaminy przez alkalię."],
+[16,17, 2,"H","Y-site","Dopamina + dobutamina: Y-site wg Trissel's zgodne."],
+[16,43, 3,"H","Wszystkie","Dopamina + NaHCO3: inaktywacja."],
+[16,23, 3,"H","Wszystkie","Dopamina + furosemid: inaktywacja + wytrącenie."],
+[16,20, 3,"H","NaCl","Dopamina + amiodaron: dopamina w NaCl/G5, amiodaron TYLKO G5 → przy NaCl niezgodność."],
+[17,23, 3,"H","Wszystkie","Dobutamina + furosemid: wytrącenie. Opisane w Trissel's."],
+[17,43, 3,"H","Wszystkie","Dobutamina + NaHCO3: inaktywacja."],
+[17,20, 3,"H","Wszystkie","Dobutamina + amiodaron: pH conflict + nośnik. Osobne linie."],
+[17,32, 3,"M","Worki","Dobutamina kwaśna + midazolam: wytrącenie możliwe przy mieszaniu."],
+// === DIGOKSYNA ===
+[18,43, 3,"M","Wszystkie","Digoksyna + NaHCO3: zmiana pH wpływa na jonizację i aktywność."],
+[18,23, 3,"M","Wszystkie","Digoksyna + furosemid: brak fizycznego wytrącenia, ale addytywna hipokaliemia → TOKSYCZNOŚĆ DIGOKSYNY nasilona."],
+[18,20, 3,"H","Kliniczna","Digoksyna + amiodaron: amiodaron DWUKROTNIE zwiększa stężenie digoksyny (hamuje P-gp i CYP). Ryzyko zatrucia digoksyną."],
+// === METOPROLOL ===
+[19,16, 3,"H","Kliniczna","Metoprolol + dopamina: antagonizm receptorowy. Ostrożność kliniczna."],
+[19,20, 2,"M","Kliniczna ostrzegawcza","Metoprolol + amiodaron: addytywna bradykardia i blok AV. Nie wolno bez monitoringu."],
+[19,18, 3,"H","Kliniczna","Metoprolol + digoksyna: addytywna bradykardia."],
+// === AMIODARON ===
+[20,23, 3,"H","Wszystkie","Amiodaron (G5, pH 3,5–4,5) + furosemid (pH 9): wytrącenie. Trissel's: niezgodne."],
+[20,32, 3,"H","Worki/strzykawki","Amiodaron + midazolam: wytrącenie przy mieszaniu. Osobne linie."],
+[20,43, 3,"H","Wszystkie","Amiodaron + NaHCO3: niezgodny nośnikowo + pH."],
+[20,5, 3,"M","Worki","Amiodaron + wanko: wytrącenie opisywane. Y-site — dane sprzeczne. Bezpieczniej: osobne linie."],
+[20,48, 3,"H","Kliniczna","Amiodaron + haloperidol: KRYTYCZNE QT addytywne → torsades de pointes."],
+[20,11, 3,"H","Kliniczna","Amiodaron + flukonazol: QT addytywne. Unikać łączenia."],
+[20,29, 3,"M","Kliniczna","Amiodaron + kwas walproinowy: oba leki o szerokim oddziaływaniu na metabolizm wątrobowy. Monitorowanie."],
+[20,36, 2,"M","Y-site G5","Amiodaron + morfina: Y-site G5 — dane ograniczone, brak doniesień o niezgodności fizycznej."],
+// === NITROGLICERYNA ===
+[21,14, 2,"M","Non-PVC Y-site","Nitrogliceryna + noradrenalina: fizycznie możliwe na Y-site non-PVC. PVC = utrata dawki obu."],
+[21,20, 3,"M","Wszystkie","Nitrogliceryna + amiodaron: oba adsorpcja do PVC + różne nośniki preferowane."],
+[21,23, 3,"M","Worki","Nitrogliceryna (pH 3–6,5) + furosemid (pH 9): wytrącenie."],
+// === URAPIDYL ===
+[22,14, 2,"M","Y-site","Urapidyl + noradrenalina: używane razem klinicznie. Y-site OK przy monitorowaniu."],
+[22,43, 3,"M","Wszystkie","Urapidyl + NaHCO3: pH >8 → wytrącenie urapidylu."],
+[22,23, 3,"M","Worki","Urapidyl + furosemid: pH conflict."],
+// === FUROSEMID ===
+[23,32, 3,"H","Wszystkie","Furosemid (pH 9) + midazolam (pH 3,5): wytrącenie."],
+[23,48, 3,"H","Wszystkie","Furosemid + haloperidol: wytrącenie (alkaliczny + kwaśny). Trissel's: niezgodne."],
+[23,33, 3,"M","Wszystkie","Furosemid + diazepam: wytrącenie."],
+[23,43, 3,"M","NaCl","Furosemid + NaHCO3: oba zasadowe — brak wytrącenia, ale kumulacja Na + pH >9,5 destabilizuje inne leki w linii."],
+[23,36, 3,"M","Worki","Furosemid + morfina: Trissel's opisuje niezgodność Y-site przy określonych stężeniach."],
+[23,39, 3,"M","Worki","Furosemid + metoklopramid: pH conflict."],
+[23,9, 3,"M","Wszystkie","Furosemid + tigecyklina: brak danych bezpośrednich + różne pH → unikać."],
+// === TORASEMID ===
+[24,32, 3,"M","Worki","Torasemid + midazolam: podobnie do furosemidu."],
+[24,48, 3,"M","Wszystkie","Torasemid + haloperidol: wytrącenie."],
+// === NIMODYPINA ===
+[25,20, 3,"H","Nośnik/PVC","Nimodypina + amiodaron: oba wymagają non-PVC + G5. Brak danych Y-site. Osobne linie."],
+[25,14, 0,"L","—","Nimodypina + noradrenalina: brak danych. Nimodypina przez dedykowaną linię."],
+[25,32, 0,"L","—","Nimodypina + midazolam: brak danych. Dedykowana linia."],
+// === LEWOSIMENDAN ===
+[26,14, 0,"L","—","Lewosimendan + noradrenalina: brak danych Y-site. Osobna linia zalecana."],
+[26,20, 3,"M","Kliniczna","Lewosimendan + amiodaron: potencjalizacja hipotensji + QT. Ostrożność."],
+[26,17, 2,"M","Y-site","Lewosimendan + dobutamina: klinicznie stosowane razem. Dane Y-site ograniczone."],
+// === FENYTOINA ===
+[28,0, 3,"H","NaCl/Worki","Fenytoina (pH 10–12) + ampicylina: wytrącenie."],
+[28,2, 3,"H","Wszystkie","Fenytoina + pip+taz: wytrącenie."],
+[28,5, 3,"H","Wszystkie","Fenytoina + wanko: wytrącenie."],
+[28,14, 3,"H","Wszystkie","Fenytoina + noradrenalina: wytrącenie. Fenytoina wytrąca się z prawie wszystkimi lekami."],
+[28,15, 3,"H","Wszystkie","Fenytoina + adrenalina: wytrącenie."],
+[28,16, 3,"H","Wszystkie","Fenytoina + dopamina: wytrącenie."],
+[28,17, 3,"H","Wszystkie","Fenytoina + dobutamina: wytrącenie."],
+[28,20, 3,"H","Wszystkie","Fenytoina + amiodaron: wytrącenie (oba słabo rozpuszczalne w wodzie)."],
+[28,32, 3,"H","Wszystkie","Fenytoina + midazolam: wytrącenie."],
+[28,23, 3,"H","Wszystkie","Fenytoina + furosemid: wytrącenie."],
+[28,36, 3,"H","Wszystkie","Fenytoina + morfina: wytrącenie."],
+[28,43, 3,"H","G5 nośnik","Fenytoina + NaHCO3: w G5 natychmiastowe wytrącenie; w NaCl zmiana pH może przyspieszyć krystalizację."],
+[28,46, 3,"H","Wszystkie","Fenytoina + hydrokortyzon: wytrącenie."],
+[28,47, 3,"H","Wszystkie","Fenytoina + deksametazon: wytrącenie."],
+[28,54, 3,"M","Wszystkie","Fenytoina + insulina: wytrącenie (alkaliczne pH fenytoiny)."],
+[28,11, 3,"M","Wszystkie","Fenytoina + flukonazol: wytrącenie + klinicznie: flukonazol podnosi stężenie fenytoiny (hamowanie CYP2C9)."],
+// === KWAS WALPROINOWY ===
+[29,4, 3,"H","Kliniczna","VPA + meropenem: KRYTYCZNE — meropenem obniża VPA o 60–100%. Niezgodność FK nie fizyczna. Dotyczy wszystkich karbapenemów."],
+[29,0, 3,"M","Kliniczna","VPA + ampicylina: interakcja PK możliwa (mniejsza niż karbapenemy, ale opisywana)."],
+[29,8, 3,"M","Kliniczna","VPA + TMP+SMX: TMP hamuje metabolizm VPA → wzrost stężenia VPA."],
+[29,11, 2,"M","Kliniczna ostrzegawcza","VPA + flukonazol: flukonazol może nieznacznie podnosić VPA."],
+[29,54, 0,"L","—","VPA + insulina: brak bezpośrednich danych o zgodności IV."],
+// === LEWETYRACETAM ===
+[30,32, 2,"H","Y-site NaCl","Lewetyracetam + midazolam: Y-site zgodne wg danych."],
+[30,36, 2,"H","Y-site","Lewetyracetam + morfina: Y-site OK."],
+[30,14, 2,"M","Y-site","Lewetyracetam + noradrenalina: Y-site dane ograniczone, brak doniesień o niezgodności."],
+[30,5, 2,"M","Y-site","Lewetyracetam + wanko: Y-site OK."],
+// === PROPOFOL ===
+[31,43, 3,"H","Wszystkie","Propofol (emulsja) + NaHCO3: zerwanie emulsji."],
+[31,9, 3,"M","Worki","Propofol + tigecyklina: niezgodność emulsji."],
+[31,58, 3,"M","Kliniczna/fizyczna","Propofol + aminofilina (teofilina): zerwanie emulsji lipidowej."],
+[31,6, 3,"M","Wszystkie","Propofol + amikacyna: niezgodność emulsji z elektrolitami aminoglikozydu."],
+[31,32, 2,"L","Y-site krótki","Propofol + midazolam: Y-site możliwy przy krótkim kontakcie. Nie mieszać."],
+[31,36, 2,"L","Y-site","Propofol + morfina: Y-site ograniczone dane."],
+[31,2, 3,"M","Wszystkie","Propofol + pip+taz: niezgodność emulsji."],
+[31,5, 3,"M","Wszystkie","Propofol + wanko: niezgodność emulsji przy bezpośrednim kontakcie."],
+// === MIDAZOLAM ===
+[32,23, 3,"H","Wszystkie","Midazolam (pH 3,5) + furosemid (pH 9): wytrącenie. Trissel's: niezgodne."],
+[32,43, 3,"H","Wszystkie","Midazolam + NaHCO3: wytrącenie."],
+[32,20, 3,"H","Worki","Midazolam + amiodaron: wytrącenie."],
+[32,36, 2,"H","Y-site/strzykawka","Midazolam + morfina: Y-site zgodne. W strzykawce — standardowa mieszanina sedacyjna OIT."],
+[32,35, 2,"H","Y-site/strzykawka","Midazolam + fentanyl: standardowa mieszanina sedacyjna. Zgodne."],
+[32,37, 2,"H","Y-site/strzykawka","Midazolam + sufentanyl: standardowa sedacja OIT. Zgodne."],
+[32,14, 2,"H","Y-site","Midazolam + noradrenalina: Y-site — Trissel's zgodne."],
+[32,47, 2,"M","Y-site","Midazolam + deksametazon: Y-site OK."],
+[32,46, 3,"M","Worki","Midazolam + hydrokortyzon: wytrącenie możliwe (pH conflict)."],
+[32,5, 2,"M","Y-site rozcieńczony","Midazolam + wanko: Y-site rozcieńczony OK. Wysokie stężenia — ryzyko."],
+[32,48, 3,"M","Worki","Midazolam + haloperidol: pH conflict (kwaśny+kwaśny, różne formy jonowe)."],
+[32,39, 2,"M","Y-site","Midazolam + metoklopramid: Y-site OK."],
+// === DIAZEPAM ===
+[33,14, 3,"H","PVC/NaCl","Diazepam w NaCl/PVC → wytrącenie + adsorpcja do PVC. Tylko G5 non-PVC lub szkło."],
+[33,36, 3,"M","Wszystkie mieszane","Diazepam + morfina: nie mieszać (wytrącenie)."],
+[33,32, 3,"M","Wszystkie","Diazepam + midazolam: nie mieszać."],
+[33,20, 3,"M","Wszystkie","Diazepam + amiodaron: obydwa wymagają non-PVC, różne pH."],
+[33,43, 3,"M","Wszystkie","Diazepam + NaHCO3: wytrącenie."],
+// === LORAZEPAM ===
+[34,36, 2,"M","Y-site","Lorazepam + morfina: Y-site OK."],
+[34,32, 2,"M","Y-site","Lorazepam + midazolam: Y-site — dane ograniczone."],
+[34,14, 2,"M","Y-site","Lorazepam + noradrenalina: Y-site brak doniesień o niezgodności."],
+[34,43, 3,"M","Worki","Lorazepam + NaHCO3: wytrącenie."],
+// === FENTANYL ===
+[35,36, 2,"H","Y-site/strzykawka","Fentanyl + morfina: zgodne, ale addytywna depresja oddechowa."],
+[35,37, 2,"H","Strzykawka","Fentanyl + sufentanyl: nie stosować razem (powielanie agonistów)."],
+[35,14, 2,"H","Y-site","Fentanyl + noradrenalina: Y-site zgodne."],
+[35,32, 2,"H","Y-site/strzykawka","Fentanyl + midazolam: standardowa mieszanina."],
+[35,46, 2,"M","Y-site","Fentanyl + hydrokortyzon: Y-site OK."],
+[35,47, 2,"M","Y-site","Fentanyl + deksametazon: Y-site OK."],
+// === SUFENTANYL ===
+[37,32, 2,"H","Strzykawka","Sufentanyl + midazolam: standardowa sedacja OIT."],
+[37,14, 2,"M","Y-site","Sufentanyl + noradrenalina: Y-site OK."],
+[37,36, 2,"M","Y-site","Sufentanyl + morfina: nie stosować razem klinicznie (dublowanie)."],
+// === MORFINA ===
+[36,14, 2,"H","Y-site","Morfina + noradrenalina: Y-site wg Trissel's zgodne."],
+[36,43, 3,"M","Worki","Morfina + NaHCO3: zmiana pH → zmiana jonizacji morfiny, wytrącenie zasadnicze możliwe."],
+[36,23, 3,"M","Worki","Morfina + furosemid: wytrącenie przy wyższych stężeniach."],
+[36,46, 2,"M","Y-site","Morfina + hydrokortyzon: Y-site dane ograniczone."],
+[36,47, 2,"M","Y-site","Morfina + deksametazon: Y-site OK."],
+[36,39, 2,"M","Y-site","Morfina + metoklopramid: Y-site OK."],
+// === METAMIZOL ===
+[38,14, 3,"M","Wszystkie","Metamizol + noradrenalina: reaktywne grupy pirazolonowe. Unikać. Brak danych Y-site."],
+[38,20, 3,"M","Wszystkie","Metamizol + amiodaron: brak danych + reaktywność chemiczna. Osobne linie."],
+[38,32, 3,"M","Worki","Metamizol + midazolam: pH i reaktywność. Unikać mieszania."],
+[38,6, 3,"M","Worki","Metamizol + amikacyna: wytrącenie opisywane."],
+// === METOKLOPRAMID ===
+[39,23, 3,"M","Worki","Metoklopramid + furosemid: pH conflict."],
+[39,43, 3,"M","Worki","Metoklopramid + NaHCO3: wytrącenie możliwe."],
+[39,48, 2,"M","Y-site","Metoklopramid + haloperidol: ostrożność QT addytywne; Y-site fizycznie OK."],
+// === ESOMEPRAZOL ===
+[40,5, 3,"M","Worki","Esomeprazol (pH 9–10) + wanko (pH 3): wytrącenie."],
+[40,32, 3,"M","Worki","Esomeprazol + midazolam: wytrącenie."],
+[40,14, 3,"M","Worki","Esomeprazol + noradrenalina: pH 9–10 niszczy katecholaminę."],
+[40,20, 3,"M","Wszystkie","Esomeprazol + amiodaron: niezgodność pH."],
+[40,43, 2,"M","NaCl","Esomeprazol + NaHCO3: oba zasadowe — brak wytrącenia ale nie mieszać."],
+// === ACETYLOCYSTEINA ===
+[41,6, 3,"H","Wszystkie","NAC + amikacyna: wytrącenie grup tiolowych z aminoglikozydami."],
+[41,0, 3,"M","Worki","NAC + ampicylina: grupy tiolowe mogą otwierać pierścień beta-laktamowy."],
+[41,2, 3,"M","Worki","NAC + pip+taz: jak wyżej."],
+[41,14, 0,"L","—","NAC + noradrenalina: brak danych Y-site."],
+[41,42, 3,"H","Wszystkie","NAC + CaCl2: grupy tiolowe chelatują Ca²⁺ → wytrącenie. Osobne linie."],
+// === CaCl2 ===
+[42,3, 3,"H","Wszystkie","CaCl2 + ceftriakson: KRYTYCZNE — śmiertelne u noworodków. Nierozpuszczalna sól."],
+[42,43, 3,"H","Wszystkie","CaCl2 + NaHCO3: wytrącenie CaCO3."],
+[42,0, 3,"M","Worki","CaCl2 + ampicylina: sole wapniowe penicylin mogą wytrącać."],
+[42,54, 3,"M","Worki","CaCl2 + insulina: wapń destabilizuje insulinę przy wysokich stężeniach."],
+[42,36, 2,"M","Y-site","CaCl2 + morfina: Y-site — brak doniesień o niezgodności."],
+[42,32, 3,"M","Worki","CaCl2 + midazolam: niezgodność jonowa możliwa."],
+[42,40, 3,"M","Worki","CaCl2 + esomeprazol: wytrącenie soli wapniowo-protonopompowych."],
+// === NaHCO3 ===
+[43,14, 3,"H","Wszystkie","NaHCO3 + noradrenalina: inaktywacja katecholamin. KRYTYCZNE."],
+[43,15, 3,"H","Wszystkie","NaHCO3 + adrenalina: inaktywacja."],
+[43,16, 3,"H","Wszystkie","NaHCO3 + dopamina: inaktywacja."],
+[43,17, 3,"H","Wszystkie","NaHCO3 + dobutamina: inaktywacja."],
+[43,4, 3,"H","Wszystkie","NaHCO3 + meropenem: degradacja meropenemu w pH zasadowym."],
+[43,0, 3,"H","Wszystkie","NaHCO3 + ampicylina: hydroliza penicyliny w pH >10."],
+[43,20, 3,"H","Wszystkie","NaHCO3 + amiodaron: niezgodność + pH + nośnik."],
+[43,28, 3,"H","Wszystkie","NaHCO3 + fenytoina: wytrącenie."],
+[43,32, 3,"H","Wszystkie","NaHCO3 + midazolam: wytrącenie."],
+[43,54, 3,"H","Wszystkie","NaHCO3 + insulina: inaktywacja insuliny w pH zasadowym."],
+[43,11, 3,"M","Worki","NaHCO3 + flukonazol: zmiana pH może destabilizować."],
+[43,2, 3,"H","Wszystkie","NaHCO3 + pip+taz: hydroliza beta-laktamu w pH zasadowym."],
+[43,5, 3,"M","Worki","NaHCO3 + wanko: alkalizacja = wytrącenie przy pH >6,5 + zmiana aktywności."],
+[43,36, 3,"M","Worki","NaHCO3 + morfina: zmiana jonizacji morfiny."],
+// === ETAMSYLAT ===
+[44,23, 3,"M","Worki","Etamsylat (pH 5–7) + furosemid (pH 9): pH conflict."],
+[44,43, 3,"M","Worki","Etamsylat + NaHCO3: wytrącenie w pH zasadowym."],
+// === KWAS TRANEKSAMOWY ===
+[45,0, 3,"M","Worki","Kw. traneksamowy + penicyliny (ampicylina): Trissel's opisuje niezgodność."],
+[45,2, 3,"M","Worki","Kw. traneksamowy + pip+taz: podobnie."],
+[45,36, 2,"M","Y-site","Kw. traneksamowy + morfina: Y-site OK."],
+[45,14, 0,"L","—","Kw. traneksamowy + noradrenalina: brak danych."],
+// === HYDROKORTYZON ===
+[46,5, 3,"M","Worki","Hydrokortyzon + wanko: wytrącenie."],
+[46,6, 3,"M","Worki","Hydrokortyzon + amikacyna: wytrącenie."],
+[46,14, 2,"M","Y-site","Hydrokortyzon + noradrenalina: Y-site — brak doniesień."],
+[46,20, 3,"M","Worki","Hydrokortyzon + amiodaron: pH conflict."],
+[46,28, 3,"H","Wszystkie","Hydrokortyzon + fenytoina: wytrącenie."],
+[46,54, 2,"M","Y-site","Hydrokortyzon + insulina: Y-site kompatybilne wg niektórych źródeł."],
+// === DEKSAMETAZON ===
+[47,14, 2,"H","Y-site","Deksametazon + noradrenalina: Y-site zgodne."],
+[47,5, 2,"M","Y-site","Deksametazon + wanko: Y-site ograniczone dane."],
+[47,20, 3,"M","Worki","Deksametazon + amiodaron: pH conflict."],
+[47,32, 2,"H","Y-site","Deksametazon + midazolam: Y-site OK."],
+[47,36, 2,"H","Y-site","Deksametazon + morfina: Y-site OK."],
+[47,35, 2,"H","Y-site","Deksametazon + fentanyl: Y-site OK."],
+[47,28, 3,"H","Wszystkie","Deksametazon + fenytoina: wytrącenie."],
+// === HALOPERIDOL ===
+[48,23, 3,"H","Wszystkie","Haloperidol (pH 3,5) + furosemid (pH 9): wytrącenie. Trissel's: niezgodne."],
+[48,43, 3,"M","Worki","Haloperidol + NaHCO3: wytrącenie."],
+[48,20, 3,"H","Kliniczna+fizyczna","Haloperidol + amiodaron: QT addytywne + wytrącenie. KRYTYCZNE."],
+[48,11, 3,"H","Kliniczna","Haloperidol + flukonazol: QT addytywne."],
+[48,32, 3,"M","Worki","Haloperidol + midazolam: wytrącenie możliwe."],
+[48,5, 3,"M","Worki","Haloperidol + wanko: wytrącenie przy mieszaniu."],
+[48,54, 0,"L","—","Haloperidol + insulina: brak danych."],
+// === INSULINA ===
+[54,14, 0,"L","—","Insulina + noradrenalina: brak bezpośrednich danych Y-site."],
+[54,43, 3,"H","Wszystkie","Insulina + NaHCO3: inaktywacja."],
+[54,42, 3,"M","Worki","Insulina + CaCl2: destabilizacja przy wyższych stężeniach wapnia."],
+[54,5, 0,"L","—","Insulina + wanko: brak danych Y-site."],
+// === ALBUMINA ===
+[60,28, 3,"H","Kliniczna","Albumina wiąże fenytoinę — zmiana farmakokinetyki. Pozornie OK, klinicznie zmienia działanie."],
+[60,33, 3,"H","Kliniczna","Albumina wiąże diazepam — zmiana farmakokinetyki."],
+[60,54, 2,"M","Kliniczna","Albumina + insulina: albumina może wiązać insulinę in vitro. Klinicznie: niewielki efekt przy standardowych stężeniach."],
+[60,42, 3,"M","Worki","Albumina + CaCl2: wapń precipituje białka albuminy przy wysokich stężeniach."],
+// === BUPIWAKAINA ===
+[61,14, 3,"H","IV bezwzględnie","Bupiwakaina IV bolus → NZK oporny na resuscytację. Nie podawać IV."],
+// === FONDAPARYNUKS ===
+[62,14, 0,"L","—","Fondaparynuks + noradrenalina: brak danych Y-site."],
+[62,5, 0,"L","—","Fondaparynuks + wanko: brak danych Y-site."],
+// === TEOFILINA ===
+[58,43, 3,"M","Worki","Teofilina + NaHCO3: zmiana pH zaburza stabilność."],
+[58,41, 3,"H","Wszystkie","Teofilina + NAC/wit.C: degradacja teofiliny w środowisku kwaśnym."],
+[58,20, 3,"M","Kliniczna","Teofilina + amiodaron: amiodaron podnosi stężenie teofiliny (hamowanie CYP1A2)."],
+[58,11, 3,"M","Kliniczna","Teofilina + flukonazol: flukonazol może zwiększać stężenie teofiliny."],
+[58,31, 3,"M","Wszystkie","Teofilina + propofol: zerwanie emulsji lipidowej."],
+// === SALBUTAMOL ===
+[59,14, 0,"L","—","Salbutamol IV + noradrenalina: brak danych. Antagonizm alfa/beta klinicznie."],
+[59,20, 3,"M","Kliniczna","Salbutamol + amiodaron: addytywne ryzyko arytmii."],
+[59,43, 3,"M","Worki","Salbutamol + NaHCO3: pH conflict."],
+// FIBRYGA / OCTAPLEX
+[56,57, 3,"H","Wszystkie","Fibryga + Octaplex: nigdy nie mieszać czynników krzepnięcia — ryzyko inaktywacji wzajemnej."],
+[56,0, 3,"H","Wszystkie","Fibryga + cokolwiek innego: absolutnie bez mieszania."],
+[57,0, 3,"H","Wszystkie","Octaplex + cokolwiek innego: absolutnie bez mieszania."],
+// HEPA-MERZ
+[49,14, 0,"L","—","Hepa-Merz + noradrenalina: brak danych."],
+[49,43, 3,"M","Worki","Hepa-Merz + NaHCO3: pH conflict."],
+// MONOFER
+[51,43, 3,"H","G5","Monofer + G5: NIEZGODNE. Hydroliza nośnika."],
+[51,42, 3,"H","Wszystkie","Monofer + CaCl2: żelazo + wapń → wytrącenie nierozpuszczalnych soli."],
+[51,14, 0,"L","—","Monofer + noradrenalina: brak danych."],
+// KANAVIT
+[50,14, 0,"L","—","Kanavit + noradrenalina: brak danych."],
+// Cerebrolysin
+[27,54, 0,"L","—","Cerebrolysin + insulina: brak danych."],
+[27,32, 0,"L","—","Cerebrolysin + midazolam: brak danych."],
+];
+
+// Build lookup map
+const pairMap = {};
+function pKey(a,b){return a<b?`${a}_${b}`:`${b}_${a}`}
+PAIRS_RAW.forEach(p=>{pairMap[pKey(p[0],p[1])]={result:p[2],cert:p[3],scenario:p[4],note:p[5]}});
+
+const RCODES = {0:"ND",1:"TAK",2:"WARUNKOWO",3:"NIE",4:"SPRZECZNE"};
+const RCLS = {0:"nd",1:"ok",2:"cond",3:"no",4:"conf"};
+const MRCLS = {0:"m-nd",1:"m-ok",2:"m-cond",3:"m-no",4:"m-conf"};
+const MRSYM = {0:"?",1:"✓",2:"~",3:"✗",4:"!"};
+
+function getPair(a,b){
+  if(a===b) return null;
+  const k=pKey(a,b);
+  return pairMap[k]||{result:0,cert:"L",scenario:"—",note:"Brak wiarygodnych danych"};
+}
+
+function show(id){
+  ['matrix','pairs','critical','priority'].forEach(x=>{
+    document.getElementById('p-'+x).classList.remove('active');
+  });
+  document.getElementById('p-'+id).classList.add('active');
+  document.querySelectorAll('.tab').forEach((t,i)=>{
+    t.classList.toggle('active', ['matrix','pairs','critical','priority'][i]===id);
+  });
+  if(id==='matrix') renderMatrix();
+  if(id==='pairs') renderPairs();
+  if(id==='critical') renderCrit();
+  if(id==='priority') renderPrio();
+}
+
+let matrixBuilt=false;
+function renderMatrix(){
+  if(matrixBuilt) return;
+  matrixBuilt=true;
+  const wrap=document.getElementById('p-matrix');
+  wrap.innerHTML='<div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:8px">Kliknij komórkę aby zobaczyć szczegóły. ✓=Zgodne ✗=Niezgodne ~=Warunkowo ?=Brak danych !=Sprzeczne</div><div class="matrix-wrap" id="matrixWrap"></div><div id="matrixDetail" style="margin-top:8px;font-size:11px;padding:8px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);display:none;color:var(--color-text-secondary)"></div>';
+  const mw=document.getElementById('matrixWrap');
+  let html='<table><thead><tr><th class="rn" style="position:sticky;left:0;z-index:5;background:var(--color-background-secondary)">Lek</th>';
+  DRUGS.forEach(d=>{html+=`<th title="${d}">${d.substring(0,8)}</th>`});
+  html+='</tr></thead><tbody>';
+  DRUGS.forEach((dA,i)=>{
+    html+=`<tr><td class="rn" style="position:sticky;left:0;background:var(--color-background-secondary);z-index:2;font-size:9px">${dA}</td>`;
+    DRUGS.forEach((dB,j)=>{
+      if(i===j){html+=`<td class="m-self">—</td>`;return;}
+      const p=getPair(i,j);
+      const r=p?p.result:0;
+      html+=`<td class="${MRCLS[r]}" onclick="showMatrixDetail(${i},${j})" title="${dA} + ${dB}">${MRSYM[r]}</td>`;
+    });
+    html+='</tr>';
+  });
+  html+='</tbody></table>';
+  mw.innerHTML=html;
+}
+
+function showMatrixDetail(i,j){
+  const p=getPair(i,j);
+  const d=document.getElementById('matrixDetail');
+  d.style.display='block';
+  d.innerHTML=`<strong>${DRUGS[i]} + ${DRUGS[j]}</strong><br>
+Wynik: <span class="b ${RCLS[p.result]}">${RCODES[p.result]}</span> &nbsp;
+Pewność: ${p.cert==='H'?'<span class="b hi">Wysoka</span>':p.cert==='M'?'<span class="b med">Umiarkowana</span>':'<span class="b lo">Niska</span>'}<br>
+Scenariusz: ${p.scenario||'—'}<br>${p.note}`;
+}
+
+function renderPairs(){
+  const q=(document.getElementById('pairQ')?.value||'').toLowerCase();
+  const res=document.getElementById('pairRes')?.value||'';
+  const cert=document.getElementById('pairCert')?.value||'';
+  const rows=PAIRS_RAW.filter(p=>{
+    const a=DRUGS[p[0]].toLowerCase(), b=DRUGS[p[1]].toLowerCase();
+    const rcode=RCODES[p[2]];
+    return (!q||a.includes(q)||b.includes(q)) &&
+      (!res||rcode===res) &&
+      (!cert||p[3]===cert);
+  });
+  document.getElementById('pairCount').textContent=`Wyświetlono: ${rows.length} par`;
+  document.getElementById('pairsBody').innerHTML=rows.map(p=>`
+    <tr>
+      <td style="font-weight:500">${DRUGS[p[0]]}</td>
+      <td style="font-weight:500">${DRUGS[p[1]]}</td>
+      <td><span class="b ${RCLS[p[2]]}">${RCODES[p[2]]}</span></td>
+      <td><span class="b ${p[3]==='H'?'hi':p[3]==='M'?'med':'lo'}">${p[3]==='H'?'Wysoka':p[3]==='M'?'Umiarkowana':'Niska'}</span></td>
+      <td style="font-size:10px;color:var(--color-text-secondary)">${p[4]||'—'}</td>
+      <td style="font-size:10px">${p[5]}</td>
+    </tr>`).join('');
+}
+
+const CRITS=[
+{type:"precipitate",level:"d",pair:"Ceftriakson + CaCl₂ / glukonolan wapnia",prob:"Wytrącenie nierozpuszczalnej soli Ca-ceftriaksonowej",mech:"Chelatacja Ca²⁺ przez ugrupowanie karboksylowe ceftriaksonu",env:"Wszystkie nośniki",conc:"Każde stężenie kliniczne",time:"Natychmiastowe do kilku minut",visible:"TAK (zmętnienie/osad)",clinical:"Śmiertelne u noworodków (FDA Black Box 2009); u dorosłych ryzyko niższe ale realne (zator, reakcja zapalna)",rec:"NIGDY — ani przez wspólny port, ani w krótkim odstępie przez tę samą linię. Osobne linie, przepłukanie ≥30 min między podaniami"},
+{type:"degradation",level:"d",pair:"Wszystkie katecholaminy (noradrenalina, adrenalina, dopamina, dobutamina) + NaHCO₃",prob:"Natychmiastowa oksydacyjna inaktywacja katecholaminy",mech:"Pierścień katecholowy utlenia się gwałtownie w pH >8; produkt (adrenochrom/analogi) bez aktywności presyjnej",env:"Wszystkie nośniki",conc:"Każde",time:"Sekundy do minut",visible:"NIE (lub późne brązowienie roztworu katecholaminy)",clinical:"Pacjent we wstrząsie może nie otrzymywać żadnego leku presyjnego mimo pozornie prawidłowego wlewu",rec:"NIGDY przez tę samą linię. Osobne linie CVC dla katecholamin i NaHCO₃. Nie przepłukiwać linii katecholamin sodem."},
+{type:"precipitate",level:"d",pair:"Fenytoina + G5% / niemal wszystkie leki przez tę samą linię",prob:"Natychmiastowe wytrącenie kryształów fenytoiny",mech:"Propylenglikol (nośnik fenytoiny) strąca lek przy rozcieńczeniu w G5 lub zmianach pH; pH fenytoiny 10–12 reaguje z praktycznie każdym lekiem",env:"G5 (natychmiastowe), każdy nośnik przy mieszaniu z kwaśnymi lub neutralnymi lekami",conc:"Każde",time:"Natychmiastowe",visible:"TAK — zmętnienie, kryształy",clinical:"Zator (mikrokryształy), utrata dawki, potencjalnie śmiertelne",rec:"Fenytoina WYŁĄCZNIE w NaCl 0,9%, stężenie ≤10 mg/ml, DEDYKOWANA LINIA NIGDY niedzielona z innymi lekami. Przepłukać linię ≥20 ml NaCl przed i po."},
+{type:"pharmacokinetic",level:"d",pair:"Kwas walproinowy + meropenem (lub inny karbapenem)",prob:"Utrata kontroli nad napadami pomimo terapeutycznych dawek VPA",mech:"Karbapenemy hamują hydroksylazę VPA (acylpeptydową hydrolazę) i indukują glukuronidację → stężenie VPA spada 60–100% w ciągu 24–48h",env:"Brak nośnikowej — interakcja farmakokinetyczna niezależna od drogi podania",conc:"Każde dawkowanie kliniczne",time:"Efekt po 24–48h od włączenia karbapenemu",visible:"NIE — roztwory wyglądają prawidłowo",clinical:"Wznowa napadów padaczkowych w OIT; opisane zgony, stany padaczkowe. KRYTYCZNIE niedoceniane.",rec:"Jeśli pacjent na VPA → unikać karbapenemów; jeśli niezbędne → monitorowanie stężenia VPA 2×/dobę, rozważyć alternatywny AED"},
+{type:"adsorption",level:"d",pair:"Nitrogliceryna + zestawy PVC",prob:"Utrata 50–80% dawki przez adsorpcję do plastiku PVC",mech:"Nitrogliceryna lipofilna — wnika w plastyfikator DEHP zestawów PVC",env:"PVC (wszystkie standardowe zestawy kroplówkowe)",conc:"Każde; gorzej przy niskich stężeniach i wolnych wlewach",time:"Narastające od pierwszych minut; max po kilkudziesięciu minutach",visible:"NIE",clinical:"Pozorna terapia nitrogliceryną — pacjent może nie otrzymywać skutecznej dawki",rec:"WYŁĄCZNIE pojemniki szklane lub specjalne zestawy non-PVC nitroglicerynowe. Nie stosować standardowych zestawów."},
+{type:"adsorption",level:"d",pair:"Diazepam + NaCl / zestawy PVC",prob:"Wytrącenie w NaCl + adsorpcja do PVC (utrata 80–90%)",mech:"Diazepam nierozpuszczalny w wodzie; rozcieńczenie w NaCl powoduje wytrącenie; adsorpcja do PVC niezależna",env:"NaCl 0,9% (wytrącenie fizyczne); PVC (adsorpcja)",conc:"Każde kliniczne",time:"Natychmiastowe (wytrącenie), narastające (adsorpcja)",visible:"TAK (zmętnienie w NaCl); NIE (adsorpcja do PVC)",clinical:"Pacjent nie otrzymuje dawki terapeutycznej; brak efektu sedatywnego może być błędnie interpretowany",rec:"NIE rozcieńczać w NaCl. Tylko G5 lub nierozcieńczony. Szkło lub non-PVC. Maksymalna ochrona przed adsorpcją."},
+{type:"adsorption",level:"d",pair:"Amiodaron + zestawy PVC + NaCl",prob:"Wytrącenie w NaCl + adsorpcja do PVC + ekstrakcja plastyfikatora DEHP",mech:"Amiodaron w NaCl: wytrącenie. W PVC: adsorpcja leku + przenikanie DEHP do roztworu (toksyczny plastyfikator)",env:"NaCl (wytrącenie), PVC (podwójny problem)",conc:"Każde",time:"Natychmiastowe (NaCl), narastające (PVC)",visible:"TAK (NaCl — zmętnienie); NIE (PVC adsorpcja)",clinical:"Utrata dawki + narażenie na DEHP",rec:"WYŁĄCZNIE G5 + pojemniki szklane lub non-PVC. Chronić przed światłem (folia aluminiowa). Standardowe zestawy — BEZWZGLĘDNIE przeciwwskazane."},
+{type:"QT_prolongation",level:"d",pair:"Amiodaron + haloperidol",prob:"Addytywne wydłużenie QT → Torsades de Pointes",mech:"Oba blokują kanały IKr (hERG); efekt addytywny lub synergistyczny",env:"Niezależne od nośnika — farmakodynamiczna",conc:"Każde dawkowanie kliniczne",time:"Godziny do doby",visible:"NIE (zmiana tylko w EKG)",clinical:"Torsades de Pointes, migotanie komór, NZK",rec:"Unikać łączenia. Jeśli niezbędne: stały monitoring EKG, pomiar QTc co 6h, korekta elektrolitów (K⁺, Mg²⁺). Alternatywy dla haloperidolu: deksmedetomidyna, propofol."},
+{type:"QT_prolongation",level:"d",pair:"Amiodaron + flukonazol",prob:"Addytywne wydłużenie QT",mech:"Oba wydłużają QT; flukonazol dodatkowo hamuje CYP2C8/3A4 → wzrost stężenia amiodaronu",env:"Farmakodynamiczna",conc:"Każde",time:"Doby",visible:"NIE",clinical:"TdP, NZK",rec:"Unikać. Monitorowanie EKG."},
+{type:"QT_prolongation",level:"w",pair:"Haloperidol + flukonazol",prob:"Addytywne QT",mech:"Oba wydłużają QT; flukonazol hamuje CYP3A4 → wzrost haloperidolu",env:"Farmakodynamiczna",conc:"Każde",time:"Doby",visible:"NIE",clinical:"TdP",rec:"Monitorowanie EKG, unikać łączenia."},
+{type:"precipitate",level:"d",pair:"Piperacylina+tazobaktam + amikacyna (aminoglikozydy)",prob:"Wytrącenie + inaktywacja aminoglikozydu",mech:"Pip+taz otwiera pierścień aminoglikozydu + tworzy kompleksy jonowe; utrata aktywności amikacyny",env:"Wszystkie nośniki",conc:"Szczególnie ≥pip 40 mg/ml",time:"Mieszanie — natychmiastowe; inaktywacja — minuty do godzin",visible:"Często TAK (zmętnienie); możliwe NIE przy niskich stężeniach",clinical:"Pacjent otrzymuje nieaktywną aminoglikozydową część terapii",rec:"NIGDY przez tę samą linię ani w tym samym pojemniku. Osobne linie. Minimalna przerwa między sekwencyjnym podaniem przez tę samą linię: >60 min + przepłukanie."},
+{type:"incompatibility",level:"d",pair:"Kaspofungina + G5% / G10%",prob:"Utrata aktywności kaspofunginy",mech:"Kaspofungina agreguje (amorficznie) przy pH G5 (~5); zmiana struktury powoduje utratę aktywności",env:"G5%, G10%, PWI nie zalecana",conc:"Każde",time:"Szybkie (minuty w G5)",visible:"Możliwe zmętnienie; może być niezauważalne",clinical:"Pacjent nie otrzymuje aktywnego leku przeciwgrzybiczego",rec:"WYŁĄCZNIE NaCl 0,9% lub NaCl 0,45%. Nigdy G5."},
+{type:"degradation",level:"d",pair:"Meropenem + G5% (wlew >1h w temp. pokojowej)",prob:"Degradacja meropenemu bez zmiany wyglądu roztworu",mech:"Hydroliza pierścienia beta-laktamowego katalizowana kwaśnym pH G5 (~5)",env:"G5%",conc:"Każde kliniczne",time:">1h w 25°C; w 5°C do 4h",visible:"NIE",clinical:"Pozorna terapia meropenemem; przy ciągłym wlewie może przez godziny być nieaktywny",rec:"W G5 — wymiana worka co 1h. Preferowany nośnik NaCl 0,9% (stabilność 4h 25°C, 24h 5°C)."},
+{type:"degradation",level:"d",pair:"Tigecyklina + ekspozycja na światło",prob:"Fotodegradacja bez zmiany zabarwienia roztworu",mech:"Fotooksydacja chromoforu tetracyklinowego → produkty bez aktywności przeciwbakteryjnej",env:"Wszystkie — problem niezależny od nośnika",conc:"Każde",time:"Minuta do kilkunastu minut przy bezpośrednim świetle",visible:"NIE",clinical:"Pozorna terapia tigecykliną; szczególnie w jasnych salach OIT",rec:"Osłonić strzykawkę/worek folią aluminiową lub nieprzezroczystą osłoną przed przygotowaniem i podczas wlewu."},
+{type:"adsorption",level:"w",pair:"Insulina + zestawy PVC (bez saturacji)",prob:"Adsorpcja 20–30% dawki do PVC",mech:"Insulina adsorpcja do powierzchni polietylenowych i PVC",env:"PVC zestawy kroplówkowe",conc:"Szczególnie przy niskich stężeniach roboczych <1 j/ml",time:"Pierwsze 30–60 min (największa utrata na początku)",visible:"NIE",clinical:"Pacjent otrzymuje 70–80% planowanej dawki; szczególnie groźne przy ścisłej kontroli glikemii",rec:"Saturacja zestawu: przepuścić 50–100 ml roboczego roztworu insuliny przez zestaw przed podłączeniem pacjenta. Możliwe strzykawki szklane."},
+{type:"pharmacokinetic",level:"d",pair:"Digoksyna + amiodaron",prob:"Istotny wzrost stężenia digoksyny → toksyczność",mech:"Amiodaron hamuje P-glikoproteiny (P-gp) i CYP2C9 → redukcja klirensu digoksyny. Wielkość efektu zmienna osobniczo.",env:"Farmakodynamiczna",conc:"Każde dawkowanie kliniczne",time:"Efekt po 24–72h od włączenia amiodaronu",visible:"NIE",clinical:"Bradykardia, blok AV, arytmie, NZK",rec:"Rozważ redukcję dawki digoksyny i monitoruj stężenie TDM przy włączeniu amiodaronu. Nie stosuj automatycznej redukcji o stały procent bez TDM."},
+{type:"pharmacokinetic",level:"w",pair:"Flukonazol + midazolam",prob:"Istotny wzrost stężenia midazolamu (wielkość efektu zmienna osobniczo)",mech:"Flukonazol silnie hamuje CYP3A4 → midazolam metabolizowany wolniej",env:"Farmakodynamiczna",conc:"Każde",time:"Kilka godzin",visible:"NIE",clinical:"Nadmierna sedacja, depresja oddechowa, trudności w wybudzeniu z sedacji w OIT",rec:"Po włączeniu flukonazolu: zmniejsz dawkę midazolamu i titruj wg efektu klinicznego (RASS). Zakres redukcji jest zmienny osobniczo — nie stosuj automatycznej redukcji o stały %."},
+{type:"pharmacokinetic",level:"w",pair:"Teofilina + amiodaron",prob:"Wzrost stężenia teofiliny",mech:"Amiodaron hamuje CYP1A2 → wolniejszy metabolizm teofiliny",env:"Farmakodynamiczna",conc:"Każde",time:"Dni",visible:"NIE",clinical:"Toksyczność teofiliny (arytmie, drgawki) — wąski indeks terapeutyczny",rec:"Monitorowanie stężenia teofiliny, redukcja dawki."},
+{type:"precipitate",level:"w",pair:"Vankomycyna + pip+taz (Y-site)",prob:"DANE SPRZECZNE — możliwe zmętnienie po czasie",mech:"Nie w pełni wyjaśniony; możliwy kompleks jonowy przy wyższych stężeniach",env:"Y-site",conc:"Problem dotyczy stężeń wyższych niż standardowe",time:"Po 1–4h kontaktu",visible:"Zmętnienie — nie zawsze natychmiastowe",clinical:"Utrata dawki jednego lub obu leków",rec:"KONFLIKT ŹRÓDEŁ: Trissel's 17 podaje zgodność Y-site przy STANDARDOWYCH stężeniach; dane z badań 2015–2018 opisują zmętnienie po czasie. Zalecenie praktyczne: przepłukiwać linię między dawkami lub stosować osobne linie."},
+{type:"adsorption",level:"w",pair:"Nimodypina + PVC",prob:"Adsorpcja + ekstrakcja plastyfikatora DEHP",mech:"Nimodypina lipofilna; jak nitrogliceryna powoduje wyługowanie DEHP z PVC",env:"PVC",conc:"Każde",time:"Narastające",visible:"NIE",clinical:"Utrata dawki + potencjalna toksyczność DEHP",rec:"Specjalny zestaw non-PVC dostarczany przez producenta. Nie stosować standardowych zestawów."},
+{type:"precipitate",level:"w",pair:"Furosemid + leki kwaśne (midazolam, haloperidol, dobutamina, metamizol, metoklopramid)",prob:"Wytrącenie soli w miejscu kontaktu pH 9 + pH <5",mech:"Furosemid (pH 9) miesza się z kwaśnymi lekami → punkt równoważący pH → wytrącenie furosemidu lub leku kwaśnego",env:"Bezpośrednie mieszanie lub Y-site",conc:"Szczególnie przy wyższych stężeniach",time:"Natychmiastowe do kilku minut",visible:"TAK (zmętnienie, biały osad)",clinical:"Utrata dawki jednego lub obu leków; zator",rec:"OSOBNE LINIE dla furosemidu i leków kwaśnych. Y-site tylko przy odpowiednim rozcieńczeniu i monitorowaniu wizualnym."},
+{type:"pharmacokinetic",level:"d",pair:"Albumina 20% + fenytoina / diazepam",prob:"Zmiana farmakokinetyki leków silnie wiążących się z białkami",mech:"Albumina wiąże do 90% fenytoiny i diazepamu → pozornie prawidłowe stężenie całkowite, ale znacznie obniżone stężenie wolne (aktywne)",env:"Farmakodynamiczna",conc:"Przy wyższych stężeniach albuminy",time:"Godziny",visible:"NIE",clinical:"Zmieniona skuteczność fenytoiny i diazepamu; trudności w interpretacji stężeń terapeutycznych",rec:"Monitorowanie wolnej frakcji fenytoiny. Zwrócić uwagę na zmienioną odpowiedź kliniczną."},
+{type:"precipitate",level:"d",pair:"CaCl₂ + fosforany / NaHCO₃ / siarczany",prob:"Wytrącenie nierozpuszczalnych soli wapnia",mech:"Ca²⁺ + PO₄³⁻ → Ca₃(PO₄)₂; Ca²⁺ + CO₃²⁻ → CaCO₃; Ca²⁺ + SO₄²⁻ → CaSO₄",env:"Bezpośredni kontakt",conc:"Przekroczenie iloczynu rozpuszczalności",time:"Minuty",visible:"TAK",clinical:"Zator, uszkodzenie tkanek, niedobór Ca²⁺ w roztworze",rec:"OSOBNE LINIE dla CaCl₂ i fosforanów/węglanów/siarczanów."},
+{type:"incompatibility",level:"d",pair:"Bupiwakaina IV bolus (każda dawka)",prob:"Kardiotoksyczność oporna na resuscytację",mech:"Bupiwakaina blokuje kanały Na⁺ mięśnia sercowego; wysoka lipofilność = kumulacja w tkance sercowej; powolna dysocjacja → NZK oporne na defibrylację",env:"IV (dotyczy wyłącznie podania dożylnego)",conc:"Każda dawka klinicznie używana do znieczulenia miejscowego",time:"Sekundy do minut",visible:"NIE",clinical:"NZK z komorowym migotaniem opornym na resuscytację standardową; antidotum: Intralipid 20%",rec:"NIGDY IV bolus. Tylko zewnątrzoponowe/obwodowe. W OIT jeśli Intralipid niedostępny → nie podawać bupiwakainy."},
+{type:"degradation",level:"w",pair:"Metamizol (>1h po rozcieńczeniu)",prob:"Utrata aktywności analgetycznej bez zmian wizualnych",mech:"Hydroliza 4-metyloaminoantypiryny w roztworze wodnym",env:"Wszystkie nośniki",conc:"Każde",time:">1h w temperaturze pokojowej",visible:"NIE",clinical:"Pozorna analgezja; szczególnie przy przedwczesnym przygotowaniu",rec:"Rozcieńczać BEZPOŚREDNIO przed podaniem. Zużyć w ciągu 1h."},
+{type:"incompatibility",level:"d",pair:"Fibryga / Octaplex + cokolwiek innego",prob:"Inaktywacja lub nieznana interakcja z czynnikami krzepnięcia",mech:"Czynniki krzepnięcia są białkami — każda zmiana pH, temperatury, jonowości może powodować denaturację lub agregację",env:"Wszystkie",conc:"Każde",time:"Natychmiastowe",visible:"Niekoniecznie",clinical:"Utrata aktywności prokoagulacyjnej; ryzyko krwawienia mimo podania",rec:"WYŁĄCZNIE dedykowany rozpuszczalnik. ABSOLUTNIE nie mieszać z żadnym lekiem."},
+{type:"pharmacokinetic",level:"w",pair:"Flukonazol + fentanyl/sufentanyl",prob:"Wzrost stężenia opioidu",mech:"Flukonazol hamuje CYP3A4 → wolniejszy metabolizm fentanylu i sufentanylu",env:"Farmakodynamiczna",conc:"Każde",time:"Kilka godzin",visible:"NIE",clinical:"Nadmierna sedacja, depresja oddechowa, trudności w wybudzeniu",rec:"Zmniejszyć dawkę opioidu. Titracja wg efektu."},
+{type:"incompatibility",level:"w",pair:"Propofol (emulsja) + aminoglikozydy / pip+taz / NaHCO₃",prob:"Zerwanie emulsji lipidowej",mech:"Jony dwuwartościowe (aminoglikozydy) lub zmiana pH (NaHCO₃) destabilizują emulsję O/W propofolu",env:"Bezpośredni kontakt — Y-site lub mieszanie",conc:"Każde",time:"Minuty",visible:"TAK (rozdzielenie faz, oleiste warstwy)",clinical:"Zator tłuszczowy, utrata dawki propofolu",rec:"Propofol WYŁĄCZNIE w dedykowanej linii lub Y-site z bardzo krótkim kontaktem (max kilka minut) z kompatybilnymi lekami."},
+{type:"adsorption",level:"w",pair:"Monofer (iron isomaltoside) + G5%",prob:"Hydroliza nośnika i niestabilność",mech:"Żelazo izomaltozydowe wymaga środowiska NaCl; G5 destabilizuje kompleks",env:"G5%",conc:"Każde",time:"Szybkie",visible:"Możliwe zmętnienie",clinical:"Utrata dawki żelaza",rec:"WYŁĄCZNIE NaCl 0,9%."},
+{type:"incompatibility",level:"w",pair:"Acetylocysteina + CaCl₂",prob:"Wytrącenie kompleksów tiol-wapń",mech:"Grupy tiolowe NAC chelatują Ca²⁺ → wytrącenie nierozpuszczalnych chelates",env:"Bezpośredni kontakt",conc:"Przy stężeniach klinicznych",time:"Minuty",visible:"TAK",clinical:"Utrata Ca²⁺ i NAC",rec:"Osobne linie."},
+{type:"incompatibility",level:"w",pair:"TMP+SMX + furosemid",prob:"Wytrącenie przy mieszaniu",mech:"TMP+SMX pH 9,5–10,5 + furosemid pH 9 → nasycenie zasadowe + reakcja siarczanów sulfametoksazolu",env:"Bezpośredni kontakt",conc:"Każde",time:"Minuty",visible:"TAK (białawy osad)",clinical:"Utrata obu leków",rec:"Osobne linie."},
+{type:"incompatibility",level:"i",pair:"Noradrenalina/dopamina + amiodaron (przez tę samą linię)",prob:"Różne nośniki wymagane + pH conflict",mech:"Amiodaron TYLKO G5; katecholaminy stabilne w NaCl i G5, ale amiodaron w NaCl się wytrąca → problem przy sekwencyjnym podaniu przez linię",env:"NaCl (katecholaminy) + G5 (amiodaron) przez tę samą linię",conc:"Każde",time:"Kontakt w linii",visible:"Możliwe zmętnienie",clinical:"Ryzyko utraty aktywności amiodaronu + wytrącenie",rec:"Osobne kanały CVC dla amiodaronu i katecholamin."},
+{type:"incompatibility",level:"i",pair:"Esomeprazol + leki kwaśne (midazolam, noradrenalina, metoklopramid)",prob:"Wytrącenie w linii",mech:"Esomeprazol pH 9–10 wchodzi w kontakt z lekami pH <5 → wytrącenie w miejscu styku w Y-site",env:"Y-site",conc:"Każde",time:"Natychmiastowe",visible:"TAK",clinical:"Utrata dawki",rec:"Osobna linia dla esomeprazolu lub przepłukanie między podaniami."},
+];
+
+let critTypeFilter='all';
+function renderCrit(){
+  if(!document.getElementById('critChips').innerHTML){
+    const types=[['all','Wszystkie'],['precipitate','Wytrącenie'],['degradation','Degradacja'],['adsorption','Adsorpcja'],['pharmacokinetic','Farmakokinet.'],['QT_prolongation','QT'],['incompatibility','Niezgodność']];
+    document.getElementById('critChips').innerHTML=types.map(([v,l])=>`<button class="chip${v==='all'?' on':''}" onclick="setCritType('${v}',this)">${l}</button>`).join('');
+  }
+  const q=(document.getElementById('critQ')?.value||'').toLowerCase();
+  const lev=document.getElementById('critLevel')?.value||'';
+  const rows=CRITS.filter(c=>{
+    return (critTypeFilter==='all'||c.type===critTypeFilter) &&
+      (!lev||c.level===lev) &&
+      (!q||c.pair.toLowerCase().includes(q)||c.note?.toLowerCase().includes(q)||c.prob.toLowerCase().includes(q));
+  });
+  document.getElementById('critCount').textContent=`Wyświetlono: ${rows.length} kombinacji`;
+  document.getElementById('critList').innerHTML=rows.map(c=>`
+    <div class="crit-card ${c.level}">
+      <div class="crit-pair">${c.pair}</div>
+      <div class="crit-body">
+        <b>Problem:</b> ${c.prob}<br>
+        <b>Mechanizm:</b> ${c.mech}<br>
+        <b>Środowisko:</b> ${c.env} &nbsp;|&nbsp; <b>Stężenia:</b> ${c.conc}<br>
+        <b>Czas:</b> ${c.time} &nbsp;|&nbsp; <b>Widoczne makroskopowo:</b> ${c.visible}<br>
+        <b>Znaczenie kliniczne:</b> ${c.clinical}<br>
+        <b>Zalecenie:</b> ${c.rec}
+      </div>
+    </div>`).join('');
+}
+function setCritType(v,btn){
+  critTypeFilter=v;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+  btn.classList.add('on');
+  renderCrit();
+}
+
+function renderPrio(){
+  const SECTIONS=[
+    {title:"NAJBARDZIEJ NIEBEZPIECZNE PARY (ryzyko zgonu lub ciężkiego uszkodzenia)", pairs:[
+      {p:"Ceftriakson + CaCl₂/Ca-glukonolan",d:"Śmiertelne wytrącenie soli Ca-ceftriaksonowej (zwłaszcza noworodki). FDA Black Box."},
+      {p:"Katecholaminy + NaHCO₃",d:"Natychmiastowa inaktywacja leku presyjnego. Pacjent może nie być leczony pomimo aktywnego wlewu."},
+      {p:"Fenytoina + G5% / inne leki w tej samej linii",d:"Natychmiastowe wytrącenie kryształów → zator + utrata dawki + linia blokuje się dla wszystkich leków."},
+      {p:"VPA + karbapenemy (meropenem)",d:"VPA spada 60–100% → wznowa napadów padaczkowych, stan padaczkowy."},
+      {p:"Bupiwakaina IV bolus",d:"NZK oporne na resuscytację. Antidotum: Intralipid 20%."},
+      {p:"Amiodaron + haloperidol (jednoczesnie)",d:"TdP → migotanie komór → NZK."},
+      {p:"Klindamycyna bolus szybki",d:"Opisane NZK przy zbyt szybkim IV."},
+      {p:"Nitrogliceryna w PVC bez ochrony",d:"Utrata 50–80% dawki — pacjent nie jest leczony."},
+    ]},
+    {title:"PARY CZĘSTO BŁĘDNIE UZNAWANE ZA ZGODNE", pairs:[
+      {p:"Vankomycyna + pip+taz (Y-site)",d:"Dane sprzeczne w literaturze. Często stosowane w Y-site, ale zmętnienie opisywane po czasie. Brak pewności."},
+      {p:"Digoksyna + amiodaron",d:"Fizycznie możliwe do podania, ale amiodaron PODWAJA stężenie digoksyny → zatrucie."},
+      {p:"Flukonazol + midazolam",d:"Y-site fizycznie OK — ale flukonazol kilkukrotnie podnosi midazolam przez CYP3A4."},
+      {p:"Insulina w standardowym zestawie PVC",d:"Bez saturacji zestawu pacjent może otrzymywać 70% planowanej dawki — szczególnie groźne w protokołach intensywnej insulinoterapii."},
+      {p:"Meropenem w G5 (wlew >1h)",d:"Wygląda prawidłowo, ale lek degraduje się. Często niezauważane na oddziale."},
+      {p:"Amiodaron w NaCl",d:"Nadal praktykowane pomimo jasnych danych — wytrącenie może być opóźnione."},
+      {p:"TMP+SMX + furosemid (sekwencyjnie tą samą linią)",d:"Ryzyko krystalizacji sulfametoksazolu nawet przy przepłukaniu, jeśli niewystarczające."},
+    ]},
+    {title:"DANE SPRZECZNE — SZCZEGÓLNA OSTROŻNOŚĆ", pairs:[
+      {p:"Vankomycyna + pip+taz",d:"Trissel's 17: zgodne Y-site przy standardowych stężeniach. Badania 2015–2020: zmętnienie przy wyższych stężeniach lub po dłuższym czasie. KONFLIKT."},
+      {p:"Propofol + midazolam (Y-site)",d:"Część źródeł dopuszcza bardzo krótki Y-site; inne odradzają ze względu na destabilizację emulsji."},
+      {p:"Noradrenalina + wankomycyna (G5, Y-site)",d:"Ograniczone dane; część OIT stosuje; brak pewności co do długotrwałego Y-site."},
+      {p:"Amiodaron + morfina (Y-site G5)",d:"Brak danych o wytrąceniu, ale oba wymagają specjalnych warunków podania."},
+    ]},
+    {title:"ZGODNE TYLKO W Y-SITE, NIEZGODNE W STRZYKAWCE/WORKU", pairs:[
+      {p:"Midazolam + morfina",d:"Y-site OK (standardowe stężenia). W tej samej strzykawce — możliwe, ale wymaga weryfikacji stężeń."},
+      {p:"Fentanyl + midazolam",d:"Y-site i strzykawka sedacyjna — OK przy standardowych stężeniach OIT."},
+      {p:"Klindamycyna + wanko",d:"Y-site akceptowalne; w worku — pH conflict."},
+      {p:"Hydrokortyzon + morfina",d:"Y-site — ograniczone dane; w worku — unikać."},
+      {p:"Lewetyracetam + wanko",d:"Y-site dane pozytywne; mieszanie bezpośrednie — brak danych."},
+    ]},
+    {title:"NIEZGODNE FIZYCZNIE, ALE NIE CHEMICZNIE (lub odwrotnie)", pairs:[
+      {p:"VPA + meropenem",d:"Fizycznie ZGODNE (brak wytrącenia), chemicznie OK — ale farmakokinetycznie KRYTYCZNIE NIEZGODNE (interakcja enzymatyczna)."},
+      {p:"Digoksyna + amiodaron",d:"Fizycznie zgodne; klinicznie niezgodne (P-gp inhibicja → toksyczność digoksyny)."},
+      {p:"Flukonazol + midazolam",d:"Fizycznie zgodne (Y-site OK); klinicznie niezgodne (CYP3A4 inhibicja)."},
+      {p:"Albumina + fenytoina",d:"Fizycznie OK; klinicznie zmienia farmakokinetykę (wiązanie z białkami)."},
+      {p:"TMP+SMX + VPA",d:"Fizycznie możliwe oddzielne podanie; klinicznie: TMP hamuje metabolizm VPA."},
+      {p:"Amiodaron + teofilina",d:"Fizycznie OK (osobne pojemniki); klinicznie: amiodaron podnosi stężenie teofiliny (CYP1A2)."},
+    ]},
+  ];
+  document.getElementById('prioContent').innerHTML=SECTIONS.map(s=>`
+    <div class="prio-section">
+      <div class="prio-h">${s.title}</div>
+      ${s.pairs.map(p=>`<div class="prio-item"><span class="pair">${p.p}</span><br>${p.d}</div>`).join('')}
+    </div>`).join('');
+}
+
+show('matrix');
+</script>

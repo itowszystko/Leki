@@ -1,0 +1,23 @@
+---
+title: "Bezpieczeństwo podań dożylnych w OIT"
+subtitle: "Kompatybilność, stabilność, linia centralna — praktyczny przewodnik dla personelu pielęgniarskiego"
+author: ""
+date: "2026"
+lang: pl-PL
+papersize: a4
+geometry:
+  - landscape
+  - top=18mm
+  - bottom=18mm
+  - left=20mm
+  - right=20mm
+fontsize: 10pt
+mainfont: "Helvetica Neue"
+sansfont: "Helvetica Neue"
+monofont: "Courier New"
+colorlinks: true
+linkcolor: "1A3A5C"
+toc: true
+toc-depth: 2
+numbersections: true
+---

@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 530" role="img" aria-labelledby="algo-title">
+  <title id="algo-title">Algorytm A — Brak wolnego lumenu lub dostępu IV</title>
+
+  <defs>
+    <style>
+      text { font-family: "Inter", "Helvetica Neue", Arial, sans-serif; }
+      .node-d { font-size: 10px; fill: #FFFFFF; font-weight: 600; }
+      .node-a { font-size: 10px; fill: #1A1A2E; }
+      .node-esc { font-size: 10px; fill: #92400E; font-weight: 600; }
+      .node-wait { font-size: 10px; fill: #1E3A5F; }
+      .yn { font-size: 9px; font-weight: 700; fill: #0C1F3F; }
+      .title { font-size: 13px; font-weight: 700; fill: #0C1F3F; }
+      .caption { font-size: 9px; fill: #6B6B8A; font-style: italic; }
+      .never { font-size: 9px; fill: #991B1B; font-weight: 600; }
+    </style>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0C1F3F" />
+    </marker>
+  </defs>
+
+  <rect width="560" height="530" fill="#FAFAF9" rx="8" />
+
+  <!-- Tytuł -->
+  <text x="280" y="26" class="title" text-anchor="middle">Algorytm A — Brak wolnego lumenu lub dostępu</text>
+
+  <!-- ══ STRZAŁKI ══ -->
+
+  <!-- Start → Diamond 1 -->
+  <line x1="280" y1="46" x2="280" y2="64" stroke="#0C1F3F" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Diamond 1 → right (TAK) -->
+  <line x1="400" y1="92" x2="428" y2="92" stroke="#0C1F3F" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="412" y="87" class="yn" text-anchor="middle">TAK</text>
+
+  <!-- Diamond 1 → down (NIE) -->
+  <line x1="280" y1="120" x2="280" y2="166" stroke="#0C1F3F" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="292" y="149" class="yn">NIE</text>
+
+  <!-- Diamond 2 → right (TAK) -->
+  <line x1="400" y1="204" x2="428" y2="204" stroke="#0C1F3F" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="412" y="199" class="yn" text-anchor="middle">TAK</text>
+
+  <!-- Diamond 2 → down (NIE) -->
+  <line x1="280" y1="232" x2="280" y2="278" stroke="#0C1F3F" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="292" y="261" class="yn">NIE</text>
+
+  <!-- Diamond 3 → right (TAK) -->
+  <line x1="400" y1="316" x2="428" y2="316" stroke="#0C1F3F" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="412" y="311" class="yn" text-anchor="middle">TAK</text>
+
+  <!-- Diamond 3 → down (NIE) -->
+  <line x1="280" y1="344" x2="280" y2="392" stroke="#0C1F3F" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="292" y="374" class="yn">NIE</text>
+
+  <!-- ══ DIAMENTY DECYZYJNE ══ -->
+
+  <!-- Diamond 1 (center 280, 92): Wenflon? -->
+  <polygon points="160,92 280,64 400,92 280,120" fill="#1D4775" stroke="#0C1F3F" stroke-width="1"/>
+  <text x="280" y="88" class="node-d" text-anchor="middle">Czy masz sprawny</text>
+  <text x="280" y="101" class="node-d" text-anchor="middle">wenflon?</text>
+
+  <!-- Diamond 2 (center 280, 204): Lumen CVC? -->
+  <polygon points="145,204 280,172 415,204 280,236" fill="#1D4775" stroke="#0C1F3F" stroke-width="1"/>
+  <text x="280" y="198" class="node-d" text-anchor="middle">Czy możesz użyć</text>
+  <text x="280" y="211" class="node-d" text-anchor="middle">istniejącego lumenu CVC?</text>
+
+  <!-- Diamond 3 (center 280, 316): Ratunkowy? -->
+  <polygon points="155,316 280,284 405,316 280,348" fill="#1D4775" stroke="#0C1F3F" stroke-width="1"/>
+  <text x="280" y="311" class="node-d" text-anchor="middle">Czy lek jest priorytetem</text>
+  <text x="280" y="324" class="node-d" text-anchor="middle">ratunkowym?</text>
+
+  <!-- ══ BLOKI AKCJI (prawa strona) ══ -->
+
+  <!-- Akcja A: TAK od D1 — wenflon -->
+  <rect x="430" y="70" width="122" height="46" rx="6" fill="#F0FDF4" stroke="#4ADE80" stroke-width="1.5"/>
+  <text x="491" y="90" class="node-a" text-anchor="middle" fill="#166534">Podaj przez</text>
+  <text x="491" y="104" class="node-a" text-anchor="middle" fill="#166534">wenflon</text>
+
+  <!-- Akcja B: TAK od D2 — Y-site -->
+  <rect x="430" y="182" width="122" height="46" rx="6" fill="#F0FDF4" stroke="#4ADE80" stroke-width="1.5"/>
+  <text x="491" y="202" class="node-a" text-anchor="middle" fill="#166534">Podaj Y-site</text>
+  <text x="491" y="216" class="node-a" text-anchor="middle" fill="#166534">(osobne strzykawki)</text>
+
+  <!-- Akcja C: TAK od D3 — eskalacja -->
+  <rect x="430" y="294" width="122" height="46" rx="6" fill="#FFFBEB" stroke="#FCD34D" stroke-width="1.5"/>
+  <text x="491" y="314" class="node-esc" text-anchor="middle">ESKALUJ</text>
+  <text x="491" y="328" class="node-esc" text-anchor="middle">DO LEKARZA</text>
+
+  <!-- ══ BLOK KOŃCOWY (NIE od D3) ══ -->
+  <rect x="178" y="394" width="204" height="48" rx="6" fill="#EFF6FF" stroke="#93C5FD" stroke-width="1.5"/>
+  <text x="280" y="414" class="node-wait" text-anchor="middle">Poczekaj na wolny lumen</text>
+  <text x="280" y="428" class="node-wait" text-anchor="middle">lub zaproponuj formę doustną</text>
+
+  <!-- ══ ZASADA BEZWZGLĘDNA ══ -->
+  <rect x="24" y="458" width="512" height="54" rx="5" fill="#FEF2F2" stroke="#FCA5A5" stroke-width="1"/>
+  <text x="280" y="476" class="never" text-anchor="middle">NIGDY przy braku lumenu:</text>
+  <text x="280" y="491" class="never" text-anchor="middle" font-weight="400">Amikacyna przez lumen z beta-laktamem · NaHCO₃ przez linię katecholaminy</text>
+  <text x="280" y="505" class="never" text-anchor="middle" font-weight="400">Ceftriakson + CaCl₂ przez ten sam port · Klindamycyna bez pompy</text>
+</svg>

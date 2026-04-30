@@ -1,0 +1,58 @@
+Lek,Bolus,Czas podania,Rozcieńczenie,Ryzyka
+Pip+tazobaktam,NIE,30 min wlew,Tak,Neurotoksyczność przy szybkim podaniu. Nie podawać w bolusie.
+Vancomycin,NIE,"≥60 min wlew (1 g), proporcjonalnie","Tak, do ≤5 mg/ml","Szybszy niż 60 min → Red Man Syndrome (flush, hipotensja, tachykardia). NIE w bolusie."
+Klindamycyna,NIE,"≥60 min wlew (600 mg), ≥20 min (300 mg)",Tak (do ≤6 mg/ml),"BEZWZGLĘDNIE NIE w bolusie — ryzyko NZK, hipotensji, zatrzymania oddychania."
+TMP+SMX,NIE,60–90 min wlew,"Tak, 1 ampułka/75–125 ml G5/NaCl",Nie podawać IV push — ryzyko hemodynamiczne i wytrącenie.
+Tigecyklina,NIE,30–60 min wlew,Tak,Nudności/wymioty przy szybkim podaniu. Nie w bolusie.
+Fosfomycyna,NIE,15–60 min wlew (zależnie od dawki),Tak (8 g/250 ml NaCl),Wysoki ładunek Na⁺. Zbyt szybko → hipermagnezemia (preparaty Mg-sól). Obrzęki.
+Flukonazol,NIE,≥60 min wlew (max 200 mg/h),Gotowy roztwór 2 mg/ml,"Zbyt szybko → hipotensja, arytmia. NIE bolus."
+Kaspofungina,NIE,60 min wlew,Tak,Nie przyspieszać wlewu. NIE bolus.
+Mykafungina,NIE,60 min wlew,Tak,NIE bolus.
+Noradrenalina,NIE,WYŁĄCZNIE wlew ciągły,G5 lub NaCl roboczy,"Bolus = natychmiastowa ciężka hipertensja, arytmia, powikłania naczyniowe."
+Dopamina,NIE,Wlew ciągły — titracja,G5/NaCl roboczy,NIE bolus. Titracja dawki μg/kg/min.
+Dobutamina,NIE,Wlew ciągły — titracja,G5/NaCl roboczy,NIE bolus. Wlew ciągły.
+Nitrogliceryna,NIE,Wlew ciągły — titracja,"NaCl/G5, pojemnik non-PVC","NIE bolus. Ciężka hipotensja, tachykardia odruchowa."
+Nimodypina,NIE,Wlew ciągły przez centralne dostęp (CVC),Nie — gotowy roztwór,NIE bolus. Ciężka hipotensja. Podanie przez CVC z uwagi na drażliwość żył.
+Lewosimendan,NIE,"Bolus opcjonalny wg protokołu (0,6–12 μg/kg/10 min), następnie wlew ciągły",G5/NaCl,"Bolus ładujący możliwy, ale powoduje hipotensję — często pomijany u pacjentów z niskim BP."
+Fenytoina,NIE,"≤50 mg/min (max!), zwykle wolniej","NaCl 0,9%, max 10 mg/ml","NIE bolus. Przekroczenie 50 mg/min → hipotensja, bradykardia, asystolia. Monitorowanie EKG."
+Acetylocysteina,NIE,"15 min (faza 1), potem wlewy 4h i 16h",G5 lub NaCl,Reakcje anafilaktoidalne przy szybkim podaniu (szczyt po 15 min).
+Insulina,NIE,Wlew ciągły — titracja,"NaCl 0,9% standardowy roboczy","NIE bolus poza hipoglikemią (wówczas glukoza IV, nie insulina). Wlew z saturacją zestawu."
+Fibryga,NIE,Wlew 5 mg/kg/min max,Tylko dedykowany rozp.,"Zbyt szybko → anafilaksja, DIC. Nie przekraczać szybkości."
+Octaplex,NIE,Max 8 ml/min,Tylko dedykowany rozp.,"Zbyt szybko → anafilaksja, zakrzepica. Ściśle wg ChPL."
+Teofilina,NIE,"Dawka ładująca ≥30 min, wlew ciągły",G5 lub NaCl,"Wąski indeks terapeutyczny — bolus → arytmia, drgawki, zgon."
+Bupiwakaina,NIE,Tylko podanie do przestrzeni zewnątrzoponowej/obwodowe,ND,"IV bolus → toksyczność sercowa, NZK. BEZWZGLĘDNIE NIE IV push."
+Amp+sulbaktam,WARUNKOWO,≥15 min,Tak,Rozcieńczyć do 50–100 ml. Szybszy wlew tolerowany ale nie zalecany.
+Ceftriakson,WARUNKOWO,"≥30 min wlew (IV), lub IM",Tak (min 50 ml),Krótszy niż 30 min → ryzyko hemodynamiczne. Nigdy z Ca²⁺ w tej samej linii.
+Adrenalina,WARUNKOWO,Resusc.: bolus IV/IO; poza resusc.: wlew ciągły,NaCl/G5 roboczy,"Poza NZK — bolus TYLKO w wyjątkowych sytuacjach (anafilaksja). Ryzyko: ciężka hipertensja, arytmia, niedokrwienie."
+Digoksyna,WARUNKOWO,≥10 min wolne IV,Rozcieńczyć ≥4x,"Szybkie podanie → ciężka bradykardia, blok AV, NZK. Wąski indeks terapeutyczny."
+Metoprolol,WARUNKOWO,1–2 min (wolne IV),"Nie wymagane, rozcieńczenie możliwe",Monitorowanie HR i BP. Ryzyko bradykardii i bloku AV. Ostrożnie u pacjentów z AHF.
+Amiodaron,WARUNKOWO,NZK: bolus IV. Poza NZK: ≥10 min (150 mg),G5 — nigdy NaCl,"Poza NZK: ryzyko hipotensji, phlebitis, bradykardii. Wzmianka o rozp. w G5."
+Urapidyl,WARUNKOWO,"Bolus 25 mg powoli, następnie wlew",Ewentualne rozcieńczenie,"Bolus możliwy w nagłej hipotensji, ale ryzyko gwałtownego spadku BP."
+Furosemid,WARUNKOWO,"≥2 min (20–40 mg), duże dawki ≥4 mg/min",Możliwe nierozcieńczone,Zbyt szybko → ototoksyczność (szczególnie przy niewydolności nerek). Max 4 mg/min.
+Torasemid,WARUNKOWO,"≥2 min, duże dawki ≥wlew",Możliwe,"Podobnie do furosemidu, mniejsza ototoksyczność ale ostrożność zachowana."
+Midazolam,WARUNKOWO,2–3 min (wolny bolus),Rozcieńczyć do 1 mg/ml,"Szybki bolus → apnea, depresja OUN. Konieczne zabezpieczenie drożności dróg oddechowych."
+Diazepam,WARUNKOWO,2–5 min (status epilepticus),NIE rozcieńczać (wytrącenie),"Depresja oddechowa, hipotensja. Bolesne iniekcje. Wyłącznie nierozcieńczony lub G5."
+Lorazepam,WARUNKOWO,2 min (wolny bolus),Rozcieńczyć 1:1 wodą do iniekcji,"Depresja oddechowa, szczególnie z opioidami. Status ep: tak (wolno)."
+Sufentanyl,WARUNKOWO,1–2 min wolno,Możliwe,Podobnie jak fentanyl. Potężniejszy — ostrożność.
+Metamizol,WARUNKOWO,≥15 min wolny wlew,Rozcieńczyć do 100 ml,"Szybki bolus → gwałtowna hipotensja (histaminoliberacja). WARUNKOWO: wolno, monitorowanie BP."
+Esomeprazol,WARUNKOWO,3 min bolus lub 30 min wlew,Rozcieńczyć do 100 ml NaCl,Bolus 3 min — dopuszczalny. Wlew 30 min — preferowany.
+CaCl₂,WARUNKOWO,2–5 min (NZK/hipokaliemia ciężka),Rozcieńczyć 1:10,"Szybki bolus → bradykardia, asystolia. Poza pilnymi — wlew."
+NaHCO₃,WARUNKOWO,Bolus w NZK; poza NZK — wlew,Możliwe rozcieńczenie,"Szybki bolus → hiperosmolalność, paradoksalna kwasica wewnątrzkomórkowa, hipokaliemia."
+Haloperidol,WARUNKOWO,"1–2 min (IV, poza ChPL)",Możliwe rozcieńczenie w G5,"Wydłużenie QT, torsades de pointes. Tylko u monitorowanych pacjentów. Pozapiramidowe."
+Salbutamol,WARUNKOWO,Powolny bolus (250 μg) lub wlew ciągły,Rozcieńczyć,"Tachykardia, hipokaliemia, drżenia. Ostrożnie kardiologicznie."
+Albumina 20%,WARUNKOWO,Wlew 1–4h (zależnie od stanu),Możliwa regulacja prędkości,"Zbyt szybko → przeciążenie, obrzęk płuc (szczeg. u krytycznie chorych)."
+Fondaparynuks,WARUNKOWO,Bolus IV/s.c.,Możliwe,Bolus IV stosowany w STEMI. Krwawienie. Tylko NaCl/G5.
+Ampicylina,TAK,3–5 min,Tak (do 100 ml),Żylna (pH~10). Ból przy szybkim podaniu.
+Meropenem,TAK,5 min bolus lub 30 min wlew,Rozcieńczyć do 50–100 ml,"Bolus szybki możliwy, wlew 3h stosowany w PK/PD optymalizacji (uwaga: G5 tylko 1h)."
+Amikacyna,TAK,30–60 min wlew,Rozcieńczyć do 100–200 ml,Zbyt szybko → nefrotoksyczność i ototoksyczność. Nie podawać w szybkim bolusie.
+Cerebrolysin,TAK,15–60 min wlew (rozcieńczony),Tak (do 100 ml),Bolus nierozcieńczony — nie zalecany.
+Kwas walproinowy,TAK,"≥5 min (bolus ładujący), lub 60 min wlew",Rozcieńczyć do 400 ml,Szybki bolus — możliwy przy monitorowaniu. Drażnienie żylne.
+Lewetyracetam,TAK,15 min wlew (minimalny),Rozcieńczyć do 100 ml,"Możliwy krótki bolus w praktyce klinicznej, ale wlew 15 min preferowany."
+Propofol 2%,TAK,Titracja — wolno do efektu,NIE rozcieńczać NaCl,"Szybki bolus → PRIS-risk, apnea, hipotensja, bradykardia. Indukcja: wolna titracja."
+Fentanyl,TAK,1–2 min (analgezja),Możliwe,"Szybki bolus → rigidity syndrome (sztywność klatki piersiowej), szczególnie duże dawki/szybko. Apnea."
+Morfina,TAK,2–5 min wolno,Rozcieńczyć do 1–2 mg/ml,"Histaminoliberacja (szybki bolus → hipotensja, skurcz oskrzeli). Apnea."
+Metoklopramid,TAK,1–2 min wolno,Możliwe rozcieńczenie,"Zbyt szybko → niepokój, pozapiramidowe objawy (u podatnych)."
+Etamsylat,TAK,1–2 min,Możliwe,Dobrze tolerowany bolus.
+Kwas traneksamowy,TAK,10 min (1 g/10 min),Rozcieńczyć lub nierozcieńczony wolno,"Szybki bolus → hipotensja, bradykardia, drgawki (duże dawki). Protokół TXA: 1 g/10 min."
+Hydrokortyzon,TAK,"1–2 min (wstrząs, przełom nadnerczowy)",Możliwe lub nierozcieńczony,Generalnie dobrze tolerowany. Duże dawki — ryzyko arytmii (historyczne).
+Deksametazon,TAK,1–3 min,Możliwe,Dobrze tolerowany.

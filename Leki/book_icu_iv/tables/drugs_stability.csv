@@ -1,0 +1,64 @@
+Lek,Kategoria,pH,NaCl,G5,Stabilność,Osłona,Uwagi krytyczne
+Acetylocysteina,objawowe,"6,0–7,5",OK,OK,"NaCl/G5: 24h po otwarciu fiolki. Unikać metali (szczególnie żelazo, miedź)",Chronić,Wytrącenie z antybiotykami aminoglikozydowymi. Reaktywne tiolowe grupy — unikać metalowych strzykawek.
+Adrenalina,kardio,"2,5–5,0",OK,OK,"24h, w lodówce do 48h. Obserwować przebarwienie (różowe/brązowe = degradacja)",CHRONIĆ bezwzględnie,Kwaśne pH — niezgodność z zasadowymi lekami. Niekompatybilna z NaHCO₃ (natychmiastowa inaktywacja).
+Albumina 20% (Alburex),inne,"6,9–7,3",OK,OK,Po otwarciu: 4h. Gotowy preparat: 24h,Chronić,"Nie rozcieńczać hipotonicznym roztworem. Może wiązać leki (fenytoinę, diazepam, inne) — wpływ na dystrybucję."
+Amikacyna,antybiotyk,"3,5–5,5",OK,OK,"NaCl/G5: 24h 25°C, 60 dni 5°C",Stabilna,Niezgodna z beta-laktamami (inaktywacja wzajemna). Podawać osobno lub z przerwą. Wskazówka: piperacylina inaktywuje amikacynę nawet w osobnych liniach przy długiej ekspozycji.
+Amiodaron (Cordarone),kardio,"3,5–4,5",NIE,OK,"G5: 24h, max stężenie 2 mg/ml w plastiku PVC (adsorpcja!). G5 non-PVC: do 24h",CHRONIĆ BEZWZGLĘDNIE — folia aluminiowa,"NaCl 0,9% — NIEZGODNY (wytrącenie). TYLKO G5. Zawiera benzalkoniowy — wrażliwe naczynie i ból w miejscu wkłucia. Adsorpcja do PVC — stosować pojemniki szklane lub non-PVC. Konflikt z wieloma lekami (QT)."
+Ampicylina,antybiotyk,"8,0–10,0",OK,OK,"NaCl/G5: 8h w temp. pokojowej, 48h w lodówce",Nieznacząca wrażliwość,Po rozp. w G5 — max 4h. Hydroliza przy pH<5 lub >10. Traci aktywność bez widocznych zmian po >8h w temp. pokojowej.
+Ampicylina + sulbaktam,antybiotyk,"8,0–10,0",OK,Brak danych,"NaCl: 8h w temp. pokojowej, 24h w lodówce",Chroni przed światłem,"G5 — sulbaktam niestabilny. W NaCl 0,9% — optymalne."
+Bupiwakaina,inne,"4,0–6,5",OK,Brak danych,NaCl: stabilna 24h,Chronić,Podawanie IV — tylko w szczególnych przypadkach pod nadzorem. Toksyczność sercowa.
+Ceftriakson,antybiotyk,"6,0–8,0",OK,OK,"NaCl/G5: 24h 25°C, 10 dni 5°C (0,1–0,4 g/ml)",Chronić przed światłem po rozp.,"BEZWZGLĘDNIE NIEZGODNY z Ca²⁺ (nawet w różnych liniach, szczególnie noworodki). Niezgodny z aminoglikozydami. Przy >40 mg/ml — ryzyko wytrącenia."
+Cerebrolysin,neuro,"7,0–8,5",OK,OK,"Po rozcieńczeniu: zużyć w ciągu 24h, preferuj niezwłoczne podanie",Chronić,Wytrąca się z roztworami aminokwasów i emulsjami lipidów. Podawać osobno.
+Chlorek wapnia (Calcium chloratum),objawowe,"5,5–7,5",OK,OK,Stabilny 24h,Stabilny,"NIEZGODNY z ceftriaksonem (wytrącenie nierozpuszczalnego soli wapniowej). Niezgodny z fosforanami, siarczanami, węglanami."
+Deksametazon (Dexaven/Dexamethasone TZF),objawowe,"7,0–8,5",OK,OK,NaCl/G5: 24h 25°C,Chronić,Wytrącenie z alkaloidami opium w pH zasadowym. Szeroka kompatybilność przy pH 7–8.
+Diazepam (Relanium),sedacja,"6,2–6,9",NIE,NIE,TYLKO niezrozcieńczony lub w G5 max 5 mg/100ml. NaCl — wytrącenie,Chronić,Silna adsorpcja do PVC — straty dawki nawet 80–90%. Stosować szkło lub non-PVC. Nie rozcieńczać NaCl.
+Digoksyna,kardio,"6,8–7,2",OK,OK,Rozcieńczona: do 4h. Podawać niezwłocznie po rozcieńczeniu,Chronić,Adsorpcja do plastiku — stosować szkło lub dedykowane zestawy. Wąski indeks terapeutyczny — dokładność dawkowania krytyczna.
+Dobutamina,kardio,"2,5–5,5",OK,OK,"Rozcieńczona: 24h 25°C, 48h 5°C. Zmiana koloru = degradacja",Chronić,Niezgodna z NaHCO₃ i zasadowymi roztworami. Strącenie z furosemidem.
+Dopamina,kardio,"2,5–5,0",OK,OK,G5/NaCl: 24h 25°C. Nie stosować jeśli zmienił kolor na różowy/żółty,Chronić,Niezgodna z NaHCO₃ i lekami zasadowymi. Żelaziste jony — inaktywacja. pH stabilizuje G5.
+Esomeprazol (Esopol),objawowe,"9,0–10,0",OK,Brak danych,NaCl: 12h w temp. pokojowej. Niezwłocznie po rozp.,CHRONIĆ bezwzględnie,"G5 — brak pewnych danych, zasadowy pH esomeprazolu jest niezgodny z kwaśnym G5. Degradacja bez widocznych zmian."
+Etamsylat (Cyclonamine),objawowe,"5,0–7,0",OK,OK,Stabilny 24h,Chronić,Niekompatybilny z alkalicznymi roztworami.
+Fentanyl,sedacja,"4,0–7,5",OK,OK,NaCl/G5: 24h 25°C,Chronić,Kompatybilny z wieloma lekami. Przy mieszaniu z midazolamem — kontrolować pH.
+Fenytoina (Epanutin),neuro,"10,0–12,3",OK,NIE,"NaCl 0,9%: 1h (max!). Stężenie ≤10 mg/ml",Chronić,"G5 — NIEZGODNA (natychmiastowe wytrącenie). TYLKO NaCl 0,9%, stężenie ≤10 mg/ml. Szybkość podania ≤50 mg/min — hipotensja i arytmia. Wytrąca się z większością leków. Podawać przez DEDYKOWANĄ linię."
+Fibryna (Fibryga),hemato,"6,5–7,5",Brak danych,Brak danych,Podawać natychmiast po rekonst. Nie mieszać z innymi lekami!,Chronić,WYŁĄCZNIE rekonstytuowany dostarczonym rozpuszczalnikiem. Nie rozcieńczać. Nie mieszać z innymi lekami — ryzyko inaktywacji.
+Flukonazol,grzyb,"4,0–8,0",OK,OK,Gotowy roztwór: 24h w temp. pokojowej,Chronić,Ostrożność z lekami wpływającymi na QT — potencjalizacja.
+Fondaparynuks (Arixtra),inne,"5,0–8,0",OK,OK,Po rozcieńczeniu: 24h 25°C,Chronić,Zasadniczo s.c. Jeśli IV bolus — niezwłocznie podać. Brak danych o kompatybilności Y-site z wieloma lekami.
+Fosfomycyna,antybiotyk,"9,0–11,0",OK,Brak danych,NaCl: 12h 25°C,Stabilna,Zawiera Na⁺ — uwaga na bilans sodu (15 mmol/g fosfomycyny). G5 — brak wystarczających danych.
+Furosemid,kardio,"8,5–9,5",OK,OK,NaCl: 24h. Unikać pH < 7 — wytrącenie,Chronić przed UV,"Zasadowy pH — niekompatybilny z kwaśnymi lekami (midazolam, amiodaron, dobutamina). Strącenie przy pH < 7."
+Glicerol (Glycerol),objawowe,"5,0–7,5",OK,OK,Stabilny 24h,Stabilny,Rozcieńczony — szeroka kompatybilność.
+Haloperidol,objawowe,"3,0–3,8",OK,OK,G5: 24h 25°C. NaCl: 38 dni 25°C (nieliczne źródła),Chronić,"Kwaśny — wytrącenie z lekami zasadowymi, furosemidem. Ryzyko QT — łączenie z amiodароnem i innymi lekami QT GROŹNE."
+Hepa-Merz (L-ornityna),objawowe,"5,0–7,0",OK,OK,Po rozcieńczeniu: 24h,Chronić,Brak szczegółowych danych o kompatybilności z innymi lekami IV — podawać osobno.
+Hydrokortyzon,objawowe,"7,0–8,0",OK,OK,NaCl/G5: 4–6h 25°C (wolna degradacja),Chronić,"Strącenie z heparyną, tetracyklinami, lekami o pH < 5. Rozcieńczać tuż przed podaniem."
+Insulina Gensulin R,objawowe,"7,0–7,8",OK,OK,Worek NaCl/G5: 24h 25°C (stężenie robocze). Adsorpcja do plastiku — saturować zestaw przed podaniem!,Chronić,"Adsorpcja do PVC — utrata do 20–30% dawki. Saturacja zestawu: przepłukać 50–100 ml roztworu przez zestaw. Niezgodna z aminofilinyną, NaHCO₃."
+Kanavit (wit. K),objawowe,"5,0–7,0",OK,OK,Stabilny 24h po rozcieńczeniu,"CHRONIĆ — fotolabilny, osłonić folią",Fotodegradacja jest klinicznie istotna — bez ochrony może stracić aktywność.
+Kaspofungina,grzyb,"6,6",OK,NIE,"NaCl 0,9%: 24h 25°C. NaCl 0,45%: OK",Chronić przed bezpośrednim,"G5, G10 — NIEZGODNE (strąca przy pH wyższym od odtwarzanego). Tylko NaCl 0,9% lub 0,45% lub PWI."
+Klindamycyna,antybiotyk,"5,5–7,0",OK,OK,"NaCl/G5: 16 mg/ml — 24h 25°C, 32 mg/ml — 8h",Stabilna,Nie podawać jako bolus (ryzyko NZK). Nierozcieńczona — bezwzględnie NIE.
+Kwas traneksamowy (Exacyl),objawowe,"6,5–7,5",OK,OK,Stabilny 24h,Stabilny,Szeroka kompatybilność. Unikać mieszania z roztworami penicyliny.
+Kwas walproinowy (Epilepsin),neuro,"7,6–8,0",OK,OK,NaCl/G5: 24h 25°C,Stabilny,Może wchodzić w interakcje z karbapenemy (obniżenie stężenia VPA). Wiązanie z białkami — interakcje farmakodynamiczne.
+Laktuloza (Lactulosum),objawowe,"3,0–7,0",OK,OK,Stabilna,Stabilna,Zwykle doustna/NG. Jeśli IV — brak specyficznych ostrzeżeń.
+Lewetyracetam,neuro,"5,5–7,5",OK,OK,NaCl/G5: 24h 25°C,Stabilny,Jeden z lepiej tolerowanych IV. Kompatybilny z szerokim zakresem leków.
+Lewosimendan (Simdax),kardio,"3,5–4,5",OK,OK,NaCl/G5: 24h 25°C po rozcieńczeniu,Chronić,Nie mieszać z innymi lekami w tej samej linii. Podawać przez oddzielne wejście.
+Lorazepam (Lorabex),sedacja,"4,0–7,0",OK,OK,Po rozcieńczeniu: 24h 25°C. Max 4h w strzykawce polietylenowej (adsorpcja),Chronić,Mniejsza adsorpcja do PVC niż diazepam ale nadal istotna. Rozcieńczyć 1:1 przed IV.
+Meropenem,antybiotyk,"7,3–8,3",OK,Warunkowo,"NaCl: 4h w 25°C, 24h w 5°C. G5: TYLKO 1h w 25°C!",Chronić,W G5 — wyjątkowo krótka stabilność (1h). Nie stosować z NaHCO₃ (degradacja). Aktywność spada bez zmian wyglądu.
+Metamizol,objawowe,"6,0–7,5",OK,OK,Po rozcieńczeniu: zużyć w ciągu 1h (degradacja hydrotyczna),Chronić — fotolabilny,Podawać NIEZWŁOCZNIE po rozcieńczeniu. Reaktywny — nie mieszać z innymi lekami.
+Metoklopramid,objawowe,"3,0–5,0",OK,OK,NaCl/G5: 48h 25°C,Chronić,Kwaśny — niekompatybilny z zasadowymi roztworami.
+Metoprolol (Metocard),kardio,"6,0–7,0",OK,OK,NaCl/G5: stabilny 24h,Stabilny,Wolne podanie IV — ryzyko bradykardii. Lek z wąskim oknem hemodynamicznym.
+Midazolam,sedacja,"2,9–3,7",OK,OK,"NaCl/G5: 24h 25°C przy stężeniu 0,5 mg/ml",Chronić,"Kwaśny — niekompatybilny z furosemidem, NaHCO₃. Wytrącenie z lekami zasadowymi."
+Monofer (żelazo karboxymaltoza w prod. Monofer = isomaltoza),objawowe,"5,0–7,0",OK,NIE,"NaCl 0,9%: stabilny przez 12h",Chronić,"G5 — NIEZGODNE (hydroliza nośnika). Tylko NaCl 0,9%."
+Morfina,sedacja,"2,5–6,0",OK,OK,NaCl/G5: 24h 25°C. W strzykawce PE: do 48h w 5°C,Chronić,Szerokie spektrum kompatybilności. Ostrożnie z lekami wpływającymi na OUN.
+Mykafungina,grzyb,"5,0–7,0",OK,OK,"Po rozp: 24h 25°C, 48h 5°C",Chronić przed długotrwałym,Stabilna w G5. Zgodna z szerszym zakresem nośników niż kaspofungina.
+Nimodypina,kardio,"4,0–6,0",OK,OK,Gotowy roztwór: 24h w 25°C — zgodnie z ChPL,CHRONIĆ BEZWZGLĘDNIE — czarny owijacz dostarczany przez producenta,Konieczny specjalny zestaw non-PVC (niekompatybilna z PVC — adsorpcja i ekstrakcja plastyfikatorów). Producent dostarcza zestaw.
+Nitrogliceryna (Trinitryl),kardio,"3,0–6,5",OK,OK,NaCl/G5: 24h. ADSORPCJA do PVC — utrata do 80% dawki!,Chronić bezwzględnie,Stosować TYLKO pojemniki szklane lub non-PVC (specjalne zestawy do nitrogliceryny). Adsorpcja do PVC jest klinicznie istotna — niedoszacowanie dawki.
+Noradrenalina,kardio,"3,0–4,5",OK,OK,G5: 24h (preferowana). NaCl: 24h ale może przyspieszyć oksydację,CHRONIĆ (fotodegradacja — brązowieje),"G5 preferowana ze względu na pH. Niezgodna z zasadowymi roztworami (NaHCO₃, barbiturany). Oksydacja daje nieaktywny związek."
+Octaplex (koncentrat czynników PT),hemato,"6,5–7,5",Brak danych,Brak danych,Podawać natychmiast po rekonst.,Chronić,Tylko dedykowany rozpuszczalnik. Nie mieszać. Szybkość podania ≤8 ml/min.
+Piperacylina + tazobaktam,antybiotyk,"4,5–6,8",OK,OK,"NaCl/G5: 12h 25°C, 48h 5°C; CIĄGŁY WLEW: 12h w strzykawce",Brak wrażliwości,W ciągłym wlewie — wymiana worka co 12h! Niekompatybilny z aminoglikozydami (wytrącenie). Konflikt danych z ceftriaksonem — unikać jednego światła.
+Propofol 2%,sedacja,"6,0–8,5",NIE,NIE,Bez rozcieńczania lub G5 ≤2 mg/ml: 12h. Po otwarciu fiolki: 12h,Chronić,Emulsja lipidowa — NIE mieszać ani nie rozcieńczać NaCl (zerwanie emulsji). G5 tylko jeśli wymagane i max 2 mg/ml. ŚCIŚLE aseptyczne warunki — pożywka dla bakterii. Wymiana zestawu co 12h.
+Runapriq (fosdenopterin),objawowe,nd,Brak danych,Brak danych,Ograniczone dane,Chronić,Lek sierocy — ograniczone dane o kompatybilności.
+Salbutamol,oddech,"3,5–5,5",OK,OK,NaCl/G5: 24h 25°C,Chronić,Kwaśny — niekompatybilny z zasadowymi roztworami.
+Sufentanyl,sedacja,"3,5–6,0",OK,OK,NaCl/G5: 24h 25°C w strzykawce,Chronić,Adsorpcja do PVC — stosować strzykawki. Kompatybilny z midazolamem (popularna mieszanina sedacyjna).
+Teofilina (Theospirex),oddech,"8,5–9,5",OK,OK,NaCl/G5: 24h 25°C,Chronić,Wąski indeks terapeutyczny. Niezgodna z kwaśnymi lekami i witaminą C.
+Tigecyklina,antybiotyk,"7,8–8,5 (rekonstyt.)",OK,OK,"NaCl/G5: 24h 25°C, 48h 5°C. Niezwłocznie po rekonst.",Chronić przed światłem BEZWZGLĘDNIE,Wyjątkowo fotowrażliwa. Strzykawka/worek — osłonić folią. Rozkłada się bez widocznych zmian barwy.
+Torasemid (Trifas),kardio,"8,5–9,5",OK,OK,NaCl/G5: 24h,Chronić,Podobne interakcje do furosemidu. Niezgodny z kwaśnymi lekami.
+Trimetoprim+sulfametoksazol,antybiotyk,"9,5–10,5",OK,OK,G5: 2–6h (zmętnienie możliwe po 6h). NaCl: do 8h,Chronić,"W NaCl 0,9% — możliwe krystalizowanie (pH zależne). Wytrąca z kwaśnymi lekami. Przy pH<8 — wytrącenie sulfametoksazolu."
+Urapidyl (Tachyben),kardio,"5,0–7,0",OK,OK,NaCl/G5: 24h 25°C,Chronić,Niezgodny z zasadami. pH > 8 — wytrącenie.
+Vancomycin,antybiotyk,"2,5–4,5",OK,OK,"NaCl/G5: 24h 25°C, 14 dni 5°C (rozcieńczone ≤5 mg/ml)",Chronić,"Silnie żrący — konieczne rozcieńczenie min. do 5 mg/ml. Podanie szybsze niż 60 min → Vancomycin Flushing Syndrome (Red Man). pH<3,5 ryzyko wytrącenia z innymi lekami."
+Wodorowęglan sodu (NaHCO₃),objawowe,"7,0–8,5",OK,NIE,Stabilny w NaCl. G5 — zmiana pH nieodpowiednia,Stabilny,"Inaktywuje katecholaminy, beta-laktamy w tej samej linii. Wytrąca sole wapnia, magnezu. pH podwyższa szybko — nie mieszać z lekami wrażliwymi na pH."

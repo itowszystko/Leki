@@ -1,0 +1,501 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);font-size:13px;color:var(--color-text-primary)}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;padding-bottom:8px;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:1rem}
+.tab{padding:6px 13px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);cursor:pointer;font-size:12px;background:transparent;color:var(--color-text-secondary)}
+.tab.active{background:var(--color-background-secondary);color:var(--color-text-primary);border-color:var(--color-border-primary);font-weight:500}
+.panel{display:none}.panel.active{display:block}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+label{font-size:12px;color:var(--color-text-secondary);min-width:120px}
+input[type=range]{flex:1;min-width:100px}
+.val{font-size:12px;font-weight:500;min-width:50px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:10px 0}
+.card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px}
+.card .cl{font-size:11px;color:var(--color-text-secondary);margin-bottom:3px}
+.card .cv{font-size:18px;font-weight:500}
+.card .cu{font-size:11px;color:var(--color-text-secondary)}
+.warn{background:var(--color-background-warning);color:var(--color-text-warning);border-radius:var(--border-radius-md);padding:7px 10px;font-size:12px;margin:6px 0}
+.danger{background:var(--color-background-danger);color:var(--color-text-danger);border-radius:var(--border-radius-md);padding:7px 10px;font-size:12px;margin:6px 0}
+.ok{background:var(--color-background-success);color:var(--color-text-success);border-radius:var(--border-radius-md);padding:7px 10px;font-size:12px;margin:6px 0}
+.info{background:var(--color-background-info);color:var(--color-text-info);border-radius:var(--border-radius-md);padding:7px 10px;font-size:12px;margin:6px 0}
+.b{display:inline-block;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:500}
+.b-r{background:#FCEBEB;color:#A32D2D}.b-a{background:#FAEEDA;color:#854F0B}.b-g{background:#EAF3DE;color:#3B6D11}.b-b{background:#E6F1FB;color:#0C447C}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{padding:5px 8px;background:var(--color-background-secondary);font-weight:500;font-size:10px;color:var(--color-text-secondary);border-bottom:0.5px solid var(--color-border-tertiary);text-align:left}
+td{padding:5px 8px;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top;line-height:1.4}
+tr:hover td{background:var(--color-background-secondary)}
+.scroll{overflow:auto;max-height:500px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md)}
+.drug-sel{font-size:12px;padding:5px 9px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);width:100%}
+.section-h{font-size:11px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:0.04em;margin:12px 0 5px}
+.pipe-viz{display:flex;align-items:center;gap:0;margin:12px 0;height:32px}
+.pipe-seg{height:16px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:500;border-radius:0}
+.pipe-label{font-size:9px;color:var(--color-text-secondary);text-align:center;margin-top:3px}
+.pipe-wrap{display:flex;flex-direction:column;align-items:stretch}
+.port-marker{width:8px;height:28px;background:#E24B4A;border-radius:2px;position:relative;z-index:2}
+.timeline{position:relative;height:6px;background:var(--color-border-tertiary);border-radius:3px;margin:8px 0}
+.timeline-fill{position:absolute;left:0;top:0;height:100%;border-radius:3px;transition:width 0.3s}
+.chk-row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.chk-item{display:flex;align-items:center;gap:5px;font-size:12px}
+@media(prefers-color-scheme:dark){
+.b-r{background:#501313;color:#F7C1C1}.b-a{background:#412402;color:#FAC775}.b-g{background:#173404;color:#C0DD97}.b-b{background:#042C53;color:#B5D4F4}
+}
+</style>
+
+<h2 style="position:absolute;width:1px;height:1px;overflow:hidden">Kalkulator dead space, kontaktu w linii i bolusów niecelowych — OIT</h2>
+
+<div class="tabs">
+  <button class="tab active" onclick="show('calc')">Kalkulator linii</button>
+  <button class="tab" onclick="show('contact')">Czas kontaktu</button>
+  <button class="tab" onclick="show('bolus')">Bolus / flush</button>
+  <button class="tab" onclick="show('rules')">Zasady praktyczne</button>
+</div>
+
+<div id="p-calc" class="panel active">
+  <div class="section-h">Parametry linii i rampy</div>
+
+  <div class="row">
+    <label>Przepływ nośnika (ml/h)</label>
+    <input type="range" id="carrier" min="1" max="100" value="10" step="1" oninput="calc()">
+    <span class="val" id="carrier-v">10 ml/h</span>
+  </div>
+  <div class="row">
+    <label>Dead space cewnika (ml)</label>
+    <input type="range" id="ds_cath" min="0.1" max="3" value="0.5" step="0.1" oninput="calc()">
+    <span class="val" id="ds_cath-v">0.5 ml</span>
+  </div>
+  <div class="row">
+    <label>Dead space rampy (ml)</label>
+    <input type="range" id="ds_ramp" min="0.1" max="5" value="1.2" step="0.1" oninput="calc()">
+    <span class="val" id="ds_ramp-v">1.2 ml</span>
+  </div>
+  <div class="row">
+    <label>Dead space trójnika (ml)</label>
+    <input type="range" id="ds_tri" min="0" max="2" value="0.3" step="0.1" oninput="calc()">
+    <span class="val" id="ds_tri-v">0.3 ml</span>
+  </div>
+  <div class="row">
+    <label>Liczba trójników</label>
+    <input type="range" id="n_tri" min="1" max="5" value="2" step="1" oninput="calc()">
+    <span class="val" id="n_tri-v">2</span>
+  </div>
+  <div class="row">
+    <label>Długość drenu (cm)</label>
+    <input type="range" id="tube_len" min="10" max="200" value="50" step="5" oninput="calc()">
+    <span class="val" id="tube_len-v">50 cm</span>
+  </div>
+  <div class="row">
+    <label>Średnica wewn. drenu (mm)</label>
+    <input type="range" id="tube_id" min="0.5" max="3" value="1.5" step="0.1" oninput="calc()">
+    <span class="val" id="tube_id-v">1.5 mm</span>
+  </div>
+
+  <div class="cards" id="calc-cards"></div>
+
+  <div id="calc-alerts"></div>
+
+  <div class="section-h">Wizualizacja linii</div>
+  <div id="pipe-viz-area"></div>
+</div>
+
+<div id="p-contact" class="panel">
+  <div class="section-h">Wybierz dwa leki — analiza kontaktu w Y-site / linii</div>
+  <div class="row">
+    <label>Lek A (wlew ciągły)</label>
+    <select class="drug-sel" id="drugA" onchange="renderContact()"></select>
+  </div>
+  <div class="row">
+    <label>Lek B (wlew ciągły / bolus)</label>
+    <select class="drug-sel" id="drugB" onchange="renderContact()"></select>
+  </div>
+  <div class="row">
+    <label>Przepływ leku A (ml/h)</label>
+    <input type="range" id="flowA" min="1" max="50" value="5" step="1" oninput="renderContact()">
+    <span class="val" id="flowA-v">5 ml/h</span>
+  </div>
+  <div class="row">
+    <label>Przepływ leku B (ml/h)</label>
+    <input type="range" id="flowB" min="1" max="50" value="5" step="1" oninput="renderContact()">
+    <span class="val" id="flowB-v">5 ml/h</span>
+  </div>
+  <div id="contact-result"></div>
+</div>
+
+<div id="p-bolus" class="panel">
+  <div class="section-h">Kalkulator niecelowego bolusu przy flushu / zwiększeniu przepływu</div>
+  <div class="row">
+    <label>Lek w linii</label>
+    <select class="drug-sel" id="bolusDrug" onchange="renderBolus()"></select>
+  </div>
+  <div class="row">
+    <label>Dead space linii (ml)</label>
+    <input type="range" id="ds_bolus" min="0.1" max="5" value="1.5" step="0.1" oninput="renderBolus()">
+    <span class="val" id="ds_bolus-v">1.5 ml</span>
+  </div>
+  <div class="row">
+    <label>Stężenie w linii (relatywne)</label>
+    <input type="range" id="conc_bolus" min="1" max="10" value="5" step="1" oninput="renderBolus()">
+    <span class="val" id="conc_bolus-v">5 (skala 1–10)</span>
+  </div>
+  <div class="row">
+    <label>Objętość flushu (ml)</label>
+    <input type="range" id="flush_vol" min="1" max="20" value="5" step="1" oninput="renderBolus()">
+    <span class="val" id="flush_vol-v">5 ml</span>
+  </div>
+  <div id="bolus-result"></div>
+</div>
+
+<div id="p-rules" class="panel">
+  <div id="rules-content"></div>
+</div>
+
+<script>
+const DRUG_DATA = [
+  {name:"Noradrenalina",cat:"kardio",bolus_risk:"KRYTYCZNY",contact_risk:"WYSOKI",instant_react:true,flush_danger:"KRYTYCZNY",notes:"Każdy flush pcha stężony lek → nagła hipertensja, arytmia. Osobna linia CVC, NIE przez rampę z innymi wazopresyjnymi.",carrier_risk:"Niezgodna z NaHCO₃ w linii — natychmiastowa inaktywacja.",min_contact_s:1,flow_typ:2},
+  {name:"Adrenalina",cat:"kardio",bolus_risk:"KRYTYCZNY",contact_risk:"WYSOKI",instant_react:true,flush_danger:"KRYTYCZNY",notes:"Jak noradrenalina. Poza NZK — wlew ciągły wyłącznie. Flush = niecelowy bolus presyjny.",carrier_risk:"NaHCO₃ → inaktywacja natychmiastowa.",min_contact_s:1,flow_typ:2},
+  {name:"Dopamina",cat:"kardio",bolus_risk:"WYSOKI",contact_risk:"WYSOKI",instant_react:true,flush_danger:"WYSOKI",notes:"Wlew ciągły. Flush przez tę linię = bolus dopaminergiczny. Zmiany HR i BP w sekundy.",carrier_risk:"NaHCO₃ → inaktywacja.",min_contact_s:1,flow_typ:3},
+  {name:"Dobutamina",cat:"kardio",bolus_risk:"WYSOKI",contact_risk:"WYSOKI",instant_react:true,flush_danger:"WYSOKI",notes:"Jak dopamina. Niezgodna z furosemidem w linii.",carrier_risk:"Furosemid, NaHCO₃ → wytrącenie/inaktywacja.",min_contact_s:1,flow_typ:3},
+  {name:"Amiodaron",cat:"kardio",bolus_risk:"WYSOKI",contact_risk:"WYSOKI",instant_react:false,flush_danger:"WYSOKI",notes:"TYLKO G5, pojemnik non-PVC. Flush NaCl przez linię amiodaronu → wytrącenie w dead space. Adsorpcja do PVC.",carrier_risk:"NaCl → wytrącenie. PVC → adsorpcja + DEHP.",min_contact_s:30,flow_typ:5},
+  {name:"Nitrogliceryna",cat:"kardio",bolus_risk:"WYSOKI",contact_risk:"ŚREDNI",instant_react:false,flush_danger:"WYSOKI",notes:"TYLKO non-PVC. Adsorpcja do PVC niweluje lek z linii. Flush PVC = utrata dawki.",carrier_risk:"Adsorpcja do PVC — utrata 50–80%.",min_contact_s:60,flow_typ:5},
+  {name:"Lewosimendan",cat:"kardio",bolus_risk:"ŚREDNI",contact_risk:"NISKI",instant_react:false,flush_danger:"NISKI",notes:"Osobna linia. Brak danych Y-site z większością leków OIT.",carrier_risk:"Brak specyficznych danych.",min_contact_s:120,flow_typ:5},
+  {name:"Nimodypina",cat:"kardio",bolus_risk:"WYSOKI",contact_risk:"WYSOKI",instant_react:false,flush_danger:"WYSOKI",notes:"Wyłącznie dedykowana linia non-PVC, osłona przed światłem. Flush standardowym zestawem = utrata leku + DEHP.",carrier_risk:"PVC → adsorpcja + plastyfikator.",min_contact_s:30,flow_typ:5},
+  {name:"Furosemid",cat:"kardio",bolus_risk:"ŚREDNI",contact_risk:"WYSOKI",instant_react:true,flush_danger:"WYSOKI",notes:"pH 9 — wytrąca kwaśne leki natychmiastowo w linii. Każdy kontakt z katecholaminami, midazolamem, haloperydolem = reakcja w trójniku/dead space.",carrier_risk:"Kwaśne leki → wytrącenie w dead space.",min_contact_s:1,flow_typ:10},
+  {name:"Digoksyna",cat:"kardio",bolus_risk:"WYSOKI",contact_risk:"NISKI",instant_react:false,flush_danger:"NISKI",notes:"Adsorpcja do plastiku — stosować szkło. Wolne podanie wymagane. Wąski indeks terapeutyczny.",carrier_risk:"Adsorpcja do plastiku.",min_contact_s:600,flow_typ:5},
+  {name:"Metoprolol",cat:"kardio",bolus_risk:"ŚREDNI",contact_risk:"NISKI",instant_react:false,flush_danger:"NISKI",notes:"Bolus wolny — monitorowanie HR/BP. Bez szczególnych konfliktów w linii.",carrier_risk:"Brak.",min_contact_s:120,flow_typ:5},
+  {name:"Urapidyl",cat:"kardio",bolus_risk:"ŚREDNI",contact_risk:"NISKI",instant_react:false,flush_danger:"NISKI",notes:"Bolus 25 mg możliwy. Niezgodny z zasadami (pH >8).",carrier_risk:"NaHCO₃, esomeprazol → wytrącenie.",min_contact_s:30,flow_typ:5},
+  {name:"Torasemid",cat:"kardio",bolus_risk:"NISKI",contact_risk:"WYSOKI",instant_react:true,flush_danger:"WYSOKI",notes:"Jak furosemid — pH zasadowy, wytrąca kwaśne leki w kontakcie.",carrier_risk:"Leki kwaśne → wytrącenie.",min_contact_s:1,flow_typ:10},
+  {name:"Propofol 2%",cat:"sedacja",bolus_risk:"WYSOKI",contact_risk:"WYSOKI",instant_react:true,flush_danger:"WYSOKI",notes:"DEDYKOWANA LINIA BEZWZGLĘDNIE. Emulsja lipidowa — kontakt z NaCl, aminoglikozydami, NaHCO₃ = zerwanie emulsji natychmiastowe. Flush przez linię propofolu = bolus sedatywny (apnea).",carrier_risk:"NaCl rozcieńczenie → zerwanie emulsji.",min_contact_s:1,flow_typ:5},
+  {name:"Midazolam",cat:"sedacja",bolus_risk:"ŚREDNI",contact_risk:"WYSOKI",instant_react:true,flush_danger:"ŚREDNI",notes:"Kwaśny (pH 3,5) — wytrąca się z furosemidem, NaHCO₃, esomeprazolem w dead space trójnika.",carrier_risk:"Furosemid, NaHCO₃ → wytrącenie w linii.",min_contact_s:1,flow_typ:3},
+  {name:"Diazepam",cat:"sedacja",bolus_risk:"WYSOKI",contact_risk:"WYSOKI",instant_react:true,flush_danger:"WYSOKI",notes:"NIE w NaCl (wytrącenie). NIE przez PVC (adsorpcja 80–90%). Osobna linia szklana/non-PVC.",carrier_risk:"NaCl → wytrącenie natychmiastowe. PVC → utrata 80–90%.",min_contact_s:1,flow_typ:5},
+  {name:"Lorazepam",cat:"sedacja",bolus_risk:"ŚREDNI",contact_risk:"NISKI",instant_react:false,flush_danger:"NISKI",notes:"Mniejsza adsorpcja niż diazepam. Rozcieńczyć 1:1 przed podaniem.",carrier_risk:"Adsorpcja do PVC — mniejsza niż diazepam.",min_contact_s:60,flow_typ:5},
+  {name:"Fentanyl",cat:"sedacja",bolus_risk:"NISKI",contact_risk:"NISKI",instant_react:false,flush_danger:"NISKI",notes:"Szeroka kompatybilność. Flush zbyt szybki → rigid chest syndrome (duże dawki). Najczęściej w strzykawce z midazolamem.",carrier_risk:"Brak istotnych.",min_contact_s:30,flow_typ:3},
+  {name:"Sufentanyl",cat:"sedacja",bolus_risk:"NISKI",contact_risk:"NISKI",instant_react:false,flush_danger:"NISKI",notes:"Jak fentanyl. Adsorpcja do PVC — strzykawki polietylenowe.",carrier_risk:"Adsorpcja do PVC — umiarkowana.",min_contact_s:30,flow_typ:2},
+  {name:"Morfina",cat:"sedacja",bolus_risk:"NISKI",contact_risk:"NISKI",instant_react:false,flush_danger:"NISKI",notes:"Histaminoliberacja przy szybkim bolusie. Szeroka kompatybilność.",carrier_risk:"Brak krytycznych.",min_contact_s:60,flow_typ:3},
+  {name:"Vankomycyna",cat:"antybiotyk",bolus_risk:"WYSOKI",contact_risk:"WYSOKI",instant_react:false,flush_danger:"WYSOKI",notes:"Stężenie >5 mg/ml powoduje Red Man Syndrome przy szybkim przepływie. Flush zbyt szybki po podaniu wanko = niezamierzony szybki bolus.",carrier_risk:"Fenytoina, furosemid → wytrącenie.",min_contact_s:60,flow_typ:50},
+  {name:"Ampicylina",cat:"antybiotyk",bolus_risk:"NISKI",contact_risk:"WYSOKI",instant_react:false,flush_danger:"NISKI",notes:"Inaktywacja przez aminoglikozydy w tej samej linii. Kontakt w dead space = inaktywacja.",carrier_risk:"Amikacyna → inaktywacja wzajemna w linii.",min_contact_s:300,flow_typ:50},
+  {name:"Amp+sulbaktam",cat:"antybiotyk",bolus_risk:"NISKI",contact_risk:"WYSOKI",instant_react:false,flush_danger:"NISKI",notes:"Jak ampicylina. Sulbaktam niestabilny w G5.",carrier_risk:"Amikacyna → inaktywacja.",min_contact_s:300,flow_typ:50},
+  {name:"Pip+tazobaktam",cat:"antybiotyk",bolus_risk:"NISKI",contact_risk:"WYSOKI",instant_react:true,flush_danger:"NISKI",notes:"Pip+taz natychmiast inaktywuje amikacynę w kontakcie. Dead space trójnika wystarczy. Unikać wspólnej linii z aminoglikozydami absolutnie.",carrier_risk:"Amikacyna → natychmiastowa inaktywacja.",min_contact_s:1,flow_typ:50},
+  {name:"Ceftriakson",cat:"antybiotyk",bolus_risk:"NISKI",contact_risk:"KRYTYCZNY",instant_react:true,flush_danger:"WYSOKI",notes:"Kontakt z wapniem (CaCl₂, glukonolan Ca) = wytrącenie w linii nawet w dead space trójnika. Przepłukanie minimum 20 ml NaCl między podaniami.",carrier_risk:"CaCl₂, Ca-glukonolan → wytrącenie w linii.",min_contact_s:1,flow_typ:50},
+  {name:"Meropenem",cat:"antybiotyk",bolus_risk:"NISKI",contact_risk:"NISKI",instant_react:false,flush_danger:"NISKI",notes:"Stabilność 1h w G5 — krytyczne przy ciągłym wlewie. NIE mieszać z NaHCO₃ w linii.",carrier_risk:"NaHCO₃ → degradacja. G5 >1h → degradacja.",min_contact_s:3600,flow_typ:50},
+  {name:"Amikacyna",cat:"antybiotyk",bolus_risk:"NISKI",contact_risk:"KRYTYCZNY",instant_react:true,flush_danger:"NISKI",notes:"Inaktywowana przez WSZYSTKIE beta-laktamy w kontakcie. Dead space kilku ml = klinicznie istotna utrata aktywności.",carrier_risk:"Beta-laktamy → inaktywacja natychmiastowa.",min_contact_s:1,flow_typ:50},
+  {name:"Klindamycyna",cat:"antybiotyk",bolus_risk:"KRYTYCZNY",contact_risk:"NISKI",instant_react:false,flush_danger:"KRYTYCZNY",notes:"BEZWZGLĘDNY zakaz bolusu — NZK. Każdy flush który przyspiesza podanie klindamycyny = potencjalnie śmiertelny. Wlew tylko przy stałym przepływie.",carrier_risk:"Brak specyficznych w linii.",min_contact_s:3600,flow_typ:100},
+  {name:"TMP+SMX",cat:"antybiotyk",bolus_risk:"NISKI",contact_risk:"WYSOKI",instant_react:true,flush_danger:"NISKI",notes:"pH 9,5–10,5 — wytrąca kwaśne leki w dead space. Krystalizacja sulfametoksazolu przy pH <8.",carrier_risk:"Kwaśne leki → wytrącenie w dead space.",min_contact_s:1,flow_typ:100},
+  {name:"Tigecyklina",cat:"antybiotyk",bolus_risk:"NISKI",contact_risk:"NISKI",instant_react:false,flush_danger:"NISKI",notes:"FOTOLABILNA — osłona folią przez cały czas. Stabilność po rozp. — 24h. Brak Y-site danych z wieloma lekami OIT.",carrier_risk:"Fotodegradacja — kluczowy problem.",min_contact_s:1800,flow_typ:50},
+  {name:"Fosfomycyna",cat:"antybiotyk",bolus_risk:"NISKI",contact_risk:"NISKI",instant_react:false,flush_danger:"NISKI",notes:"Wysokie ładunki Na (15 mmol/g). pH 9–11 — zasadowy, jak furosemid.",carrier_risk:"Aminoglikozydy → inaktywacja.",min_contact_s:900,flow_typ:50},
+  {name:"Flukonazol",cat:"grzyb",bolus_risk:"NISKI",contact_risk:"NISKI",instant_react:false,flush_danger:"NISKI",notes:"Gotowy woreczek 2 mg/ml — wlew gotowy. Klinicznie: hamowanie CYP3A4 → wzrost midazolamu.",carrier_risk:"QT-prolongators klinicznie.",min_contact_s:3600,flow_typ:100},
+  {name:"Kaspofungina",cat:"grzyb",bolus_risk:"NISKI",contact_risk:"WYSOKI",instant_react:true,flush_danger:"WYSOKI",notes:"WYŁĄCZNIE NaCl. Flush G5 przez linię kaspofunginy = kontakt G5 + kaspofungina w dead space = utrata aktywności.",carrier_risk:"G5 → natychmiastowa niezgodność.",min_contact_s:1,flow_typ:50},
+  {name:"Mykafungina",cat:"grzyb",bolus_risk:"NISKI",contact_risk:"NISKI",instant_react:false,flush_danger:"NISKI",notes:"Szersza kompatybilność niż kaspofungina. G5 i NaCl — OK.",carrier_risk:"Brak krytycznych.",min_contact_s:3600,flow_typ:50},
+  {name:"Fenytoina",cat:"neuro",bolus_risk:"KRYTYCZNY",contact_risk:"KRYTYCZNY",instant_react:true,flush_danger:"KRYTYCZNY",notes:"DEDYKOWANA LINIA ABSOLUTNIE. pH 10–12 = wytrącenie z każdym lekiem w dead space. Każdy flush przez linię fenytoiny po innym leku = wytrącenie kryształów. Max 50 mg/min — przekroczenie (przez flush) = asystolia.",carrier_risk:"Wszystkie leki → wytrącenie. G5 → natychmiastowe.",min_contact_s:1,flow_typ:50},
+  {name:"Kwas walproinowy",cat:"neuro",bolus_risk:"NISKI",contact_risk:"NISKI",instant_react:false,flush_danger:"NISKI",notes:"Klinicznie: karbapenemy (meropenem) obniżają VPA 60–100% — interakcja FK niezależna od linii.",carrier_risk:"Karbapenemy → FK interakcja.",min_contact_s:3600,flow_typ:50},
+  {name:"Lewetyracetam",cat:"neuro",bolus_risk:"NISKI",contact_risk:"NISKI",instant_react:false,flush_danger:"NISKI",notes:"Jeden z najmniej problematycznych leków IV. Szeroka kompatybilność.",carrier_risk:"Brak krytycznych.",min_contact_s:900,flow_typ:50},
+  {name:"Cerebrolysin",cat:"neuro",bolus_risk:"NISKI",contact_risk:"NISKI",instant_react:false,flush_danger:"NISKI",notes:"Nie mieszać z aminokwasami IV i emulsjami lipidów.",carrier_risk:"Emulsje lipidowe → wytrącenie.",min_contact_s:1800,flow_typ:50},
+  {name:"NaHCO₃",cat:"objawowe",bolus_risk:"ŚREDNI",contact_risk:"KRYTYCZNY",instant_react:true,flush_danger:"KRYTYCZNY",notes:"pH silnie zasadowy — inaktywuje katecholaminy, degraduje beta-laktamy w SEKUNDACH w dead space. Flush NaHCO₃ przez linię katecholaminy = natychmiastowa utrata leku presyjnego.",carrier_risk:"Katecholaminy → inaktywacja. Beta-laktamy → hydroliza.",min_contact_s:1,flow_typ:50},
+  {name:"CaCl₂",cat:"objawowe",bolus_risk:"ŚREDNI",contact_risk:"KRYTYCZNY",instant_react:true,flush_danger:"KRYTYCZNY",notes:"Kontakt z ceftriaksonem w dead space nawet 0,2 ml = wytrącenie. Wytrącenie z fosforanami. Osobna linia.",carrier_risk:"Ceftriakson → wytrącenie. Fosforany → CaPO₄.",min_contact_s:1,flow_typ:50},
+  {name:"Haloperidol",cat:"objawowe",bolus_risk:"ŚREDNI",contact_risk:"WYSOKI",instant_react:true,flush_danger:"WYSOKI",notes:"pH 3,5 — wytrąca z furosemidem w dead space natychmiastowo. QT addytywne z amiodароnem.",carrier_risk:"Furosemid → wytrącenie.",min_contact_s:1,flow_typ:10},
+  {name:"Esomeprazol",cat:"objawowe",bolus_risk:"NISKI",contact_risk:"WYSOKI",instant_react:true,flush_danger:"WYSOKI",notes:"pH 9–10 — wytrąca kwaśne leki natychmiastowo w dead space. Bolus 3 min dopuszczalny.",carrier_risk:"Kwaśne leki → wytrącenie w trójniku.",min_contact_s:1,flow_typ:10},
+  {name:"Metamizol",cat:"objawowe",bolus_risk:"ŚREDNI",contact_risk:"NISKI",instant_react:false,flush_danger:"NISKI",notes:"Rozcieńczyć i podać w 15 min. Stabilność po rozcieńczeniu TYLKO 1h. Reaktywny chemicznie.",carrier_risk:"Aminoglikozydy → wytrącenie.",min_contact_s:60,flow_typ:50},
+  {name:"Acetylocysteina",cat:"objawowe",bolus_risk:"NISKI",contact_risk:"WYSOKI",instant_react:true,flush_danger:"NISKI",notes:"Grupy tiolowe — inaktywacja aminoglikozydów i beta-laktamów w kontakcie. CaCl₂ → wytrącenie chelate.",carrier_risk:"Amikacyna, CaCl₂ → wytrącenie.",min_contact_s:1,flow_typ:50},
+  {name:"Hydrokortyzon",cat:"objawowe",bolus_risk:"NISKI",contact_risk:"NISKI",instant_react:false,flush_danger:"NISKI",notes:"Szeroka kompatybilność. Rozcieńczyć tuż przed podaniem.",carrier_risk:"Heparyna → wytrącenie.",min_contact_s:240,flow_typ:50},
+  {name:"Deksametazon",cat:"objawowe",bolus_risk:"NISKI",contact_risk:"NISKI",instant_react:false,flush_danger:"NISKI",notes:"Dobra kompatybilność. Y-site z wieloma lekami OIT.",carrier_risk:"Fenytoina → wytrącenie.",min_contact_s:60,flow_typ:10},
+  {name:"Insulina",cat:"objawowe",bolus_risk:"NISKI",contact_risk:"NISKI",instant_react:false,flush_danger:"NISKI",notes:"Adsorpcja do PVC — SATURACJA ZESTAWU wymagana (50 ml roboczego roztworu przepuścić przed podłączeniem). Flush nasyconą linią — OK.",carrier_risk:"Adsorpcja PVC 20–30%.",min_contact_s:60,flow_typ:5},
+  {name:"Kanavit (wit. K)",cat:"objawowe",bolus_risk:"NISKI",contact_risk:"NISKI",instant_react:false,flush_danger:"NISKI",notes:"FOTOLABILNY — osłona absolutnie wymagana. Szybki bolus może powodować ciężkie reakcje anafilaktoidalne.",carrier_risk:"Fotodegradacja.",min_contact_s:1800,flow_typ:10},
+  {name:"Monofer",cat:"objawowe",bolus_risk:"NISKI",contact_risk:"WYSOKI",instant_react:true,flush_danger:"WYSOKI",notes:"WYŁĄCZNIE NaCl. Flush G5 przez linię Monoferu = wytrącenie w dead space.",carrier_risk:"G5 → wytrącenie/hydroliza.",min_contact_s:1,flow_typ:50},
+  {name:"Fibryga",cat:"hemato",bolus_risk:"NISKI",contact_risk:"KRYTYCZNY",instant_react:true,flush_danger:"KRYTYCZNY",notes:"ABSOLUTNIE DEDYKOWANA LINIA. Żaden lek nie może przejść przez linię Fibrygi. Inaktywacja czynników krzepnięcia jest natychmiastowa przy kontakcie z większością leków.",carrier_risk:"Wszystko → inaktywacja białka.",min_contact_s:1,flow_typ:50},
+  {name:"Octaplex",cat:"hemato",bolus_risk:"NISKI",contact_risk:"KRYTYCZNY",instant_react:true,flush_danger:"KRYTYCZNY",notes:"Jak Fibryga. Absolutnie dedykowana linia. Max 8 ml/min.",carrier_risk:"Wszystko → inaktywacja.",min_contact_s:1,flow_typ:50},
+  {name:"Teofilina",cat:"oddech",bolus_risk:"KRYTYCZNY",contact_risk:"NISKI",instant_react:false,flush_danger:"KRYTYCZNY",notes:"Wąski indeks terapeutyczny — flush zbyt szybki = bolus teofiliny → arytmia, drgawki, zgon. Ścisła kontrola szybkości.",carrier_risk:"NAC/wit. C → degradacja.",min_contact_s:1800,flow_typ:50},
+  {name:"Salbutamol",cat:"oddech",bolus_risk:"NISKI",contact_risk:"NISKI",instant_react:false,flush_danger:"NISKI",notes:"Kwaśny pH — unikać kontaktu z zasadowymi lekami.",carrier_risk:"NaHCO₃ → wytrącenie.",min_contact_s:60,flow_typ:10},
+  {name:"Albumina 20%",cat:"inne",bolus_risk:"NISKI",contact_risk:"NISKI",instant_react:false,flush_danger:"NISKI",notes:"Dedykowany zestaw. Wiąże fenytoinę i diazepam klinicznie. Nie mieszać.",carrier_risk:"Fenytoina, diazepam → wiązanie białkowe.",min_contact_s:14400,flow_typ:50},
+  {name:"Bupiwakaina",cat:"inne",bolus_risk:"KRYTYCZNY",contact_risk:"NISKI",instant_react:false,flush_danger:"KRYTYCZNY",notes:"NIGDY IV. Każdy przypadkowy kontakt IV = ryzyko NZK. Intralipid 20% w pobliżu jako antidotum.",carrier_risk:"Podanie IV = śmierć.",min_contact_s:1,flow_typ:0},
+  {name:"Fondaparynuks",cat:"inne",bolus_risk:"NISKI",contact_risk:"NISKI",instant_react:false,flush_danger:"NISKI",notes:"Zasadniczo s.c. IV stosowane w specjalnych wskazaniach.",carrier_risk:"Brak krytycznych.",min_contact_s:60,flow_typ:2},
+  {name:"Metoklopramid",cat:"objawowe",bolus_risk:"NISKI",contact_risk:"NISKI",instant_react:false,flush_danger:"NISKI",notes:"Kwaśny — unikać kontaktu z furosemidem w linii.",carrier_risk:"Furosemid → wytrącenie.",min_contact_s:60,flow_typ:10},
+  {name:"Etamsylat",cat:"objawowe",bolus_risk:"NISKI",contact_risk:"NISKI",instant_react:false,flush_danger:"NISKI",notes:"Niezgodny z zasadami. Stosunkowo bezpieczny w linii.",carrier_risk:"NaHCO₃ → wytrącenie.",min_contact_s:60,flow_typ:10},
+  {name:"Kwas traneksamowy",cat:"objawowe",bolus_risk:"NISKI",contact_risk:"NISKI",instant_react:false,flush_danger:"NISKI",notes:"10 min podania 1g. Unikać z penicylinami w tej samej linii.",carrier_risk:"Ampicylina → niezgodność.",min_contact_s:600,flow_typ:50},
+  {name:"Hepa-Merz",cat:"objawowe",bolus_risk:"NISKI",contact_risk:"NISKI",instant_react:false,flush_danger:"NISKI",notes:"Podawać osobno. Brak danych Y-site.",carrier_risk:"Brak danych.",min_contact_s:3600,flow_typ:50},
+  {name:"Glicerol",cat:"objawowe",bolus_risk:"NISKI",contact_risk:"NISKI",instant_react:false,flush_danger:"NISKI",notes:"Szeroka kompatybilność.",carrier_risk:"Brak krytycznych.",min_contact_s:3600,flow_typ:50},
+  {name:"Neurovit B",cat:"objawowe",bolus_risk:"NISKI",contact_risk:"NISKI",instant_react:false,flush_danger:"NISKI",notes:"B1 fotolabilna. Podawać osobno.",carrier_risk:"Fotodegradacja B1.",min_contact_s:1800,flow_typ:10},
+];
+
+const DRUG_NAMES = DRUG_DATA.map(d=>d.name);
+
+function show(id){
+  ['calc','contact','bolus','rules'].forEach(x=>{
+    document.getElementById('p-'+x).classList.remove('active');
+  });
+  document.getElementById('p-'+id).classList.add('active');
+  document.querySelectorAll('.tab').forEach((t,i)=>{
+    t.classList.toggle('active',['calc','contact','bolus','rules'][i]===id);
+  });
+  if(id==='contact') initContact();
+  if(id==='bolus') initBolus();
+  if(id==='rules') renderRules();
+}
+
+function calcTubeVol(len_cm, id_mm){
+  const r = (id_mm/2)/10;
+  return Math.PI * r * r * len_cm;
+}
+
+function fmt(v, dec=1){ return parseFloat(v.toFixed(dec)); }
+
+function calc(){
+  const carrier = +document.getElementById('carrier').value;
+  const ds_cath = +document.getElementById('ds_cath').value;
+  const ds_ramp = +document.getElementById('ds_ramp').value;
+  const ds_tri = +document.getElementById('ds_tri').value;
+  const n_tri = +document.getElementById('n_tri').value;
+  const tube_len = +document.getElementById('tube_len').value;
+  const tube_id = +document.getElementById('tube_id').value;
+
+  document.getElementById('carrier-v').textContent = carrier + ' ml/h';
+  document.getElementById('ds_cath-v').textContent = ds_cath.toFixed(1) + ' ml';
+  document.getElementById('ds_ramp-v').textContent = ds_ramp.toFixed(1) + ' ml';
+  document.getElementById('ds_tri-v').textContent = ds_tri.toFixed(1) + ' ml';
+  document.getElementById('n_tri-v').textContent = n_tri;
+  document.getElementById('tube_len-v').textContent = tube_len + ' cm';
+  document.getElementById('tube_id-v').textContent = tube_id.toFixed(1) + ' mm';
+
+  const tube_vol = calcTubeVol(tube_len, tube_id);
+  const total_ds = ds_cath + ds_ramp + (ds_tri * n_tri) + tube_vol;
+  const clearance_min = (total_ds / carrier) * 60;
+  const clearance_s = clearance_min * 60;
+  const bolus_ml_flush5 = Math.min(5, total_ds);
+  const flow_s = carrier / 3600;
+
+  const el = id => document.getElementById(id);
+
+  el('calc-cards').innerHTML = `
+    <div class="card"><div class="cl">Objętość drenu</div><div class="cv">${fmt(tube_vol)} ml</div><div class="cu">${tube_len}cm × ø${tube_id}mm</div></div>
+    <div class="card"><div class="cl">Łączny dead space</div><div class="cv">${fmt(total_ds)} ml</div><div class="cu">cewnik+rampa+trójniki+dren</div></div>
+    <div class="card"><div class="cl">Czas przepłukania linii</div><div class="cv">${fmt(clearance_min)} min</div><div class="cu">przy ${carrier} ml/h nośnika</div></div>
+    <div class="card"><div class="cl">Opóźnienie działania</div><div class="cv">${fmt(clearance_s)} s</div><div class="cu">od zmiany dawki do pacjenta</div></div>
+    <div class="card"><div class="cl">Przepływ nośnika</div><div class="cv">${fmt(flow_s*1000,2)} μl/s</div><div class="cu">= ${fmt(flow_s*60,2)} ml/min</div></div>
+  `;
+
+  let alerts = '';
+  if(clearance_min > 10) alerts += `<div class="danger">Dead space ${fmt(total_ds)} ml przy przepływie ${carrier} ml/h = ${fmt(clearance_min)} min opóźnienie. Zmiana dawki leku presyjnego nie dotrze do pacjenta przez ${fmt(clearance_min)} min!</div>`;
+  else if(clearance_min > 3) alerts += `<div class="warn">Opóźnienie ${fmt(clearance_min)} min. Przy lekach presyjnych — istotne klinicznie.</div>`;
+  else alerts += `<div class="ok">Opóźnienie ${fmt(clearance_min)} min — akceptowalne.</div>`;
+
+  if(total_ds >= 1.5) alerts += `<div class="warn">Dead space ${fmt(total_ds)} ml — przy flushu 5 ml pchasz ${fmt(Math.min(total_ds,5))} ml skumulowanego leku jednocześnie do pacjenta (niecelowy bolus).</div>`;
+  if(carrier < 5) alerts += `<div class="danger">Przepływ nośnika ${carrier} ml/h jest bardzo niski. Lek z dead space może kumulować się i dawać nieciągłe bolusy przy każdej zmianie ciśnienia/przepływu.</div>`;
+
+  el('calc-alerts').innerHTML = alerts;
+
+  el('pipe-viz-area').innerHTML = buildPipeViz(ds_cath, ds_ramp, ds_tri, n_tri, tube_vol, total_ds);
+}
+
+function buildPipeViz(ds_c, ds_r, ds_t, n_t, tv, total){
+  const segs = [
+    {label:'Rampa',vol:ds_r,color:'#B5D4F4',tc:'#0C447C'},
+  ];
+  for(let i=0;i<Math.min(n_t,3);i++) segs.push({label:'Trójnik',vol:ds_t,color:'#F5C4B3',tc:'#712B13'});
+  segs.push({label:'Dren',vol:tv,color:'#D3D1C7',tc:'#2C2C2A'});
+  segs.push({label:'Cewnik',vol:ds_c,color:'#9FE1CB',tc:'#085041'});
+  const totalW = 500;
+  let html = '<div style="display:flex;align-items:flex-start;gap:0;margin:4px 0">';
+  segs.forEach(s=>{
+    const w = Math.max(30, (s.vol/total)*totalW);
+    html += `<div style="display:flex;flex-direction:column;align-items:center;width:${fmt(w)}px">
+      <div style="width:100%;height:18px;background:${s.color};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:500;color:${s.tc}">${fmt(s.vol)}ml</div>
+      <div style="font-size:9px;color:var(--color-text-secondary);margin-top:2px;text-align:center">${s.label}</div>
+    </div>`;
+  });
+  html += '<div style="display:flex;flex-direction:column;align-items:center;margin-left:4px"><div style="width:12px;height:18px;background:#E24B4A;border-radius:2px"></div><div style="font-size:9px;color:#A32D2D;margin-top:2px">Pac.</div></div>';
+  html += '</div>';
+  return html;
+}
+
+function initContact(){
+  const sA = document.getElementById('drugA');
+  const sB = document.getElementById('drugB');
+  if(sA.options.length === 0){
+    DRUG_DATA.forEach((d,i)=>{
+      sA.add(new Option(d.name,i));
+      sB.add(new Option(d.name,i));
+    });
+    sB.selectedIndex = 1;
+  }
+  renderContact();
+}
+
+function renderContact(){
+  const iA = +document.getElementById('drugA').value;
+  const iB = +document.getElementById('drugB').value;
+  const fA = +document.getElementById('flowA').value;
+  const fB = +document.getElementById('flowB').value;
+  document.getElementById('flowA-v').textContent = fA + ' ml/h';
+  document.getElementById('flowB-v').textContent = fB + ' ml/h';
+
+  const dA = DRUG_DATA[iA];
+  const dB = DRUG_DATA[iB];
+  const totalFlow = fA + fB;
+  const dilutionA = fA/totalFlow;
+  const dilutionB = fB/totalFlow;
+  const contactConc = Math.min(dilutionA, dilutionB);
+
+  const fastReact = dA.instant_react || dB.instant_react;
+  const highRisk = ['KRYTYCZNY','WYSOKI'].includes(dA.contact_risk) || ['KRYTYCZNY','WYSOKI'].includes(dB.contact_risk);
+
+  let rClass = highRisk ? (fastReact?'danger':'warn') : 'ok';
+  let rText = '';
+
+  if(dA.instant_react && ['KRYTYCZNY','WYSOKI'].includes(dA.contact_risk)){
+    rText += `<b>${dA.name}</b> reaguje NATYCHMIASTOWO w kontakcie z wieloma lekami.<br>`;
+  }
+  if(dB.instant_react && ['KRYTYCZNY','WYSOKI'].includes(dB.contact_risk)){
+    rText += `<b>${dB.name}</b> reaguje NATYCHMIASTOWO w kontakcie z wieloma lekami.<br>`;
+  }
+
+  const contactTimeSec = (0.3 / (totalFlow/3600));
+  const minTime = Math.min(dA.min_contact_s, dB.min_contact_s);
+
+  let riskLevel = contactTimeSec > minTime ? 'Kontakt wystarczająco DŁUGI aby wywołać reakcję' : 'Kontakt prawdopodobnie ZA KRÓTKI dla pełnej reakcji';
+
+  const result = document.getElementById('contact-result');
+  result.innerHTML = `
+    <div class="${rClass}" style="margin:10px 0">
+      Ryzyko kontaktu w Y-site: <b>${dA.contact_risk}</b> (${dA.name}) × <b>${dB.contact_risk}</b> (${dB.name})<br>
+      ${rText}
+      Czas kontaktu w trójniku (~0,3 ml): ~${fmt(contactTimeSec)} s<br>
+      Minimalny czas reakcji: ${minTime < 5 ? '<b style="color:inherit">NATYCHMIASTOWA</b>' : minTime+'s'}<br>
+      Ocena: ${riskLevel}
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0">
+      <div class="card"><div class="cl">${dA.name}</div><div style="font-size:11px;margin-top:4px">${dA.carrier_risk}</div></div>
+      <div class="card"><div class="cl">${dB.name}</div><div style="font-size:11px;margin-top:4px">${dB.carrier_risk}</div></div>
+    </div>
+    <div class="info" style="margin-top:8px">
+      Rozcieńczenie w miejscu kontaktu: ${dA.name} = ${fmt(dilutionA*100)}% | ${dB.name} = ${fmt(dilutionB*100)}%<br>
+      Im niższy przepływ jednego z leków, tym wyższe stężenie drugiego w miejscu kontaktu.
+    </div>
+    <div style="font-size:11px;color:var(--color-text-secondary);margin-top:8px">
+      <b>Praktyczne:</b> ${dA.notes}<br><b>Praktyczne:</b> ${dB.notes}
+    </div>
+  `;
+}
+
+function initBolus(){
+  const s = document.getElementById('bolusDrug');
+  if(s.options.length === 0){
+    DRUG_DATA.forEach((d,i)=>s.add(new Option(d.name,i)));
+  }
+  renderBolus();
+}
+
+function renderBolus(){
+  const idx = +document.getElementById('bolusDrug').value;
+  const ds = +document.getElementById('ds_bolus').value;
+  const conc = +document.getElementById('conc_bolus').value;
+  const fv = +document.getElementById('flush_vol').value;
+  document.getElementById('ds_bolus-v').textContent = ds.toFixed(1) + ' ml';
+  document.getElementById('conc_bolus-v').textContent = conc + ' (skala 1–10)';
+  document.getElementById('flush_vol-v').textContent = fv + ' ml';
+
+  const drug = DRUG_DATA[idx];
+  const pushed = Math.min(fv, ds);
+  const relDose = fmt((pushed/ds)*conc, 1);
+  const isCrit = drug.flush_danger === 'KRYTYCZNY';
+  const isHigh = drug.flush_danger === 'WYSOKI';
+
+  const rClass = isCrit ? 'danger' : isHigh ? 'warn' : 'ok';
+
+  document.getElementById('bolus-result').innerHTML = `
+    <div class="${rClass}" style="margin:10px 0">
+      Ryzyko flushu: <b>${drug.flush_danger}</b> dla ${drug.name}<br>
+      Przy flushu ${fv} ml przez linię z dead space ${ds.toFixed(1)} ml:<br>
+      Pchasz ~${fmt(pushed,1)} ml skumulowanego ${drug.name} w ciągu sekund = niecelowy bolus<br>
+      Względna intensywność dawki: <b>${relDose}/10</b>
+    </div>
+    <div class="cards">
+      <div class="card"><div class="cl">Dead space w linii</div><div class="cv">${ds.toFixed(1)} ml</div></div>
+      <div class="card"><div class="cl">Objętość bolusu</div><div class="cv">${fmt(pushed,1)} ml</div><div class="cu">pchnięte do pacjenta</div></div>
+      <div class="card"><div class="cl">% dead space spuszczony</div><div class="cv">${fmt((pushed/ds)*100)}%</div></div>
+    </div>
+    <div style="font-size:11px;color:var(--color-text-secondary);margin-top:8px">${drug.notes}</div>
+    <div class="info" style="margin-top:8px;font-size:11px">
+      <b>Niski przepływ nośnika</b> (np. 2–5 ml/h) = lek kumuluje się w dead space latami, a każde przypadkowe naciśnięcie strzykawki lub zmiana ciśnienia = bolus.<br>
+      <b>Wysoki przepływ nośnika</b> (np. 50–100 ml/h) = szybsze przepłukiwanie dead space, ale też szybsze pchanie skumulowanego leku na raz.
+    </div>
+  `;
+}
+
+const RULES = [
+  {cat:"Katecholaminy (noradrenalina, adrenalina, dopamina, dobutamina)",rules:[
+    {do:false,text:"NIE podawaj żadnego leku presyjnego przez rampę dzieloną z innymi lekami bez osobnego portu CVC"},
+    {do:false,text:"NIE przepłukuj linii katecholamin NaHCO₃ — natychmiastowa inaktywacja całości dead space"},
+    {do:false,text:"NIE zmieniaj dawki katecholaminy i licz na natychmiastowy efekt — opóźnienie = objętość dead space / przepływ nośnika"},
+    {do:true,text:"Stosuj najkrótszy możliwy dren od portu do cewnika (minimalizacja dead space)"},
+    {do:true,text:"Przy niskim przepływie nośnika (<5 ml/h) — rozważ dodanie dodatkowego nośnika flush lub użyj dedykowanej pompy"},
+    {do:true,text:"Przy każdej zmianie dawki katecholaminy — uwzględnij opóźnienie w swojej ocenie klinicznej"},
+    {do:true,text:"Katecholaminy ZAWSZE przez osobne kanały CVC — nie dziel kanału z NaHCO₃, furosemidem, esomeprazolem"},
+  ]},
+  {cat:"Fenytoina — najwyższe ryzyko w linii",rules:[
+    {do:false,text:"NIE podawaj żadnego innego leku przez linię fenytoiny — wytrącenie z każdym lekiem (pH 10–12)"},
+    {do:false,text:"NIE używaj G5 jako nośnika ani do przepłukania — natychmiastowe kryształy"},
+    {do:false,text:"NIE pushuj linii fenytoiny — przekroczenie 50 mg/min = asystolia"},
+    {do:true,text:"Dedykowana linia CVC WYŁĄCZNIE dla fenytoiny"},
+    {do:true,text:"Przepłukuj TYLKO NaCl 0,9% — minimum 20 ml przed i po"},
+    {do:true,text:"Monitorowanie EKG i BP podczas każdego podania"},
+  ]},
+  {cat:"Dead space — zasady ogólne",rules:[
+    {do:false,text:"NIE traktuj dead space jako 'nieistotnego' — przy lekach presyjnych 1 ml dead space = bolus hemodynamiczny"},
+    {do:false,text:"NIE wykonuj rutynowego flushu 10 ml przez linie katecholamin lub klindamycyny"},
+    {do:false,text:"NIE zmieniaj strzykawki bez uwzględnienia, że nowa strzykawka pcha najpierw stary lek z dead space"},
+    {do:true,text:"Obliczaj dead space swojej linii: (dren [ml]) + (rampa) + (trójniki) + (cewnik) = łączne opóźnienie"},
+    {do:true,text:"Przy lekach krytycznych (katecholaminy, propofol) — minimalizuj długość drenu, unikaj niepotrzebnych trójników"},
+    {do:true,text:"Flush wykonuj TYLKO deliberatnie, z pełną świadomością co jest w dead space"},
+  ]},
+  {cat:"Amiodaron i nitrogliceryna — problem materiałowy",rules:[
+    {do:false,text:"NIE podawaj amiodaronu przez standardowe zestawy PVC ani w NaCl"},
+    {do:false,text:"NIE podawaj nitrogliceryny przez PVC — utrata 50–80% dawki"},
+    {do:false,text:"NIE flushujesz linii amiodaronu NaCl — wytrącenie w dead space"},
+    {do:true,text:"Amiodaron: G5 + pojemnik szklany lub non-PVC + folia aluminiowa"},
+    {do:true,text:"Nitrogliceryna: dedykowany zestaw non-PVC nitroglicerynowy (dostarczany przez farmację)"},
+    {do:true,text:"Nimodypina: specjalny zestaw od producenta — nie improvizuj"},
+  ]},
+  {cat:"Klindamycyna i teofilina — bolus śmiertelny",rules:[
+    {do:false,text:"NIE podawaj klindamycyny jako bolus — NZK"},
+    {do:false,text:"NIE przepłukuj linii klindamycyny szybkim flush'em podczas wlewu"},
+    {do:false,text:"NIE podawaj teofiliny szybciej niż nakazuje protokół — flush = bolus → arytmia, drgawki"},
+    {do:true,text:"Klindamycyna: stały pompowany wlew, minimum czasy podania, bez flush manewrów"},
+    {do:true,text:"Teofilina: dawka ładująca zawsze przez pompę z limitowaną szybkością, EKG monitoring"},
+  ]},
+  {cat:"Aminoglikozydy vs beta-laktamy w linii",rules:[
+    {do:false,text:"NIE podawaj amikacyny przez linię po pip+taz bez przepłukania minimum 20–30 ml NaCl"},
+    {do:false,text:"NIE pozwalaj na kontakt amikacyny z ceftriaksonem, ampicyliną w dead space"},
+    {do:true,text:"Aminoglikozydy przez osobną linię lub sekwencyjnie z dokładnym przepłukaniem"},
+    {do:true,text:"Przy braku osobnej linii: pip+taz → przepłucz 30 ml NaCl → amikacyna → przepłucz 30 ml NaCl"},
+  ]},
+  {cat:"Kaspofungina i Monofer — problem nośnika",rules:[
+    {do:false,text:"NIE podawaj kaspofunginy w G5 — utrata aktywności natychmiastowa"},
+    {do:false,text:"NIE flushujesz linii kaspofunginy G5 — kontakt w dead space = problem"},
+    {do:false,text:"NIE podawaj Monoferu w G5 — wytrącenie"},
+    {do:true,text:"Kaspofungina i Monofer: wyłącznie NaCl 0,9%, przepłukiwanie tylko NaCl"},
+  ]},
+  {cat:"Insulina — saturacja zestawu",rules:[
+    {do:false,text:"NIE podawaj insuliny bez saturacji zestawu — pierwsze 30–60 min to 70% planowanej dawki"},
+    {do:true,text:"Przepuść 50–100 ml roboczego roztworu insuliny przez zestaw PRZED podłączeniem pacjenta"},
+    {do:true,text:"Protokoły intensywnej insulinoterapii: uwzględnij saturację w obliczeniach"},
+  ]},
+  {cat:"Fibryga / Octaplex",rules:[
+    {do:false,text:"NIE podawaj żadnego leku przez linię czynników krzepnięcia"},
+    {do:false,text:"NIE używaj tej linii do czegokolwiek poza dedykowanym preparatem"},
+    {do:true,text:"Absolutnie dedykowana linia, jednorazowa, tylko dedykowany rozpuszczalnik"},
+  ]},
+];
+
+function renderRules(){
+  const el = document.getElementById('rules-content');
+  el.innerHTML = RULES.map(section=>`
+    <div style="margin-bottom:14px">
+      <div class="section-h">${section.cat}</div>
+      ${section.rules.map(r=>`
+        <div class="${r.do?'ok':'danger'}" style="margin-bottom:4px;display:flex;gap:8px;align-items:flex-start">
+          <span style="font-weight:500;flex-shrink:0">${r.do?'ROBISZ':'NIE ROBISZ'}</span>
+          <span>${r.text}</span>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+calc();
+</script>

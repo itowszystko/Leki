@@ -1,0 +1,361 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);font-size:13px;color:var(--color-text-primary)}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;padding-bottom:8px;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:1rem}
+.tab{padding:6px 14px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);cursor:pointer;font-size:12px;background:transparent;color:var(--color-text-secondary)}
+.tab.active{background:var(--color-background-secondary);color:var(--color-text-primary);font-weight:500}
+.panel{display:none}.panel.active{display:block}
+.lconfig{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);margin-bottom:12px;overflow:hidden}
+.lconfig-head{padding:10px 14px;display:flex;align-items:center;gap:10px;cursor:pointer}
+.lconfig-head:hover{background:var(--color-background-secondary)}
+.lconfig-body{padding:0 14px 12px;border-top:0.5px solid var(--color-border-tertiary)}
+.lumen-strip{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.lumen-card{flex:1;min-width:130px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);overflow:hidden}
+.lumen-card-head{padding:6px 10px;font-size:11px;font-weight:500}
+.lumen-card-body{padding:6px 10px;font-size:10px;line-height:1.6;color:var(--color-text-secondary)}
+.lumen-card-body .must{color:var(--color-text-primary);font-weight:500}
+.lumen-card-body .warn{color:var(--color-text-danger)}
+.lumen-card-body .note{color:var(--color-text-secondary);font-style:italic}
+.comp-row{margin:6px 0;padding:6px 10px;border-radius:var(--border-radius-md);font-size:11px;line-height:1.5}
+.comp-a{background:var(--color-background-success);color:var(--color-text-success)}
+.comp-w{background:var(--color-background-warning);color:var(--color-text-warning)}
+.comp-d{background:var(--color-background-danger);color:var(--color-text-danger)}
+.comp-i{background:var(--color-background-info);color:var(--color-text-info)}
+.b{display:inline-block;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:500}
+.b-r{background:#FCEBEB;color:#A32D2D}.b-o{background:#FAEEDA;color:#854F0B}
+.b-g{background:#EAF3DE;color:#3B6D11}.b-b{background:#E6F1FB;color:#0C447C}
+.b-gr{background:#F1EFE8;color:#5F5E5A}
+.scroll{overflow:auto;max-height:520px}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{padding:5px 8px;background:var(--color-background-secondary);font-weight:500;font-size:10px;color:var(--color-text-secondary);border-bottom:0.5px solid var(--color-border-tertiary);text-align:left;position:sticky;top:0;z-index:2}
+td{padding:5px 8px;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top;line-height:1.4}
+tr:hover td{background:var(--color-background-secondary)}
+.row-f{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
+.row-f input,.row-f select{font-size:12px;padding:5px 9px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary)}
+.row-f input{flex:1;min-width:140px}
+.badge-strip{display:flex;gap:5px;flex-wrap:wrap;margin:4px 0}
+.section-h{font-size:11px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.04em;margin:12px 0 5px}
+@media(prefers-color-scheme:dark){
+.b-r{background:#501313;color:#F7C1C1}.b-o{background:#412402;color:#FAC775}
+.b-g{background:#173404;color:#C0DD97}.b-b{background:#042C53;color:#B5D4F4}
+.b-gr{background:#2C2C2A;color:#B4B2A9}
+}
+</style>
+
+<h2 style="position:absolute;width:1px;height:1px;overflow:hidden">Konfiguracje lumenów OIT — kompromisy i zasady bolus vs pompa</h2>
+
+<div class="tabs">
+  <button class="tab active" onclick="show('l3')">3 lumeny</button>
+  <button class="tab" onclick="show('l4')">4 lumeny</button>
+  <button class="tab" onclick="show('l5')">5 lumenów</button>
+  <button class="tab" onclick="show('bolus')">Bolus vs pompa</button>
+  <button class="tab" onclick="show('comp')">Ocena kompromisów</button>
+</div>
+
+<div id="p-l3" class="panel active"></div>
+<div id="p-l4" class="panel"></div>
+<div id="p-l5" class="panel"></div>
+<div id="p-bolus" class="panel"></div>
+<div id="p-comp" class="panel"></div>
+
+<script>
+const L3 = {
+  title:"3 lumeny — tryb przetrwania",
+  subtitle:"Absolutne minimum. Każdy kompromis jest tu widoczny. Bez drugiego dostępu naczyniowego — niebezpieczna konfiguracja.",
+  risk:"WYSOKI",
+  lumens:[
+    {
+      id:"A",label:"Lumen A — dystalny",color:"#FCEBEB",tc:"#A32D2D",
+      title:"Presyjne + sedacja ciągła",
+      must:["Noradrenalina / adrenalina LUB dopamina","Midazolam+fentanyl (strzykawka) — przez Y-site"],
+      avoid:["NaHCO₃ — inaktywuje katecholaminy","Furosemid — wytrącenie z midazolamem","Esomeprazol — inaktywuje katecholaminy","Amiodaron — niezgodność z katecholaminami"],
+      note:"Y-site nora+midazolam/fentanyl — wg Trissel's OK. Ale: zero innych leków przez ten port w czasie ciągłego wlewu. Bolus tylko po zatrzymaniu infuzji i przepłukaniu."
+    },
+    {
+      id:"B",label:"Lumen B — medialny",color:"#E6F1FB",tc:"#185FA5",
+      title:"Antybiotyki sekwencyjnie",
+      must:["Antybiotyki IV — sekwencyjnie (NIE jednocześnie)","Kolejność: pip+taz LUB ceftriakson → 20 ml NaCl → antygrzybicze","Wankomycyna (osobna strzykawka, inna pora niż pip+taz)"],
+      avoid:["Amikacyna przez ten sam lumen co pip+taz lub ceftriakson","CaCl₂ przez ten sam lumen co ceftriakson"],
+      note:"Kluczowe: amikacyna przez linię obwodową lub MUSI być osobna linia. Bez drugiego dostępu — amikacyna = odroczony problem."
+    },
+    {
+      id:"C",label:"Lumen C — proksymalny",color:"#FAEEDA",tc:"#854F0B",
+      title:"Leki objawowe + bolus",
+      must:["Furosemid (bolus — gdy nie ma innych kwaśnych leków aktywnych)","Hydrokortyzon / deksametazon (bolus)","Metamizol (bolus świeży)","Esomeprazol (OSOBNO od kwaśnych — bolus lub krótki wlew)","Insulina (wlew po saturacji zestawu)","Flukonazol (wlew, gdy nie ma kwaśnych leków jednocześnie)"],
+      avoid:["Furosemid i midazolam jednocześnie — wytrącenie","Esomeprazol i haloperydol jednocześnie — wytrącenie (pH conflict)"],
+      note:"Ten lumen to 'tor sekwencyjny'. Zasada: jeden lek na raz, 10 ml NaCl przepłukania przed kolejnym."
+    }
+  ],
+  additional:[
+    {type:"d",text:"Propofol — jeśli wymagany: CZWARTY dostęp (linia obwodowa 18G) lub zastąpić midazolamem. Propofol przez lumen wspólny z innymi lekami = bezwzględnie NIE."},
+    {type:"d",text:"Amiodaron — linia obwodowa dedykowana (G5, non-PVC, folia). Przez lumen CVC tylko gdy absolutnie brak alternatywy i katecholaminy nie są w tym samym lumenie."},
+    {type:"d",text:"Amikacyna — linia obwodowa. Nigdy przez lumen B gdy pip+taz / ceftriakson aktywne."},
+    {type:"d",text:"Fenytoina — własna linia obwodowa lub 4. dostęp CVC. Absolutnie nie przez 3-lumenowy CVC jeśli inne leki są aktywne."},
+    {type:"w",text:"NaHCO₃ — tylko gdy katecholaminy zatrzymane i linia przepłukana. NIE jednocześnie z presyjnymi przez żaden lumen."},
+    {type:"w",text:"CaCl₂ — gdy ceftriakson aktywny: wyłącznie linia obwodowa lub nowy wkłucie."},
+  ],
+  crisis:"W konfiguracji 3-lumenowej każdy pacjent na noradrenalinie + antybiotykoterapii wielolekowej + sedacji ciągłej przekracza bezpieczny limit. Rozważ drugi dostęp naczyniowy (drugi CVC, linia obwodowa) jako standard, nie wyjątek."
+};
+
+const L4 = {
+  title:"4 lumeny — standard OIT",
+  subtitle:"Minimalna konfiguracja pozwalająca na bezpieczne prowadzenie większości pacjentów. Kompromisy są akceptowalne przy zachowaniu zasad.",
+  risk:"UMIARKOWANY",
+  lumens:[
+    {
+      id:"A",label:"Lumen A — dystalny (ciśnienie)",color:"#FCEBEB",tc:"#A32D2D",
+      title:"Wyłącznie presyjne",
+      must:["Noradrenalina (wlew ciągły)","LUB adrenalina / dopamina / dobutamina"],
+      avoid:["Wszystko inne — bez wyjątków podczas aktywnego wlewu presyjnego","NaHCO₃, furosemid, esomeprazol — inaktywacja / wytrącenie"],
+      note:"Lumen dystalny = najkrótszy dead space do pacjenta. Tylko presyjne. Zmiana dawki = natychmiastowy efekt hemodrynamiczny. Zero 'pożyczonego' czasu."
+    },
+    {
+      id:"B",label:"Lumen B — medialny (sedacja)",color:"#FAEEDA",tc:"#854F0B",
+      title:"Sedacja ciągła + analgezja",
+      must:["Midazolam+fentanyl (strzykawka) — wlew ciągły","LUB propofol — WYŁĄCZNIE ten lumen (zero innych leków)","LUB sufentanyl+midazolam"],
+      avoid:["Propofol: absolutnie żaden inny lek przez ten lumen","Midazolam: furosemid, NaHCO₃, amiodaron — wytrącenie"],
+      note:"Propofol = ten lumen jest zajęty wyłącznie. Jeśli midazolam+fentanyl — można sekwencyjnie podawać inne leki kompatybilne (morfina, deks) po przepłukaniu."
+    },
+    {
+      id:"C",label:"Lumen C — proksymalny (antybiotyki)",color:"#E6F1FB",tc:"#185FA5",
+      title:"Antybiotyki + antygrzybicze",
+      must:["Pip+tazobaktam LUB ceftriakson LUB meropenem (sekwencyjnie)","Wankomycyna (inna pora, 20 ml NaCl flush między)","Kaspofungina/mykafungina/flukonazol (sekwencyjnie)"],
+      avoid:["Amikacyna gdy pip+taz lub ceftriakson aktywne — inaktywacja","CaCl₂ gdy ceftriakson aktywny — wytrącenie"],
+      note:"Zasada: jeden antybiotyk na raz. Między podaniami: 20 ml NaCl. Amikacyna → patrz 'dodatkowe'."
+    },
+    {
+      id:"D",label:"Lumen D — proksymalny (objawowe)",color:"#EAF3DE",tc:"#3B6D11",
+      title:"Leki objawowe, bolus, insulina",
+      must:["Furosemid (bolus)","Hydrokortyzon / deksametazon (bolus)","Esomeprazol (bolus/krótki wlew — gdy lumen wolny od kwaśnych)","Metamizol (bolus — świeży)","Insulina (wlew ciągły po saturacji)","Metoklopramid, etamsylat, kw. traneksamowy (bolus)","NaHCO₃ (gdy lumen wolny od katecholamin — tu tak)","Haloperydol (bolus — gdy furosemid nie aktywny)"],
+      avoid:["Furosemid + midazolam jednocześnie","Esomeprazol + haloperydol jednocześnie","NaHCO₃ + cokolwiek kwaśnego jednocześnie"],
+      note:"Ten lumen = tor sekwencyjny dla bolusów. Jeden lek na raz + 10 ml NaCl przepłukanie. Insulina wlew ciągły to wyjątek — gdy aktywna, bolus tylko przez ten sam lumen z zachowaniem zasady aseptyki."
+    }
+  ],
+  additional:[
+    {type:"w",text:"Amikacyna — linia obwodowa lub osobna linia obwodowa 18G. W 4-lumenowym CVC: tylko gdy dedykowany jeden lumen wyłącznie dla amikacyny (odsuwając jeden z powyższych)."},
+    {type:"w",text:"Amiodaron — linia obwodowa (G5, non-PVC, folia). W wyjątkowych sytuacjach przez lumen D — ale tylko gdy propofol nie jest na B, a katecholaminy są na A (nie ma wspólnego nośnika G5 vs NaCl)."},
+    {type:"i",text:"Fenytoina — własna linia obwodowa lub 5. lumen. Przez żaden z powyższych lumenów jeśli inne leki aktywne."},
+    {type:"i",text:"CaCl₂ gdy ceftriakson aktywny — linia obwodowa lub czasowe zamknięcie lumenu C, przepłukanie 30 ml NaCl, podanie CaCl₂, ponowne przepłukanie."},
+    {type:"a",text:"Lewetyracetam — może iść przez lumen C lub D sekwencyjnie. Szeroka kompatybilność, bezproblemowy."},
+    {type:"a",text:"Nimodypina — własna linia (zestaw producenta non-PVC). Nie przez standardowy CVC."},
+  ],
+  crisis:""
+};
+
+const L5 = {
+  title:"5 lumenów — komfort i bezpieczeństwo",
+  subtitle:"Pozwala na separację wszystkich krytycznych grup. Kompromisy minimalne. Obowiązuje przy złożonej terapii wielolekowej.",
+  risk:"NISKI",
+  lumens:[
+    {
+      id:"A",label:"Lumen A — dystalny",color:"#FCEBEB",tc:"#A32D2D",
+      title:"Presyjne — wyłącznie",
+      must:["Noradrenalina / adrenalina / dopamina (wlew ciągły)"],
+      avoid:["Wszystko inne"],
+      note:"Jeden lek. Jeden cel. Żadnych kompromisów."
+    },
+    {
+      id:"B",label:"Lumen B — sedacja",color:"#FAEEDA",tc:"#854F0B",
+      title:"Sedacja ciągła",
+      must:["Propofol (wyłącznie) LUB midazolam+fentanyl/sufentanyl","Morfina (Y-site z midazolamem — OK)"],
+      avoid:["Propofol: nic więcej","Midazolam: furosemid, NaHCO₃"],
+      note:"Propofol → 12h wymiana zestawu, aseptyka."
+    },
+    {
+      id:"C",label:"Lumen C — antybiotyki",color:"#E6F1FB",tc:"#185FA5",
+      title:"Antybiotyki + antygrzybicze",
+      must:["Beta-laktamy (sekwencyjnie)","Wankomycyna (osobna pora)","Antygrzybicze"],
+      avoid:["Amikacyna gdy beta-laktamy aktywne"],
+      note:"20 ml NaCl flush między antybiotykami."
+    },
+    {
+      id:"D",label:"Lumen D — amikacyna / specjalne",color:"#EEEDFE",tc:"#3C3489",
+      title:"Amikacyna + leki wymagające izolacji",
+      must:["Amikacyna (osobno od beta-laktamów — wreszcie)","Dobutamina (gdy osobna katecholamina — LUB tutaj)","Teofilina (własna pompa, własny lumen)","Digoksyna (jeśli aktywna)"],
+      avoid:["Beta-laktamy gdy amikacyna aktywna","Amiodaron (inny nośnik — G5)"],
+      note:"Ten lumen rozwiązuje największy problem konfiguracji 3 i 4 lumenów — amikacyna ma wreszcie własne miejsce."
+    },
+    {
+      id:"E",label:"Lumen E — objawowe / bolus",color:"#EAF3DE",tc:"#3B6D11",
+      title:"Bolus, insulina, krótkie wlewy",
+      must:["Furosemid (bolus)","Esomeprazol","Hydrokortyzon, deksametazon","Insulina (wlew ciągły)","NaHCO₃ (gdy potrzebny)","Metamizol, metoklopramid, etamsylat","Kw. traneksamowy","Haloperydol (bolus — gdy furosemid nieaktywny)","Flukonazol (wlew)"],
+      avoid:["Furosemid + midazolam jednocześnie","NaHCO₃ + katecholaminy przez TEN lumen (katecholaminy są na A)"],
+      note:"Przy 5 lumenach ten lumen staje się komfortowym 'buforem'. Sekwencje z 10 ml NaCl flush."
+    }
+  ],
+  additional:[
+    {type:"a",text:"Fenytoina — jeśli wymagana: linia obwodowa lub 6. dostęp. Przez lumen C gdy antybiotyki nie są aktywne — tylko wtedy."},
+    {type:"a",text:"Amiodaron — linia obwodowa G5 non-PVC. W 5-lumenowym CVC: jeśli lumen D nie ma amikacyny aktywnej, można przez D pod warunkiem G5 nośnika. Ale bezpieczniej obwodowo."},
+    {type:"a",text:"CaCl₂ + ceftriakson — przy 5 lumenach nie ma już problemu: ceftriakson na C, CaCl₂ na E z przepłukaniem. Ale zachować zasadę: nie jednocześnie, zawsze flush między."},
+    {type:"a",text:"Fibryga/Octaplex — jeśli wymagane: własna linia do podania (wenflon, żyła obwodowa). Nie przez CVC z innymi lekami aktywnymi."},
+  ],
+  crisis:""
+};
+
+function renderLConfig(data, panelId){
+  const el = document.getElementById('p-'+panelId);
+  const riskCls = data.risk==='WYSOKI'?'b-r':data.risk==='UMIARKOWANY'?'b-o':'b-g';
+  let html = `
+    <div style="margin-bottom:10px">
+      <div style="font-size:15px;font-weight:500;margin-bottom:3px">${data.title}</div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:6px">${data.subtitle}</div>
+      <span class="b ${riskCls}">Ryzyko kliniczne: ${data.risk}</span>
+    </div>
+    <div class="lumen-strip">`;
+
+  data.lumens.forEach(l=>{
+    html += `<div class="lumen-card" style="border-top:3px solid ${l.tc}">
+      <div class="lumen-card-head" style="background:${l.color};color:${l.tc}">${l.id}: ${l.label}</div>
+      <div class="lumen-card-body">
+        <div style="font-size:10px;font-weight:500;color:var(--color-text-primary);margin-bottom:3px">${l.title}</div>
+        ${l.must.map(m=>`<div class="must">+ ${m}</div>`).join('')}
+        <div style="margin-top:5px">${l.avoid.map(a=>`<div class="warn">− ${a}</div>`).join('')}</div>
+        <div style="margin-top:5px" class="note">${l.note}</div>
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+
+  if(data.additional && data.additional.length){
+    html += '<div style="font-size:11px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.04em;margin:8px 0 5px">Poza standardowymi lumenami / decyzje dodatkowe</div>';
+    data.additional.forEach(a=>{
+      const cls = a.type==='d'?'comp-d':a.type==='w'?'comp-w':a.type==='i'?'comp-i':'comp-a';
+      html += `<div class="comp-row ${cls}">${a.text}</div>`;
+    });
+  }
+  if(data.crisis){
+    html += `<div class="comp-row comp-d" style="margin-top:8px;font-weight:500">${data.crisis}</div>`;
+  }
+  el.innerHTML = html;
+}
+
+const BOLUS_DATA = [
+  {n:"Klindamycyna",pump:true,bolus:false,method:"Pompa wymagana — min. 60 min/600 mg",danger:"KRYTYCZNY — bolus = NZK",prevent:"Blokada szybkości w pompie. Nigdy ręczny push."},
+  {n:"Vankomycyna",pump:true,bolus:false,method:"Pompa — min. 60 min/1g, 90 min/1,5g",danger:"Red Man Syndrome, nefrotoksyczność",prevent:"Stała pompa strzykawkowa. Flush 20 ml po zakończeniu — powoli."},
+  {n:"Teofilina",pump:true,bolus:false,method:"Pompa — dawka ładująca ≥30 min, wlew ciągły",danger:"KRYTYCZNY — arytmia, drgawki, zgon",prevent:"Pompa z limitem szybkości. EKG monitoring."},
+  {n:"Fenytoina",pump:true,bolus:false,method:"Pompa — max 50 mg/min (wolniej u starszych)",danger:"KRYTYCZNY — asystolia przy >50 mg/min",prevent:"Pompa z limitem. EKG+BP monitoring ciągły. Dedykowana linia."},
+  {n:"Noradrenalina",pump:true,bolus:false,method:"Pompa strzykawkowa — wlew ciągły titrowany",danger:"Bolus = ciężka hipertensja, arytmia",prevent:"Nigdy nie przepłukuj linii presyjnej. Zmiana strzykawki = prime z nową dawką."},
+  {n:"Adrenalina",pump:true,bolus:false,method:"Pompa ciągła (poza NZK)",danger:"Bolus poza NZK = hipertensja, arytmia",prevent:"NZK — bolus przez dowolną linię dopuszczalny."},
+  {n:"Dopamina / Dobutamina",pump:true,bolus:false,method:"Pompa ciągła — titracja μg/kg/min",danger:"Bolus = tachykardia, arytmia",prevent:"Pompa. Żaden push przez tę linię."},
+  {n:"Amiodaron",pump:true,bolus:false,method:"Pompa (poza NZK), G5 non-PVC",danger:"Poza NZK: hipotensja, phlebitis, bradykardia",prevent:"NZK — bolus dopuszczalny. Poza NZK — zawsze pompa."},
+  {n:"Nitrogliceryna",pump:true,bolus:false,method:"Pompa ciągła — non-PVC",danger:"Bolus = ciężka hipotensja",prevent:"Non-PVC. Pompa."},
+  {n:"Propofol",pump:true,bolus:false,method:"Pompa strzykawkowa ciągła (indukcja — wolna titracja)",danger:"Szybki bolus = PRIS, apnea, hipotensja",prevent:"Indukcja: titracja co 30 sek. Wymiana strzykawki co 12h."},
+  {n:"Nimodypina",pump:true,bolus:false,method:"Pompa ciągła — non-PVC (zestaw producenta)",danger:"Bolus = ciężka hipotensja",prevent:"CVC. Dedykowany zestaw."},
+  {n:"Lewosimendan",pump:true,bolus:false,method:"Pompa (bolus ładujący opcjonalny wg protokołu)",danger:"Bolus → hipotensja",prevent:"Jeśli bolus ładujący: powolny, monitorowanie BP."},
+  {n:"Insulina",pump:true,bolus:false,method:"Pompa strzykawkowa ciągła",danger:"Bolus insuliny = hipoglikemia",prevent:"Saturacja zestawu (50 ml) przed podłączeniem."},
+  {n:"Midazolam",pump:true,bolus:true,method:"Ciągła pompa + bolus 2–3 min (wolno)",danger:"Szybki bolus = apnea",prevent:"Bolus rozcieńczyć do 1 mg/ml. Wolno. Zabezpieczenie dróg."},
+  {n:"Morfina",pump:false,bolus:true,method:"Bolus 2–5 min (rozcieńczona do 1–2 mg/ml)",danger:"Szybki bolus = histaminoliberacja, hipotensja",prevent:"Powoli. Obserwacja BP przez 5 min."},
+  {n:"Fentanyl",pump:false,bolus:true,method:"Bolus 1–2 min (wolno). Duże dawki = pompa",danger:"Duże dawki szybko = rigid chest syndrome",prevent:"Standardowe dawki analgetyczne — OK. Duże dawki sedacyjne → pompa."},
+  {n:"Diazepam",pump:false,bolus:true,method:"Bolus 2–5 min (nierozcieńczony lub G5, szkło/non-PVC)",danger:"NaCl = wytrącenie. PVC = utrata 80%",prevent:"Szkło lub non-PVC. G5. Nigdy NaCl."},
+  {n:"Lorazepam",pump:false,bolus:true,method:"Bolus 2 min (rozcieńczony 1:1)",danger:"Szybki bolus = apnea",prevent:"Wolno. Zabezpieczenie dróg."},
+  {n:"Furosemid",pump:false,bolus:true,method:"Bolus 2 min (≤4 mg/min), duże dawki pompa",danger:"Szybko = ototoksyczność (niewyd. nerek)",prevent:"Ototoks. szczególnie przy zaburz. nerek. Max 4 mg/min."},
+  {n:"Hydrokortyzon",pump:false,bolus:true,method:"Bolus 1–2 min (wstrząs nadnerczowy)",danger:"Rzadkie (historyczne arytmie przy dużych dawkach)",prevent:"Standardowa OIT — bezpieczny bolus."},
+  {n:"Deksametazon",pump:false,bolus:true,method:"Bolus 1–3 min",danger:"Brak istotnych",prevent:"Bezpieczny bolus."},
+  {n:"Metamizol",pump:false,bolus:true,method:"Wolny wlew 15 min (rozcieńczony 100 ml) — NIE szybki bolus",danger:"Szybki = gwałtowna hipotensja (histamina)",prevent:"Minimum 15 min. Obserwacja BP."},
+  {n:"Metoklopramid",pump:false,bolus:true,method:"Bolus 1–2 min (wolno)",danger:"Pozapiramidowe przy szybkim podaniu",prevent:"Wolno. Obserwacja."},
+  {n:"Esomeprazol",pump:false,bolus:true,method:"Bolus 3 min LUB wlew 30 min",danger:"Wytrącenie w linii z kwaśnymi lekami",prevent:"Przepłukaj linię 10 ml NaCl przed."},
+  {n:"CaCl₂",pump:false,bolus:true,method:"Bolus 2–5 min (NZK z hipokalcemią/hiperkaliemią) — rozcieńczony 1:10",danger:"Szybki = bradykardia, asystolia; kontakt z ceftriaksonem",prevent:"Absolutnie osobna linia od ceftriaksonu."},
+  {n:"NaHCO₃",pump:false,bolus:true,method:"Bolus w NZK; poza NZK — wlew wolny",danger:"Inaktywuje katecholaminy w linii, hiperosmolalność",prevent:"Absolutnie osobna linia od presyjnych."},
+  {n:"Kwas traneksamowy",pump:false,bolus:true,method:"1g/10 min (wolny bolus) LUB wlew",danger:"Szybki bolus = hipotensja, drgawki (duże dawki)",prevent:"10 min dla 1g. Standard TXA."},
+  {n:"Haloperydol",pump:false,bolus:true,method:"Bolus 1–2 min (wolno) — poza ChPL IV",danger:"QT addytywne z amiodароnem — monitoring EKG",prevent:"Tylko u monitorowanych. Nigdy z amiodароnem jednocześnie."},
+  {n:"Acetylocysteina",pump:true,bolus:false,method:"Wlew protokołowy (15 min + 4h + 16h)",danger:"Szybki = reakcja anafilaktoidalna",prevent:"Pompa. Monitorowanie 15 min po."},
+  {n:"Kaspofungina",pump:true,bolus:false,method:"Wlew 60 min (pompa)",danger:"NIE w G5. NIE bolus.",prevent:"Wyłącznie NaCl. Pompa 60 min."},
+  {n:"Flukonazol",pump:true,bolus:false,method:"Wlew ciągły (max 200 mg/h)",danger:"Szybszy = hipotensja, arytmia",prevent:"Gotowy woreczek. Pompa lub grawitacja kontrolowana."},
+  {n:"Digoksyna",pump:false,bolus:true,method:"Bolus ≥10 min (wolny, rozcieńczony 4x)",danger:"Szybki = bradykardia, blok AV, NZK",prevent:"Szklany zestaw. Wąski indeks — powoli."},
+  {n:"Kanavit (wit. K)",pump:false,bolus:false,method:"Wolny wlew 30 min (rozcieńczony) — osłona przed światłem",danger:"Szybki bolus = ciężka anafilaksja",prevent:"Ochrona przed światłem absolutna. Wolny wlew."},
+  {n:"Monofer",pump:true,bolus:false,method:"Wlew ciągły NaCl 0,9% (pompa)",danger:"G5 = wytrącenie",prevent:"Wyłącznie NaCl. Obserwacja reakcji."},
+  {n:"Teofilina (Theospirex)",pump:true,bolus:false,method:"Pompa — ładowanie ≥30 min, wlew ciągły",danger:"Wąski indeks — bolus = arytmia",prevent:"Pompa z limitem. EKG."},
+  {n:"Albumina 20%",pump:false,bolus:false,method:"Wlew 1–4h (grawitacja lub pompa)",danger:"Zbyt szybko = przeciążenie płynowe",prevent:"Kontrolowana szybkość. Własna linia."},
+  {n:"Etamsylat",pump:false,bolus:true,method:"Bolus 1–2 min",danger:"Brak istotnych",prevent:"Bezpieczny. Unikać NaHCO₃ w linii."},
+  {n:"Lewetyracetam",pump:false,bolus:false,method:"Wlew 15 min (rozcieńczony 100 ml)",danger:"Brak istotnych — ale wlew preferowany",prevent:"Bezproblemowy."},
+  {n:"Metoprolol",pump:false,bolus:true,method:"Bolus 1–2 min (wolny)",danger:"Bradykardia, blok AV",prevent:"Monitorowanie HR/BP."},
+  {n:"Urapidyl",pump:false,bolus:true,method:"Bolus 25 mg + wlew pompa",danger:"Nagły spadek BP",prevent:"Monitorowanie."},
+];
+
+function renderBolus(){
+  const el = document.getElementById('p-bolus');
+  const pump = BOLUS_DATA.filter(d=>d.pump && !d.bolus);
+  const pumpBolus = BOLUS_DATA.filter(d=>d.pump && d.bolus);
+  const bolusOnly = BOLUS_DATA.filter(d=>!d.pump && d.bolus);
+  const special = BOLUS_DATA.filter(d=>!d.pump && !d.bolus);
+
+  function mkTable(rows, title, cls){
+    return `<div style="font-size:11px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.04em;margin:12px 0 5px">${title}</div>
+    <div style="overflow:auto;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);margin-bottom:4px">
+    <table><thead><tr><th>Lek</th><th>Forma</th><th>Metoda</th><th>Ryzyko</th><th>Prewencja</th></tr></thead><tbody>
+    ${rows.map(d=>`<tr>
+      <td style="font-weight:500">${d.n}</td>
+      <td><span class="b ${cls}">${d.pump?'Pompa':''} ${d.bolus?'Bolus':''}</span></td>
+      <td style="font-size:10px">${d.method}</td>
+      <td style="font-size:10px;color:var(--color-text-danger)">${d.danger}</td>
+      <td style="font-size:10px;color:var(--color-text-secondary)">${d.prevent}</td>
+    </tr>`).join('')}
+    </tbody></table></div>`;
+  }
+
+  el.innerHTML =
+    mkTable(pump,'Wyłącznie pompa — bolus absolutnie NIE','b-r') +
+    mkTable(pumpBolus,'Pompa ciągła + bolus warunkowo dopuszczalny','b-o') +
+    mkTable(bolusOnly,'Bolus bez pompy — standardowe podanie','b-g') +
+    mkTable(special,'Wolny wlew / protokół — nie bolus, nie standardowa pompa','b-b') +
+    `<div class="comp-row comp-d" style="margin-top:10px">
+    <b>Jak unikać przypadkowych bolusów:</b><br>
+    1. Każda zmiana strzykawki presyjnej = prime nowej strzykawki do momentu wypłynięcia leku z końcówki (bez powietrza, bez starego nośnika).<br>
+    2. Flush przez linię presyjną lub sedacyjną = NIGDY ręczny push. Jeśli konieczny — zatrzymaj wlew, powolny flush 0,9 NaCl, wznów wlew.<br>
+    3. Długi dren + niski przepływ = lek kumuluje się w dead space. Każda zmiana pozycji strzykawki lub trójnika = niecelowy bolus.<br>
+    4. Minimalizuj długość drenu od trójnika do cewnika. Każdy centymetr to dead space.<br>
+    5. Nie używaj grawitacji do przepłukiwania linii presyjnej lub sedacyjnej.
+    </div>`;
+}
+
+const COMP_DATA = [
+  {pair:"Midazolam + fentanyl (strzykawka)",type:"a",why:"Dane Y-site i strzykawkowe potwierdzone. Standard OIT. Addytywna depresja oddechowa — klinicznie oczekiwana i monitorowana.",when:"Zawsze gdy brak osobnych lumenów.",limit:"Sprawdzaj stężenia. Przy flukonazolu: zmniejsz dawkę midazolamu i titruj wg efektu (RASS) — nie stosuj automatycznej redukcji o stały %."},
+  {pair:"Noradrenalina + midazolam Y-site",type:"a",why:"Trissel's: zgodne Y-site. Krótki kontakt. Monitorowanie hemodynamiczne i tak wymagane.",when:"Gdy tylko 3 lumeny i nie ma osobnego dla sedacji.",limit:"Nie mieszać w jednym pojemniku. Tylko Y-site."},
+  {pair:"Noradrenalina + morfina Y-site",type:"a",why:"Trissel's: zgodne.",when:"Gdy brak lumenu dla analgezji.",limit:""},
+  {pair:"Antybiotyki sekwencyjnie przez jeden lumen",type:"a",why:"Pip+taz → 20 ml NaCl flush → ceftriakson → 20 ml → wankomycyna. Fizycznie bezpieczne po przepłukaniu.",when:"Standardowa praktyka przy 3–4 lumenach.",limit:"Amikacyna NIGDY przez lumen, przez który płynął pip+taz lub ceftriakson bez przepłukania ≥20 ml."},
+  {pair:"Furosemid + esomeprazol przez jeden lumen (sekwencyjnie)",type:"a",why:"Oba zasadowe — brak niezgodności fizycznej. Sekwencyjne podanie z przepłukaniem.",when:"Gdy jeden lumen dla leków objawowych.",limit:"Nie jednocześnie. Flush 10 ml NaCl między."},
+  {pair:"Haloperydol przez lumen D gdy furosemid nieaktywny",type:"a",why:"pH 3,5 — wytrąca z furosemidem TYLKO przy jednoczesnym kontakcie. Sekwencyjnie OK.",when:"Ograniczone lumeny.",limit:"Przepłucz linię 10 ml NaCl. EKG monitoring (QT)."},
+  {pair:"Kaspofungina przez lumen antybiotyków (NaCl)",type:"a",why:"Tylko NaCl — ten sam warunek co w lumenach CVC. Sekwencyjnie po antybiotyku z przepłukaniem.",when:"Gdy brak osobnego lumenu dla antygrzybiczego.",limit:"Absolutnie nie przez G5. Flush 20 ml NaCl przed i po."},
+  {pair:"Lewetyracetam przez dowolny dostępny lumen",type:"a",why:"Szeroka kompatybilność. Jeden z najmniej problematycznych leków IV.",when:"Zawsze.",limit:"Nie jednocześnie z fenytoiną przez tę samą linię."},
+  {pair:"NaHCO₃ przez lumen D gdy katecholaminy na lumenach A",type:"a",why:"Fizycznie osobne lumeny = brak kontaktu. Inaktywacja wymaga kontaktu.",when:"4–5 lumenów.",limit:"NIE gdy oba leki przez ten sam lumen w jakimkolwiek wariancie."},
+  {pair:"Amiodaron przez lumen C/D gdy brak obwodowego (G5, non-PVC)",type:"w",why:"Możliwe technicznie jeśli nośnik G5 + non-PVC + folia. Ale: adsorpcja do PVC CVC jest realnym problemem.",when:"Sytuacja braku alternatywy.",limit:"TYLKO G5 non-PVC. TYLKO folia aluminiowa. TYLKO osobny kanał niespołdzielony z katecholaminami. Monituj efekt kliniczny."},
+  {pair:"Vankomycyna + pip+taz Y-site",type:"w",why:"DANE SPRZECZNE. Trissel's: OK przy standardowych stężeniach. Inne źródła: zmętnienie po czasie.",when:"Gdy absolutnie brak alternatywy.",limit:"Monitorowanie wizualne każde 30 min. Przy zmętnieniu — natychmiast osobne linie."},
+  {pair:"CaCl₂ przez lumen C gdy ceftriakson nieaktywny i linia przepłukana 30 ml NaCl",type:"w",why:"Ryzyko resztek ceftriaksonu w dead space mimo przepłukania. Fizycznie niebezpieczne.",when:"Ostatnia deska ratunku.",limit:"Minimum 30 ml NaCl flush. Poczekaj 5 min. Podaj CaCl₂. Znów 20 ml NaCl. Monitoruj linię wizualnie."},
+  {pair:"Amikacyna przez lumen B po antybiotykach i przepłukaniu 30 ml NaCl",type:"w",why:"Inaktywacja wzajemna beta-laktamów z amikacyną jest szybka. 30 ml NaCl zmniejsza ryzyko, ale nie eliminuje.",when:"Gdy absolutnie brak osobnej linii.",limit:"Minimum 60 min przerwy po beta-laktamie. 30 ml NaCl. Monitoruj poziomy amikacyny (TDM). Ostateczność."},
+  {pair:"Fenytoina przez lumen C gdy wszystkie inne antybiotyki wstrzymane i linia spłukana",type:"d",why:"Fenytoina pH 10–12 wytrąca się z resztkami prawie każdego leku. Nawet po przepłukaniu — ślady w dead space wystarczą.",when:"OSTATNIA DESKA RATUNKU. Wyłącznie gdy brak jakiegokolwiek innego dostępu.",limit:"30 ml NaCl flush. Podawaj powoli (pompa, max 50 mg/min). EKG+BP monitoring ciągły. Najlepiej: załóż wenflon do fenytoiny."},
+  {pair:"Propofol przez lumen wspólny z jednym innym lekiem",type:"d",why:"Emulsja lipidowa destabilizuje się przy kontakcie z jonami i zmianą pH. Ryzyko zerwania emulsji + bakteryjne.",when:"ABSOLUTNA OSTATECZNOŚĆ.",limit:"Nigdy. Jeden kompromis: propofol na osobnej obwodowej 18G jeśli brak lumenu CVC."},
+];
+
+function renderComp(){
+  const el = document.getElementById('p-comp');
+  const acc = COMP_DATA.filter(c=>c.type==='a');
+  const warn = COMP_DATA.filter(c=>c.type==='w');
+  const danger = COMP_DATA.filter(c=>c.type==='d');
+  function mkComp(rows, title, cls, hdr){
+    return `<div class="section-h">${title}</div>` + rows.map(c=>`
+      <div class="comp-row ${cls}" style="margin-bottom:5px">
+        <div style="font-weight:500;margin-bottom:3px">${c.pair}</div>
+        <div>${c.why}</div>
+        <div style="margin-top:3px"><b>Kiedy:</b> ${c.when}</div>
+        ${c.limit?`<div style="margin-top:2px"><b>Limit:</b> ${c.limit}</div>`:''}
+      </div>`).join('');
+  }
+  el.innerHTML =
+    mkComp(acc,'Kompromisy akceptowalne — bezpieczne przy zachowaniu zasad','comp-a','ok') +
+    mkComp(warn,'Kompromisy warunkowe — ostatnia deska ratunku z nadzorem','comp-w','warn') +
+    mkComp(danger,'Kompromisy niedopuszczalne — tylko w sytuacji bez alternatywy i z pełnym monitoringiem','comp-d','danger');
+}
+
+function show(id){
+  ['l3','l4','l5','bolus','comp'].forEach(x=>document.getElementById('p-'+x).classList.remove('active'));
+  document.getElementById('p-'+id).classList.add('active');
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['l3','l4','l5','bolus','comp'][i]===id));
+  if(id==='bolus') renderBolus();
+  if(id==='comp') renderComp();
+}
+
+renderLConfig(L3,'l3');
+renderLConfig(L4,'l4');
+renderLConfig(L5,'l5');
+</script>

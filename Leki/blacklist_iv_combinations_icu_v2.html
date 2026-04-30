@@ -1,0 +1,532 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);font-size:13px;color:var(--color-text-primary)}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;padding-bottom:8px;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:1rem}
+.tab{padding:6px 14px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);cursor:pointer;font-size:12px;background:transparent;color:var(--color-text-secondary)}
+.tab.active{background:var(--color-background-secondary);color:var(--color-text-primary);font-weight:500}
+.panel{display:none}.panel.active{display:block}
+.bl-item{border-radius:var(--border-radius-md);margin-bottom:7px;overflow:hidden;border:0.5px solid var(--color-border-tertiary)}
+.bl-head{padding:9px 14px;display:flex;align-items:center;gap:10px;cursor:pointer}
+.bl-head:hover{filter:brightness(.97)}
+.bl-head.A{background:#FCEBEB}.bl-head.B{background:#FAEEDA}.bl-head.C{background:#E6F1FB}
+.bl-title{font-size:12px;font-weight:500;flex:1}
+.bl-head.A .bl-title{color:#A32D2D}.bl-head.B .bl-title{color:#854F0B}.bl-head.C .bl-title{color:#185FA5}
+.bl-body{display:none;padding:8px 14px 10px;border-top:0.5px solid var(--color-border-tertiary);font-size:11px;line-height:1.6}
+.bl-body.open{display:block}
+.bl-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:6px}
+.bl-cell{font-size:10px;color:var(--color-text-secondary)}
+.bl-cell b{color:var(--color-text-primary);display:block;margin-bottom:2px;font-size:10px}
+.t-instant{color:#A32D2D;font-weight:500}.t-delay{color:#854F0B;font-weight:500}
+.bl-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:5px}
+.bx{display:inline-block;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:500}
+.bA{background:#FCEBEB;color:#A32D2D}.bB{background:#FAEEDA;color:#854F0B}
+.bC{background:#E6F1FB;color:#0C447C}.bN{background:#501313;color:#F0A0A0}
+.row-f{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.row-f input,.row-f select{font-size:12px;padding:5px 9px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary)}
+.row-f input{flex:1;min-width:140px}
+.cnt{font-size:11px;color:var(--color-text-secondary);margin-bottom:8px}
+/* NIGDY panel */
+.never-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.never-card{border-radius:var(--border-radius-md);padding:10px 13px;background:#501313;border:0.5px solid #791F1F}
+.never-card .nc-pair{font-size:12px;font-weight:500;color:#F7C1C1;margin-bottom:4px}
+.never-card .nc-why{font-size:10px;color:#F0A0A0;line-height:1.5}
+.never-card .nc-time{font-size:10px;font-weight:500;margin-top:3px;color:#FAC775}
+.never-card .nc-cons{font-size:10px;color:#F0A0A0;margin-top:2px}
+.section-title{font-size:14px;font-weight:500;margin:0 0 10px}
+@media(prefers-color-scheme:dark){
+.bl-head.A{background:#3a1010}.bl-head.B{background:#2e1a05}.bl-head.C{background:#041e35}
+.bl-head.A .bl-title{color:#F7C1C1}.bl-head.B .bl-title{color:#FAC775}.bl-head.C .bl-title{color:#85B7EB}
+}
+</style>
+
+<h2 style="position:absolute;width:1px;height:1px;overflow:hidden">Czarna lista kombinacji IV — OIT. Kombinacje które nie mogą występować.</h2>
+
+<div class="tabs">
+  <button class="tab active" onclick="show('all')">Wszystkie</button>
+  <button class="tab" onclick="show('A')">A — Fizyczne</button>
+  <button class="tab" onclick="show('B')">B — Chemiczne</button>
+  <button class="tab" onclick="show('C')">C — Kliniczne</button>
+  <button class="tab" onclick="show('never')">NIGDY W LINII</button>
+</div>
+
+<div id="p-all" class="panel active"></div>
+<div id="p-A" class="panel"></div>
+<div id="p-B" class="panel"></div>
+<div id="p-C" class="panel"></div>
+<div id="p-never" class="panel"></div>
+
+<script>
+const BL=[
+// ===== A: FIZYCZNE =====
+{cat:"A",pair:"Ceftriakson + CaCl₂ / Ca-glukonolan",
+ mech:"Ceftriakson chelatuje Ca²⁺ → nierozpuszczalna sól wapniowo-ceftriaksonowa. Mikrokryształy w linii.",
+ time:"instant",timeLabel:"Natychmiast (sekundy)",
+ cons:"Zator płucny i naczyniowy. Opisane zgony noworodków (FDA Black Box Warning 2009). U dorosłych: ryzyko zakrzepicy i zatorowości.",
+ never:true},
+
+{cat:"A",pair:"Fenytoina + glukoza 5%",
+ mech:"Propylenglikol (nośnik fenytoiny) nie miesza się z G5 → kryształy fenytoiny natychmiastowo.",
+ time:"instant",timeLabel:"Natychmiast",
+ cons:"Kryształy w żyle → zator, uszkodzenie naczynia. Utrata dawki leku.",
+ never:true},
+
+{cat:"A",pair:"Fenytoina + jakikolwiek lek w tej samej linii",
+ mech:"pH fenytoiny 10–12 → strącenie się z praktycznie każdym lekiem przy kontakcie w dead space.",
+ time:"instant",timeLabel:"Natychmiast",
+ cons:"Wytrącenie w linii, zator, utrata obu leków. Ryzyko asystolii przy przekroczeniu 50 mg/min.",
+ never:true},
+
+{cat:"A",pair:"Amiodaron + NaCl 0,9% (jako nośnik do wlewu ciągłego lub bolus niezgodny z formułą)",
+ mech:"Amiodaron do wlewu ciągłego powinien być podawany w G5. Preparaty amiodaronu do wstrzyknięć zawierają polisorbat 80 i benzalkoniowy — w NaCl 0,9% może dochodzić do wytrącenia przy wyższych rozcieńczeniach. Uwaga: w nagłym NZK dopuszcza się podanie amiodaronu w strzykawce bez rozcieńczenia lub z minimalnym G5 — dane dotyczą głównie wlewów ciągłych.",
+ time:"instant",timeLabel:"Natychmiast do kilku minut (przy wlewie ciągłym)",
+ cons:"Widoczne wytrącenie (zmętnienie, osad) przy wlewie ciągłym w NaCl. Utrata leku. Ryzyko zatoru. Przy wlewie ciągłym: zawsze G5.",
+ never:false},
+
+{cat:"A",pair:"Pip+tazobaktam + amikacyna (w tej samej linii)",
+ mech:"Pip+taz inaktywuje aminoglikozyd przez otwarcie pierścienia beta-laktamowego + tworzenie kompleksów jonowych.",
+ time:"instant",timeLabel:"Natychmiast",
+ cons:"Amikacyna klinicznie nieaktywna. Możliwe zmętnienie. Terapia zakażenia pozorna.",
+ never:true},
+
+{cat:"A",pair:"Ceftriakson + amikacyna (ta sama linia)",
+ mech:"Wytrącenie + chemiczna inaktywacja aminoglikozydu przez beta-laktam.",
+ time:"instant",timeLabel:"Natychmiast",
+ cons:"Utrata aktywności amikacyny. Zmętnienie. Terapia pozorna.",
+ never:true},
+
+{cat:"A",pair:"Ampicylina + amikacyna (ta sama linia)",
+ mech:"Wzajemna inaktywacja — ampicylina inaktywuje amikacynę.",
+ time:"instant",timeLabel:"Natychmiast",
+ cons:"Utrata aktywności amikacyny.",
+ never:true},
+
+{cat:"A",pair:"Furosemid + midazolam (ta sama linia/Y-site bez rozcieńczenia)",
+ mech:"Furosemid pH 9 + midazolam pH 3,5 → natychmiastowe wytrącenie przy kontakcie.",
+ time:"instant",timeLabel:"Natychmiast",
+ cons:"Biały osad w linii. Utrata obu leków. Zator.",
+ never:false},
+
+{cat:"A",pair:"Furosemid + haloperydol (ta sama linia)",
+ mech:"Furosemid pH 9 + haloperydol pH 3,5 → wytrącenie.",
+ time:"instant",timeLabel:"Natychmiast",
+ cons:"Osad. Utrata obu leków.",
+ never:false},
+
+{cat:"A",pair:"Furosemid + dobutamina (ta sama linia)",
+ mech:"Wytrącenie przy kontakcie dwóch leków o skrajnie różnym pH.",
+ time:"instant",timeLabel:"Natychmiast",
+ cons:"Utrata obu leków. Nieaktywna terapia inotropowa i diuretyczna.",
+ never:false},
+
+{cat:"A",pair:"Furosemid + metamizol (ta sama linia)",
+ mech:"pH conflict: furosemid pH 9 + metamizol kwaśny → wytrącenie.",
+ time:"instant",timeLabel:"Natychmiast",
+ cons:"Osad. Utrata leków.",
+ never:false},
+
+{cat:"A",pair:"Furosemid + metoklopramid (ta sama linia)",
+ mech:"Jak wyżej — pH 9 vs pH kwaśny.",
+ time:"instant",timeLabel:"Natychmiast",
+ cons:"Wytrącenie.",
+ never:false},
+
+{cat:"A",pair:"Midazolam + NaHCO₃ (ta sama linia)",
+ mech:"Midazolam kwaśny (pH 3,5) + NaHCO₃ zasadowy → wytrącenie.",
+ time:"instant",timeLabel:"Natychmiast",
+ cons:"Biały osad. Utrata midazolamu.",
+ never:false},
+
+{cat:"A",pair:"Midazolam + furosemid (ta sama linia)",
+ mech:"Jak wyżej.",
+ time:"instant",timeLabel:"Natychmiast",
+ cons:"Wytrącenie w trójniku.",
+ never:false},
+
+{cat:"A",pair:"Midazolam + amiodaron (w pojemniku/strzykawce)",
+ mech:"Różne pH + nośniki. Amiodaron w G5, midazolam kwaśny → wytrącenie.",
+ time:"instant",timeLabel:"Natychmiast przy mieszaniu",
+ cons:"Wytrącenie. Utrata leków.",
+ never:false},
+
+{cat:"A",pair:"Diazepam + NaCl 0,9%",
+ mech:"Diazepam nierozpuszczalny w wodzie → wytrącenie w NaCl natychmiast.",
+ time:"instant",timeLabel:"Natychmiast",
+ cons:"Widoczne zmętnienie. Utrata leku.",
+ never:true},
+
+{cat:"A",pair:"Diazepam + zestaw PVC",
+ mech:"Adsorpcja do PVC — diazepam penetruje plastyfikator DEHP.",
+ time:"delay",timeLabel:"Narastające (minuty–godziny)",
+ cons:"Utrata 80–90% dawki. Brak efektu terapeutycznego przy pozornie prawidłowym wlewie.",
+ never:true},
+
+{cat:"A",pair:"Kaspofungina + glukoza 5% / 10%",
+ mech:"Kaspofungina agreguje amorficznie przy pH G5 (~5) → utrata struktury aktywnej.",
+ time:"instant",timeLabel:"Natychmiast",
+ cons:"Nieaktywna kaspofungina. Brak efektu przeciwgrzybiczego.",
+ never:true},
+
+{cat:"A",pair:"CaCl₂ + NaHCO₃ (ta sama linia)",
+ mech:"Ca²⁺ + CO₃²⁻ → CaCO₃ (nierozpuszczalny).",
+ time:"instant",timeLabel:"Natychmiast",
+ cons:"Wytrącenie CaCO₃. Zator.",
+ never:false},
+
+{cat:"A",pair:"CaCl₂ + fosforany (TPN, mieszaniny odżywcze)",
+ mech:"Ca²⁺ + PO₄³⁻ → Ca₃(PO₄)₂ nierozpuszczalny.",
+ time:"instant",timeLabel:"Natychmiast lub po czasie",
+ cons:"Zator mikrokrystaliczny. Uszkodzenie naczyń.",
+ never:false},
+
+{cat:"A",pair:"CaCl₂ + acetylocysteina (ta sama linia)",
+ mech:"Grupy tiolowe NAC chelatują Ca²⁺ → wytrącenie kompleksów.",
+ time:"instant",timeLabel:"Natychmiast",
+ cons:"Wytrącenie. Utrata obu leków.",
+ never:false},
+
+{cat:"A",pair:"Propofol + rozcieńczanie (jakimkolwiek roztworem)",
+ mech:"Propofol jest gotową emulsją lipidową — nie rozcieńcza się. Rozcieńczenie NaCl lub G5 destabilizuje emulsję O/W → rozdzielenie faz. Kontakt z elektrolitami w linii wspólnej może przyspieszyć destabilizację.",
+ time:"instant",timeLabel:"Natychmiast przy rozcieńczaniu",
+ cons:"Zerwanie emulsji. Tłuste krople. Ryzyko zatoru lipidowego. Propofol podaje się nierozcieńczony przez dedykowaną linię.",
+ never:false},
+
+{cat:"A",pair:"Propofol + aminoglikozydy (Y-site lub pojemnik)",
+ mech:"Jony dwuwartościowe aminoglikozydów destabilizują emulsję.",
+ time:"instant",timeLabel:"Minuty",
+ cons:"Zerwanie emulsji.",
+ never:false},
+
+{cat:"A",pair:"Propofol + pip+tazobaktam (ta sama linia)",
+ mech:"Niezgodność emulsji z roztworami o wysokiej zawartości elektrolitów.",
+ time:"instant",timeLabel:"Minuty",
+ cons:"Zerwanie emulsji.",
+ never:false},
+
+{cat:"A",pair:"TMP+SMX + leki kwaśne (midazolam, haloperydol) — ta sama linia",
+ mech:"TMP+SMX pH 9,5–10,5 → wytrącenie sulfametoksazolu przy kontakcie z pH <8.",
+ time:"instant",timeLabel:"Natychmiast",
+ cons:"Krystalizacja siarczanów. Zator.",
+ never:false},
+
+{cat:"A",pair:"Esomeprazol + leki kwaśne w linii (midazolam, haloperydol, noradrenalina)",
+ mech:"Esomeprazol pH 9–10 → natychmiastowe wytrącenie przy kontakcie z lekami kwaśnymi w dead space.",
+ time:"instant",timeLabel:"Natychmiast",
+ cons:"Wytrącenie w trójniku. Utrata leków.",
+ never:false},
+
+{cat:"A",pair:"Haloperydol + furosemid (ta sama linia)",
+ mech:"pH 3,5 (haloperydol) + pH 9 (furosemid) → wytrącenie.",
+ time:"instant",timeLabel:"Natychmiast",
+ cons:"Biały osad. Utrata obu leków.",
+ never:false},
+
+{cat:"A",pair:"Acetylocysteina + amikacyna (ta sama linia)",
+ mech:"Grupy tiolowe NAC reagują z aminoglikozydami → wytrącenie.",
+ time:"instant",timeLabel:"Natychmiast",
+ cons:"Utrata amikacyny i NAC.",
+ never:false},
+
+{cat:"A",pair:"Monofer + glukoza 5%",
+ mech:"Żelazo izomaltozydowe wymaga środowiska NaCl — G5 destabilizuje kompleks.",
+ time:"instant",timeLabel:"Szybko",
+ cons:"Niestabilność preparatu. Utrata żelaza.",
+ never:true},
+
+{cat:"A",pair:"Fibryga / Octaplex + jakikolwiek lek IV",
+ mech:"Białka czynników krzepnięcia denaturują przy kontakcie z niekompatybilnym środowiskiem.",
+ time:"instant",timeLabel:"Natychmiast",
+ cons:"Utrata aktywności prokoagulacyjnej. Brak efektu hemostatycznego.",
+ never:true},
+
+{cat:"A",pair:"Nitrogliceryna + zestaw PVC",
+ mech:"Nitrogliceryna lipofilna penetruje plastyfikator DEHP w PVC.",
+ time:"delay",timeLabel:"Narastające od pierwszych minut",
+ cons:"Utrata 50–80% dawki. Pozorna terapia antyanginalnej/hipotensyjna.",
+ never:true},
+
+{cat:"A",pair:"Amiodaron + zestaw PVC",
+ mech:"Adsorpcja amiodaronu + ekstrakcja DEHP z PVC do roztworu.",
+ time:"delay",timeLabel:"Narastające",
+ cons:"Utrata dawki amiodaronu + narażenie na toksyczny plastyfikator DEHP.",
+ never:true},
+
+{cat:"A",pair:"Nimodypina + zestaw PVC",
+ mech:"Jak nitrogliceryna — adsorpcja + ekstrakcja DEHP.",
+ time:"delay",timeLabel:"Narastające",
+ cons:"Utrata dawki + DEHP.",
+ never:true},
+
+// ===== B: CHEMICZNE =====
+{cat:"B",pair:"Meropenem + NaHCO₃ (ta sama linia)",
+ mech:"NaHCO₃ pH zasadowy katalizuje hydrolizę pierścienia beta-laktamowego meropenemu.",
+ time:"instant",timeLabel:"Minuty",
+ cons:"Degradacja meropenemu. Brak aktywności przeciwbakteryjnej.",
+ never:false},
+
+{cat:"B",pair:"Meropenem + glukoza 5% (wlew >1h w 25°C)",
+ mech:"Kwaśne pH G5 (~5) katalizuje hydrolizę pierścienia beta-laktamowego.",
+ time:"delay",timeLabel:"Po 1h w temperaturze pokojowej",
+ cons:"Lek degraduje bez zmiany wyglądu. Pozorna terapia meropenemem przy ciągłym wlewie.",
+ never:false},
+
+{cat:"B",pair:"Katecholaminy (noradrenalina, adrenalina, dopamina, dobutamina) + NaHCO₃",
+ mech:"Oksydacja pierścienia katecholowego w pH >8 → produkty nieaktywne (adrenochrom i analogi).",
+ time:"instant",timeLabel:"Sekundy",
+ cons:"Natychmiastowa inaktywacja leku presyjnego. Pacjent we wstrząsie bez aktywnego leku — bez widocznych zmian w linii.",
+ never:true},
+
+{cat:"A",pair:"Katecholaminy (noradrenalina, adrenalina, dobutamina) + furosemid (ta sama linia)",
+ mech:"Furosemid pH 9 tworzy środowisko zasadowe — wytrącenie katecholamin możliwe. Mechanizm RÓŻNY od NaHCO₃: furosemid nie oksyduje katecholamin, lecz zmiana pH może powodować wytrącenie. Kliniczne znaczenie mniej pewne niż dla NaHCO₃.",
+ time:"instant",timeLabel:"Minuty do godzin",
+ cons:"Możliwe wytrącenie i utrata leku. Z ostrożności: nie podawać przez tę samą linię.",
+ never:false},
+
+{cat:"B",pair:"Ampicylina / Amp+sulbaktam + amikacyna",
+ mech:"Beta-laktam otwiera pierścień aminoglikozydu → inaktywacja. Wzajemna.",
+ time:"delay",timeLabel:"Minuty–godziny w kontakcie",
+ cons:"Utrata aktywności amikacyny. Terapia zakażenia pozorna.",
+ never:true},
+
+{cat:"B",pair:"Insulina + NaHCO₃",
+ mech:"Insulina denaturuje w pH zasadowym.",
+ time:"delay",timeLabel:"Minuty",
+ cons:"Utrata aktywności insuliny.",
+ never:false},
+
+{cat:"B",pair:"Metamizol (rozcieńczony >1h przed podaniem)",
+ mech:"Hydroliza 4-metyloaminoantypiryny — degradacja aktywnego metabolitu w roztworze wodnym.",
+ time:"delay",timeLabel:"Po 1h od rozcieńczenia",
+ cons:"Lek nieaktywny analgetycznie. Podanie starego roztworu = brak efektu przeciwbólowego.",
+ never:false},
+
+{cat:"B",pair:"Tigecyklina + ekspozycja na światło",
+ mech:"Fotooksydacja chromoforu tetracyklinowego → produkty bez aktywności.",
+ time:"delay",timeLabel:"Minuty przy bezpośrednim świetle",
+ cons:"Lek nieaktywny. Bez zmiany barwy — błąd nierozpoznany.",
+ never:false},
+
+{cat:"B",pair:"Kanavit (witamina K) + ekspozycja na światło",
+ mech:"Fotodegradacja filochinonu — rozpad struktury.",
+ time:"delay",timeLabel:"Minuty",
+ cons:"Utrata aktywności. Brak efektu koagulacyjnego.",
+ never:false},
+
+{cat:"B",pair:"Noradrenalina / adrenalina + ekspozycja na światło (bez osłony przez długi czas)",
+ mech:"Fotooksydacja katecholaminy → adrenochrom.",
+ time:"delay",timeLabel:"Godziny",
+ cons:"Utrata aktywności presyjnej. Roztwór różowieje/brązowieje.",
+ never:false},
+
+{cat:"B",pair:"Teofilina + acetylocysteina / witamina C",
+ mech:"Środowisko kwaśne (NAC, wit.C) degraduje teofilinę.",
+ time:"delay",timeLabel:"Godziny",
+ cons:"Utrata aktywności teofiliny.",
+ never:false},
+
+{cat:"B",pair:"NaHCO₃ + ampicylina / meropenem (ta sama linia)",
+ mech:"Hydroliza pierścienia beta-laktamowego w środowisku zasadowym.",
+ time:"instant",timeLabel:"Minuty",
+ cons:"Degradacja antybiotyku. Pozorna terapia.",
+ never:false},
+
+{cat:"B",pair:"Insulina + adsorpcja PVC (bez saturacji zestawu)",
+ mech:"Insulina adsorpcja do ściany zestawu PVC — nie degradacja, lecz utrata dawki.",
+ time:"delay",timeLabel:"Pierwsze 30–60 minut wlewu",
+ cons:"Utrata 20–30% dawki przy każdym nowym zestawie bez saturacji. Hiperglikemia przy pozornie prawidłowym wlewie.",
+ never:false},
+
+// ===== C: KLINICZNE =====
+{cat:"C",pair:"Amiodaron + haloperydol (jednoczesne stosowanie)",
+ mech:"Oba blokują kanały IKr (hERG) → addytywne wydłużenie QT. UWAGA: to interakcja farmakodynamiczna — działa niezależnie od drogi/linii podania. Fizycznie mogą być podawane przez tę samą linię (brak danych o wytrąceniu Y-site), ale jednoczesne stosowanie jest klinicznie niebezpieczne.",
+ time:"delay",timeLabel:"Godziny do doby",
+ cons:"Torsades de Pointes → migotanie komór → NZK. Ryzyko rośnie przy hipokaliemii i hipomagnezemii.",
+ never:false},
+
+{cat:"C",pair:"Amiodaron + flukonazol",
+ mech:"Addytywne QT + flukonazol hamuje CYP2C8/3A4 → wzrost stężenia amiodaronu.",
+ time:"delay",timeLabel:"Godziny do dni",
+ cons:"TdP, migotanie komór.",
+ never:false},
+
+{cat:"C",pair:"Haloperydol + flukonazol",
+ mech:"Addytywne QT + flukonazol hamuje CYP3A4 → wzrost stężenia haloperydolu.",
+ time:"delay",timeLabel:"Godziny",
+ cons:"TdP.",
+ never:false},
+
+{cat:"C",pair:"Digoksyna + amiodaron (jednoczesne stosowanie)",
+ mech:"Amiodaron hamuje P-glikoproteiny i CYP2C9 → stężenie digoksyny rośnie 2×.",
+ time:"delay",timeLabel:"24–72h",
+ cons:"Toksyczność digoksyny: bradykardia, blok AV, NZK. Niezależne od linii IV.",
+ never:false},
+
+{cat:"C",pair:"Flukonazol + midazolam (jednoczesne stosowanie)",
+ mech:"Flukonazol silnie hamuje CYP3A4 → midazolam metabolizowany 3–5× wolniej.",
+ time:"delay",timeLabel:"Kilka godzin",
+ cons:"Nadmierna sedacja, depresja oddechowa, niemożność wybudzenia. Klinicznie: prolongowana sedacja w OIT.",
+ never:false},
+
+{cat:"C",pair:"Flukonazol + fentanyl/sufentanyl (jednoczesne stosowanie)",
+ mech:"Flukonazol hamuje CYP3A4 → wolniejszy metabolizm opioidów.",
+ time:"delay",timeLabel:"Kilka godzin",
+ cons:"Nadmierna analgosedacja. Depresja oddechowa.",
+ never:false},
+
+{cat:"C",pair:"Meropenem + kwas walproinowy (jednoczesne stosowanie)",
+ mech:"Meropenem hamuje hydroksylazę VPA + nasila glukuronidację → VPA spada 60–100%. UWAGA: to interakcja farmakokinetyczna, niezależna od tego, przez którą linię są podawane. Fizycznie mogą być podawane przez tę samą linię.",
+ time:"delay",timeLabel:"24–48h",
+ cons:"Wznowa napadów padaczkowych, stan padaczkowy. Brak zmiany wyglądu — cicha utrata kontroli nad epilepsją. Monitorowanie VPA obowiązkowe. Rozważyć zmianę antybiotyku lub AED.",
+ never:false},
+
+{cat:"C",pair:"Klindamycyna — szybki bolus lub wlew niekontrolowany",
+ mech:"Przy szybkim wlewie lub bolusie klindamycyna powoduje blok nerwowo-mięśniowy i działanie kardiotoksyczne (zaburzenia przewodzenia). Opisywano ciężkie zdarzenia hemodynamiczne i zatrzymanie krążenia przy zbyt szybkim podaniu IV.",
+ time:"instant",timeLabel:"Minuty",
+ cons:"Ciężkie zaburzenia hemodynamiczne, blok nerwowo-mięśniowy, zatrzymanie oddychania, potencjalnie NZK. Minimum: 600 mg w 60 min przez pompę.",
+ never:true},
+
+{cat:"C",pair:"Fenytoina — podanie >50 mg/min",
+ mech:"Bezpośredni kardiotoksyczny efekt fenytoiny przy wysokich szybkościach — blok przewodzenia.",
+ time:"instant",timeLabel:"Minuty",
+ cons:"Asystolia, głęboka hipotensja. NZK.",
+ never:true},
+
+{cat:"C",pair:"Teofilina — szybki bolus lub niekontrolowany wlew",
+ mech:"Wąski indeks terapeutyczny. Toksyczność przy gwałtownym wzroście stężenia.",
+ time:"instant",timeLabel:"Minuty",
+ cons:"Arytmie komorowe, drgawki, zgon.",
+ never:true},
+
+{cat:"C",pair:"Wankomycyna — podanie szybsze niż 60 min/1g",
+ mech:"Bezpośrednia degranulacja mastocytów i bazofilów przez wankomycynę — mechanizm niezależny od IgE (pseudoalergia). Efekt proporcjonalny do szybkości infuzji i stężenia.",
+ time:"instant",timeLabel:"Minuty od przyspieszenia",
+ cons:"Red Man Syndrome: erytema twarzy/szyi/tułowia, świąd, hipotensja, tachykardia, skurcz oskrzeli. U niestabilnego pacjenta — dekompensacja hemodynamiczna. Przy stężeniu >5 mg/ml ryzyko wyższe. Zwolnienie wlewu zwykle odwraca reakcję.",
+ never:false},
+
+{cat:"C",pair:"Bupiwakaina IV — jakakolwiek dawka",
+ mech:"Blok kanałów Na⁺ mięśnia sercowego + kumulacja w tkance sercowej (lipofilność).",
+ time:"instant",timeLabel:"Sekundy do minut",
+ cons:"NZK oporne na resuscytację standardową. Antidotum: Intralipid 20%.",
+ never:true},
+
+{cat:"C",pair:"Metamizol — szybki bolus (undiluted lub <15 min)",
+ mech:"Histaminoliberacja → gwałtowna hipotensja.",
+ time:"instant",timeLabel:"Minuty",
+ cons:"Ciężka hipotensja, szczególnie u niestabilnych hemodynamicznie.",
+ never:false},
+
+{cat:"C",pair:"Morfina — szybki bolus",
+ mech:"Histaminoliberacja przy wysokich peak-stężeniach.",
+ time:"instant",timeLabel:"Minuty",
+ cons:"Hipotensja, skurcz oskrzeli — szczególnie u astmatyków i POCHP.",
+ never:false},
+
+{cat:"C",pair:"Fentanyl/sufentanyl — duże dawki szybko",
+ mech:"Działanie na receptory opioidowe mięśni oddechowych i j. ogoniastego.",
+ time:"instant",timeLabel:"Minuty",
+ cons:"Rigid chest syndrome — niemożność wentylacji workiem. Wymaga naloksonu i/lub zwiotczenia.",
+ never:false},
+
+{cat:"C",pair:"TMP+SMX + kwas walproinowy (jednoczesne stosowanie)",
+ mech:"TMP hamuje metabolizm VPA → wzrost stężenia VPA.",
+ time:"delay",timeLabel:"Dni",
+ cons:"Toksyczność VPA: hepatotoksyczność, encefalopatia.",
+ never:false},
+
+{cat:"C",pair:"Furosemid + digoksyna (pośrednio — hipokaliemia)",
+ mech:"Furosemid → hipokaliemia → nasilona toksyczność digoksyny.",
+ time:"delay",timeLabel:"Godziny",
+ cons:"Arytmie, NZK z powodu toksyczności digoksyny.",
+ never:false},
+
+{cat:"C",pair:"Albumina 20% + fenytoina (jednoczesne stosowanie)",
+ mech:"Albumina wiąże >90% fenytoiny → zmiana wolnej frakcji aktywnej.",
+ time:"delay",timeLabel:"Godziny",
+ cons:"Zmieniona farmakodynamika fenytoiny. Trudność interpretacji stężeń. Możliwa toksyczność lub brak efektu.",
+ never:false},
+];
+
+const NEVER = BL.filter(x=>x.never);
+
+function blItem(item, idx){
+  const catCls = item.cat;
+  const tLabel = item.time==='instant' ? `<span class="t-instant">${item.timeLabel}</span>` : `<span class="t-delay">${item.timeLabel}</span>`;
+  return `<div class="bl-item">
+    <div class="bl-head ${catCls}" onclick="toggleBl(${idx})">
+      <div class="bl-title">${item.pair}</div>
+      <span class="bx b${item.cat}">${item.cat==='A'?'Fizyczna':item.cat==='B'?'Chemiczna':'Kliniczna'}</span>
+      ${item.never?`<span class="bx bN">NIGDY</span>`:''}
+    </div>
+    <div class="bl-body" id="blb_${idx}">
+      <div class="bl-tags">
+        <span class="bx b${item.cat}">${item.cat==='A'?'Niezgodność fizyczna':item.cat==='B'?'Niezgodność chemiczna':'Interakcja kliniczna'}</span>
+        ${item.never?`<span class="bx bN">NIGDY W JEDNEJ LINII</span>`:''}
+      </div>
+      <div class="bl-row">
+        <div class="bl-cell"><b>Mechanizm</b>${item.mech}</div>
+        <div class="bl-cell"><b>Czas</b>${tLabel}<br>${item.time==='instant'?'Nie ma bezpiecznego marginesu':'Może przebiegać bez widocznych zmian'}</div>
+        <div class="bl-cell"><b>Konsekwencja kliniczna</b>${item.cons}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleBl(idx){
+  const b=document.getElementById('blb_'+idx);
+  b.classList.toggle('open');
+}
+
+function renderList(panelId, items){
+  const el=document.getElementById('p-'+panelId);
+  el.innerHTML=`
+    <div class="row-f">
+      <input type="text" id="q_${panelId}" placeholder="Szukaj pary..." oninput="filterList('${panelId}')">
+      <select id="s_${panelId}" onchange="filterList('${panelId}')">
+        <option value="">Wszystkie</option>
+        <option value="instant">Natychmiast</option>
+        <option value="delay">Opóźnione</option>
+      </select>
+    </div>
+    <div class="cnt" id="cnt_${panelId}"></div>
+    <div id="list_${panelId}"></div>`;
+  filterList(panelId, items);
+}
+
+function filterList(panelId, sourceItems){
+  const items = sourceItems || (panelId==='all' ? BL : BL.filter(x=>x.cat===panelId));
+  const q=(document.getElementById('q_'+panelId)?.value||'').toLowerCase();
+  const s=document.getElementById('s_'+panelId)?.value||'';
+  const filtered=items.filter(x=>(!q||x.pair.toLowerCase().includes(q)||x.mech.toLowerCase().includes(q))&&(!s||x.time===s));
+  document.getElementById('cnt_'+panelId).textContent='Wyświetlono: '+filtered.length+' kombinacji';
+  const globalIdx = (item)=>BL.indexOf(item);
+  document.getElementById('list_'+panelId).innerHTML=filtered.map(item=>blItem(item, globalIdx(item))).join('');
+}
+
+function renderNever(){
+  const el=document.getElementById('p-never');
+  el.innerHTML=`<div class="section-title">Lista NIGDY W JEDNEJ LINII — ${NEVER.length} kombinacji bezwzględnie zakazanych</div>
+    <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:12px">Bez warunków. Bez "raczej". Bez wyjątków. Każda z tych kombinacji — w tej samej linii, przez ten sam port, jednocześnie lub bez odpowiedniego przepłukania — jest niedopuszczalna. <b>Uwaga:</b> Interakcje czysto farmakodynamiczne (np. amiodaron + haloperydol, meropenem + VPA) nie są tutaj ujęte, bo dotyczą jednoczesnego stosowania niezależnie od linii — patrz zakładka C — Kliniczne.</div>
+    <div class="never-grid">
+    ${NEVER.map(item=>`
+      <div class="never-card">
+        <div class="nc-pair">${item.pair}</div>
+        <div class="nc-why">${item.mech}</div>
+        <div class="nc-time">${item.timeLabel}</div>
+        <div class="nc-cons">${item.cons}</div>
+      </div>`).join('')}
+    </div>`;
+}
+
+function show(id){
+  ['all','A','B','C','never'].forEach(x=>document.getElementById('p-'+x).classList.remove('active'));
+  document.getElementById('p-'+id).classList.add('active');
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['all','A','B','C','never'][i]===id));
+  if(id==='all'&&!document.getElementById('p-all').innerHTML) renderList('all',BL);
+  if(id==='A'&&!document.getElementById('p-A').innerHTML) renderList('A',BL.filter(x=>x.cat==='A'));
+  if(id==='B'&&!document.getElementById('p-B').innerHTML) renderList('B',BL.filter(x=>x.cat==='B'));
+  if(id==='C'&&!document.getElementById('p-C').innerHTML) renderList('C',BL.filter(x=>x.cat==='C'));
+  if(id==='never'&&!document.getElementById('p-never').innerHTML) renderNever();
+}
+
+renderList('all',BL);
+</script>

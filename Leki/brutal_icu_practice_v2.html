@@ -1,0 +1,340 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);font-size:13px;color:var(--color-text-primary)}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;padding-bottom:8px;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:1rem}
+.tab{padding:6px 14px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);cursor:pointer;font-size:12px;background:transparent;color:var(--color-text-secondary)}
+.tab.active{background:var(--color-background-secondary);color:var(--color-text-primary);font-weight:500}
+.panel{display:none}.panel.active{display:block}
+.card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 14px;margin-bottom:8px}
+.card.red{border-left:3px solid #E24B4A;background:var(--color-background-danger)}
+.card.amber{border-left:3px solid #EF9F27;background:var(--color-background-warning)}
+.card.green{border-left:3px solid #639922;background:var(--color-background-success)}
+.card.blue{border-left:3px solid #378ADD;background:var(--color-background-info)}
+.card.gray{border-left:3px solid var(--color-border-primary);background:var(--color-background-secondary)}
+.card-title{font-size:12px;font-weight:500;margin-bottom:5px}
+.card-body{font-size:11px;line-height:1.6;color:var(--color-text-secondary)}
+.card-body b{color:var(--color-text-primary)}
+.card.red .card-title{color:var(--color-text-danger)}
+.card.amber .card-title{color:var(--color-text-warning)}
+.card.green .card-title{color:var(--color-text-success)}
+.card.blue .card-title{color:var(--color-text-info)}
+.b{display:inline-block;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:500}
+.br{background:#FCEBEB;color:#A32D2D}.bg{background:#EAF3DE;color:#3B6D11}
+.bo{background:#FAEEDA;color:#854F0B}.bi{background:#E6F1FB;color:#0C447C}
+.bx{background:#F1EFE8;color:#5F5E5A}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;align-items:baseline}
+.section-h{font-size:11px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.04em;margin:14px 0 6px}
+@media(prefers-color-scheme:dark){
+.br{background:#501313;color:#F7C1C1}.bg{background:#173404;color:#C0DD97}
+.bo{background:#412402;color:#FAC775}.bi{background:#042C53;color:#B5D4F4}
+.bx{background:#2C2C2A;color:#B4B2A9}
+}
+</style>
+
+<h2 style="position:absolute;width:1px;height:1px;overflow:hidden">Brutalna praktyka OIT — brak lumenów, pacjent niestabilny</h2>
+
+<div class="tabs">
+  <button class="tab active" onclick="show('connect')">Co łączę</button>
+  <button class="tab" onclick="show('never')">Czego nigdy</button>
+  <button class="tab" onclick="show('accept')">Akceptowalna strata</button>
+  <button class="tab" onclick="show('damage')">Ograniczenie szkód</button>
+  <button class="tab" onclick="show('bolus')">Bolus zamiast linii</button>
+</div>
+
+<div id="p-connect" class="panel active"></div>
+<div id="p-never" class="panel"></div>
+<div id="p-accept" class="panel"></div>
+<div id="p-damage" class="panel"></div>
+<div id="p-bolus" class="panel"></div>
+
+<script>
+function show(id){
+  ['connect','never','accept','damage','bolus'].forEach(x=>document.getElementById('p-'+x).classList.remove('active'));
+  document.getElementById('p-'+id).classList.add('active');
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['connect','never','accept','damage','bolus'][i]===id));
+}
+
+document.getElementById('p-connect').innerHTML=`
+<div class="section-h">Co połączę mimo ryzyka — priorytet ratowania życia</div>
+
+<div class="card amber">
+  <div class="card-title">Noradrenalina + midazolam+fentanyl — Y-site przez jeden port</div>
+  <div class="card-body">
+    Trissel's potwierdza Y-site. Robię to codziennie. <b>Warunek:</b> lumen dystalny, niski przepływ nośnika minimum 5 ml/h, bez dodatkowych leków przez ten port podczas aktywnego wlewu.
+    <br><br><b>Ryzyko które akceptuję:</b> kontaminacja hemodynamiczna przy zmianie dawki jednego z leków przez wpływ na przepływ drugiego. Monitoruję BP/HR i odpowiednio titruje.
+  </div>
+</div>
+
+<div class="card amber">
+  <div class="card-title">Noradrenalina + dobutamina — Y-site</div>
+  <div class="card-body">
+    Trissel's: zgodne. Klinicznie stosowane. <b>Warunek:</b> oddzielne strzykawki i pompy, tylko Y-site — nie mieszam w jednym pojemniku. Każda zmiana dawki jednej z nich wpływa na przepływ drugiej przez port — uwzględniam to w ocenie odpowiedzi hemodynamicznej.
+  </div>
+</div>
+
+<div class="card amber">
+  <div class="card-title">Antybiotyki sekwencyjnie przez jeden lumen — pip+taz → flush → wankomycyna → flush → meropenem</div>
+  <div class="card-body">
+    <b>Zasada bezwzględna:</b> 20 ml NaCl między każdym. Tylko sekwencyjnie, nigdy jednocześnie. Amikacyny tu nie ma — amikacyna idzie przez wenflon obwodowy, to jedyna alternatywa.
+    <br><br><b>Ryzyko które akceptuję:</b> marginalne resztki w dead space. Przy 20 ml flush — akceptowalne. Monitoruję TDM amikacyny.
+  </div>
+</div>
+
+<div class="card amber">
+  <div class="card-title">Midazolam+fentanyl (strzykawka) + bolus deksametazonu lub hydrokortyzon przez ten sam lumen</div>
+  <div class="card-body">
+    Trissel's: zgodne Y-site. <b>Warunek:</b> bez furosemidu i NaHCO₃ przez ten lumen. Bolus kortykosteroidu przez linię sedacyjną — fizycznie bezpieczny przy tych lekach.
+  </div>
+</div>
+
+<div class="card amber">
+  <div class="card-title">Lewetyracetam przez dowolny dostępny lumen (sekwencyjnie z prawie wszystkim)</div>
+  <div class="card-body">
+    Najszerzej kompatybilny lek IV w tym zestawieniu. W sytuacji braku lumenów — lewetyracetam dorzucam do niemal każdej linii (poza fenytoiną i propofol). Bezproblemowy.
+  </div>
+</div>
+
+<div class="card amber">
+  <div class="card-title">Furosemid bolus przez lumen objawowy — gdy inne wlewy są wstrzymane na chwilę</div>
+  <div class="card-body">
+    Zatrzymuję aktywny wlew, przepłukuję 10 ml NaCl, daję furosemid, przepłukuję 10 ml NaCl, wznawiam wlew. <b>Trwa 3 minuty.</b> Akceptowalne.
+  </div>
+</div>`;
+
+document.getElementById('p-never').innerHTML=`
+<div class="section-h">Czego nie połączę nigdy — nawet przy braku lumenów, nawet przy NZK</div>
+
+<div class="card red">
+  <div class="card-title">Amikacyna przez lumen z aktywnym pip+taz lub ceftriaksonem</div>
+  <div class="card-body">
+    Nigdy. Nie ma wyjątku. Inaktywacja w dead space trójnika — pacjent myśli że dostał aminoglikozyd, ale dostał nieaktywny produkt. <b>Rozwiązanie zawsze dostępne:</b> wenflon 18G w grzbiet ręki lub stopę. 2 minuty i problem rozwiązany.
+  </div>
+</div>
+
+<div class="card red">
+  <div class="card-title">NaHCO₃ przez linię z aktywną katecholaminą</div>
+  <div class="card-body">
+    Nigdy. Inaktywacja noradrenaliny w sekundach bez widocznych zmian w linii. Pacjent we wstrząsie traci lek presyjny, a ty nie wiesz dlaczego BP nie reaguje. <b>Rozwiązanie:</b> NaHCO₃ przez wenflon lub inny lumen. Jeśli nie ma — NaHCO₃ czeka. Nie katecholamina.
+  </div>
+</div>
+
+<div class="card red">
+  <div class="card-title">Ceftriakson przez ten sam port co CaCl₂ — kiedykolwiek, jakkolwiek</div>
+  <div class="card-body">
+    Nigdy. Nawet "tylko chwilę", nawet "po przepłukaniu 30 ml". Dead space trójnika 0,3 ml wystarczy. <b>Rozwiązanie:</b> CaCl₂ przez wenflon lub lumen bez historii ceftriaksonu. Zawsze.
+  </div>
+</div>
+
+<div class="card red">
+  <div class="card-title">Klindamycyna szybciej niż nakazuje protokół — bez pompowanego wlewu</div>
+  <div class="card-body">
+    Nigdy. Opisane NZK przy zbyt szybkim wlewie. Klindamycyna przez grawitację = proszenie się o problem. <b>Rozwiązanie:</b> jeśli nie ma pompy — klindamycyna czeka aż pompa się zwolni. Nie ma "wyjątku na 5 minut".
+  </div>
+</div>
+
+<div class="card red">
+  <div class="card-title">Fenytoina przez cokolwiek poza dedykowaną linią NaCl</div>
+  <div class="card-body">
+    Nigdy. pH 10–12. Wytrącenie z każdym lekiem. Asystolia przy przekroczeniu 50 mg/min. <b>Rozwiązanie:</b> wenflon. Zawsze znajdę żyłę obwodową. Jeśli nie — ossealne IO.
+  </div>
+</div>
+
+<div class="card red">
+  <div class="card-title">Propofol przez lumen wspólny z aktywnym wlewem</div>
+  <div class="card-body">
+    Nigdy. Zerwanie emulsji + skażenie bakteryjne. <b>Rozwiązanie:</b> jeśli nie ma osobnego lumenu — propofol zastępuję midazolamem. Midazolam jest gorszy farmakologicznie w pewnych sytuacjach, ale bezpieczniejszy logistycznie.
+  </div>
+</div>
+
+<div class="card red">
+  <div class="card-title">Amiodaron w NaCl — jako nośnik do wlewu ciągłego</div>
+  <div class="card-body">
+    Do wlewu ciągłego: nigdy NaCl — wytrącenie. Wyłącznie G5 + non-PVC. Jeśli nie mam G5 non-PVC — szukam alternatywnego leczenia arytmii lub czekam na właściwy nośnik. <b>Uwaga:</b> w NZK amiodaronowy bolus IV bez rozcieńczenia (preparat gotowy) lub z minimalnym G5 jest stosowany i nie dotyczy go ten zakaz — dotyczy on nośnika do wlewu ciągłego.
+  </div>
+</div>
+
+<div class="card red">
+  <div class="card-title">Bupiwakaina IV — w jakiejkolwiek dawce, przez jakąkolwiek linię</div>
+  <div class="card-body">
+    Nigdy. NZK oporne na resuscytację. Intralipid 20% zawsze w pobliżu gdy bupiwakaina jest używana w jakiejkolwiek formie.
+  </div>
+</div>`;
+
+document.getElementById('p-accept').innerHTML=`
+<div class="section-h">Gdzie strata skuteczności jest akceptowalna — hierarchia ważności</div>
+
+<div class="card green">
+  <div class="card-title">Amiodaron przez CVC PVC (zamiast non-PVC) — przy bezpośrednim zagrożeniu życia arytmią</div>
+  <div class="card-body">
+    Adsorpcja amiodaronu do PVC jest udokumentowana, ale jej kliniczne znaczenie przy krótkotrwałym podaniu jest zmienne i zależy od stężenia i czasu kontaktu. <b>Akceptuję</b> przy hemodynamicznie niestabilnej arytmii wymagającej natychmiastowego leczenia — podaję przez dostępną linię, wymieniam na non-PVC przy pierwszej okazji. <b>Uwaga: nie kompensuj automatycznie dawki — brak danych pozwalających na wiarygodne wyliczenie korekty dawki przy adsorpcji PVC.</b> Monitoruj efekt kliniczny i EKG.
+  </div>
+</div>
+
+<div class="card green">
+  <div class="card-title">Tigecyklina bez osłony przez pierwsze minuty (nagłe podanie)</div>
+  <div class="card-body">
+    Fotodegradacja tigecykliny zachodzi bez zmiany barwy roztworu — szybkość zależy od natężenia światła (szczególnie jasne sale OIT). <b>Akceptuję</b> krótkotrwałą ekspozycję wyłącznie przy bezwzględnie nagłym włączeniu terapii, gdy brak czasu na przygotowanie osłony. <b>Natychmiast zakładam osłonę</b> i nie powtarzam tego przy kolejnych dawkach. Nie podaję tigecykliny bez osłony jako rutyny.
+  </div>
+</div>
+
+<div class="card green">
+  <div class="card-title">Insulina bez idealnej saturacji zestawu — gdy glikemia krytyczna</div>
+  <div class="card-body">
+    Strata 20–30% dawki w pierwszych 30 minutach. <b>Akceptuję</b> przy hiperglikemii krytycznej — zaczynam wlew, przepuszczam 30 ml roboczego roztworu (skrócona saturacja), monitoruję glikemię co godzinę i koryguję dawkę wg efektu klinicznego. Nie idealnie, ale bezpiecznie.
+  </div>
+</div>
+
+<div class="card green">
+  <div class="card-title">Kaspofungina przez lumen antybiotyków NaCl (sekwencyjnie, flush NaCl)</div>
+  <div class="card-body">
+    Marginalnie trudniejsze warunki niż dedykowana linia, ale fizycznie bezpieczne gdy lumen jest NaCl i przepłukany. <b>Akceptuję.</b> Strata skuteczności minimalna.
+  </div>
+</div>
+
+<div class="card green">
+  <div class="card-title">Metamizol — rozcieńczony krótko przed podaniem (nie bezpośrednio — wyjątkowo)</div>
+  <div class="card-body">
+    Zalecenie to podanie w ciągu 1h od rozcieńczenia. Dokładna kinetyka degradacji w pierwszych minutach-godzinach nie jest precyzyjnie określona w dostępnych danych klinicznych. <b>Stosuj zasadę:</b> rozcieńczaj bezpośrednio przed podaniem — to jedyna pewna rekomendacja. Nie przygotowuj z wielogodzinnym wyprzedzeniem.
+  </div>
+</div>
+
+<div class="card gray">
+  <div class="card-title">Czego NIE akceptuję jako "straty skuteczności"</div>
+  <div class="card-body">
+    <b>Amikacyna przez lumen beta-laktamowy</b> — tu nie ma "partial loss". Jest albo aktywna albo nie.<br><br>
+    <b>Katecholamina z NaHCO₃ w linii</b> — nie ma "trochę inaktywowana". Jest inaktywowana.<br><br>
+    <b>Fenytoina w G5</b> — nie ma "trochę wytrącona". Są kryształy w żyle.
+  </div>
+</div>`;
+
+document.getElementById('p-damage').innerHTML=`
+<div class="section-h">Jak ograniczę szkody — konkretnie, w kolejności</div>
+
+<div class="card blue">
+  <div class="card-title">1. Wenflon 18G — rozwiązuje 80% problemów z lumenami</div>
+  <div class="card-body">
+    Amikacyna, fenytoina, CaCl₂, NaHCO₃, Fibryga/Octaplex — każdy z tych leków idzie przez wenflon. <b>Założenie wenflonu zajmuje 2 minuty.</b> To jest najszybsza i najtańsza interwencja redukująca ryzyko. Przy niestabilnym pacjencie — grzbiet ręki, przedramię, stopa, żyła szyjna zewnętrzna. Gdziekolwiek.
+  </div>
+</div>
+
+<div class="card blue">
+  <div class="card-title">2. Sekwencja zamiast jednoczesności — zawsze tam gdzie możliwe</div>
+  <div class="card-body">
+    Pip+taz podaję co 8h przez 30 min. Amikacyna raz dziennie. Ceftriakson raz dziennie. <b>Te leki rzadko muszą iść naprawdę jednocześnie.</b> Planuję sekwencję tak żeby okna ich aktywności w dead space nie zachodziły na siebie. 20 ml NaCl między nimi — wystarczy przy odpowiednim odstępie.
+  </div>
+</div>
+
+<div class="card blue">
+  <div class="card-title">3. Minimalizacja dead space — fizycznie</div>
+  <div class="card-body">
+    Skracam dren od trójnika do portu CVC do minimum. Każdy centymetr to dead space. Przy 50 cm drenu 1 mm ID — to 0,4 ml. Przy 20 cm — 0,16 ml. <b>Różnica małostkowa w normalnych warunkach, istotna przy lekach presyjnych i klindamycynie.</b>
+  </div>
+</div>
+
+<div class="card blue">
+  <div class="card-title">4. Priming każdej nowej strzykawki — bez wyjątku</div>
+  <div class="card-body">
+    Zmiana strzykawki noradrenaliny: nowa strzykawka podłączona do przedłużacza, tłok przesunięty aż lek pojawi się na końcówce złącza — <b>zanim</b> podłączę do pacjenta. Eliminuje opóźnienie i niecelowy bolus. 20 sekund, każda zmiana.
+  </div>
+</div>
+
+<div class="card blue">
+  <div class="card-title">5. Jeden lumen presyjny — nienaruszalny</div>
+  <div class="card-body">
+    Przy braku lumenów: lumen z katecholaminą jest <b>zamknięty dla wszystkiego innego</b>. Nie wolno mi się skusić żeby "tylko na chwilę" dać NaHCO₃ przez ten port. Zanim cokolwiek dam przez ten lumen — katecholamina musi być wstrzymana, linia przepłukana 20 ml, a to nie jest opcja przy niestabilnym pacjencie.
+  </div>
+</div>
+
+<div class="card blue">
+  <div class="card-title">6. Zamienniki farmakologiczne gdy brak bezpiecznej drogi</div>
+  <div class="card-body">
+    Propofol niemożliwy bez dedykowanej linii → <b>midazolam</b>.<br>
+    Klindamycyna bez pompy → <b>odroczenie do zwolnienia pompy</b> (nie gram grawitacją).<br>
+    Diazepam bez non-PVC → <b>lorazepam</b> (mniejsza adsorpcja).<br>
+    Fenytoina bez osobnej linii → <b>lewetyracetam</b> jeśli wskazania pozwalają.<br><br>
+    To są decyzje kliniczne, nie porażka. Zmiana leku na bezpieczniejszą logistycznie opcję jest lepsza niż podanie właściwego leku w warunkach stwarzających ryzyko.
+  </div>
+</div>`;
+
+document.getElementById('p-bolus').innerHTML=`
+<div class="section-h">Które leki podam w bolusie zamiast kombinować z linią — decyzja operacyjna</div>
+
+<div class="card green">
+  <div class="card-title">Hydrokortyzon 100–200 mg — bolus 1–2 min, przez dowolny kompatybilny lumen</div>
+  <div class="card-body">
+    Wstrząs septyczny, przełom nadnerczowy — <b>bolus natychmiast</b>. Szeroka kompatybilność. Nie trzeba osobnej linii. Podaję przez lumen objawowy, obserwuję 2 minuty.
+  </div>
+</div>
+
+<div class="card green">
+  <div class="card-title">Adrenalina 1 mg — bolus IV przez cokolwiek, w NZK</div>
+  <div class="card-body">
+    NZK: adrenalina przez dowolną linię, dowolny lumen, wenflon, IO — cokolwiek. <b>Nie ma "złej linii" w NZK.</b> To jedyny moment kiedy reguły kompatybilności schodzą na drugi plan.
+  </div>
+</div>
+
+<div class="card green">
+  <div class="card-title">Kwas traneksamowy 1 g — wolny bolus 10 min przez dowolny kompatybilny lumen</div>
+  <div class="card-body">
+    Masywne krwawienie — TXA podaję przez to co mam. Szeroka kompatybilność. 10 minut, monitoruję BP.
+  </div>
+</div>
+
+<div class="card green">
+  <div class="card-title">CaCl₂ 10 ml 10% — bolus 2–5 min w NZK (asystolia wapniozależna, hiperkaliemia, hipokalcemia)</div>
+  <div class="card-body">
+    Przez lumen wolny od ceftriaksonu. W NZK — przez IO lub wenflon jeśli nie ma innej drogi. <b>Warunek nienaruszalny:</b> nie przez linię z ceftriaksonem — szukaj alternatywnego dostępu przed podaniem.
+  </div>
+</div>
+
+<div class="card green">
+  <div class="card-title">Furosemid 40–80 mg — bolus 2 min przez lumen objawowy</div>
+  <div class="card-body">
+    Obrzęk płuc, krytyczna oligurian — bolus przez lumen D, gdy wlewy wstrzymane na 3 minuty lub gdy tam nie ma kwaśnych leków. Prościej niż organizowanie wlewu.
+  </div>
+</div>
+
+<div class="card green">
+  <div class="card-title">Deksametazon / Dexaven — bolus 1–2 min przez prawie dowolny lumen</div>
+  <div class="card-body">
+    Obrzęk mózgu, anafilaksja, zapalenie opon — bolus przez to co mam. Jedna z najszerszych kompatybilności Y-site. Nie kombinuję z linią.
+  </div>
+</div>
+
+<div class="card green">
+  <div class="card-title">Metoprolol 5 mg — wolny bolus 1–2 min przy tachyarytmii</div>
+  <div class="card-body">
+    Nagłe AF z szybką czynnością — bolus przez lumen objawowy, monitoruję EKG.
+  </div>
+</div>
+
+<div class="card green">
+  <div class="card-title">Lorazepam 4 mg — bolus 2 min w status epilepticus</div>
+  <div class="card-body">
+    Status epilepticus — lorazepam przez wenflon lub dowolny lumen. Szybciej i prościej niż diazepam (który wymaga non-PVC). <b>Lorazepam jest lepszy logistycznie</b> w sytuacji braku lumenów.
+  </div>
+</div>
+
+<div class="card green">
+  <div class="card-title">Morfina 2–4 mg — wolny bolus 2–3 min do analgezji proceduralnej</div>
+  <div class="card-body">
+    Bolesna procedura, ostry ból — bolus przez lumen sedacyjny lub objawowy. Nie organizuję wlewu do analgezji jednorazowej.
+  </div>
+</div>
+
+<div class="card amber">
+  <div class="card-title">NaHCO₃ — bolus przez WENFLON lub lumen wolny od katecholamin, w NZK</div>
+  <div class="card-body">
+    NZK z kwasicą głęboką — daję przez wenflon lub lumen absolutnie oddzielony od presyjnych. <b>Nie przez linię katecholamin nigdy.</b> Jeśli mam tylko jeden lumen z presyjnymi — NaHCO₃ przez IO.
+  </div>
+</div>
+
+<div class="card red">
+  <div class="card-title">Klindamycyna, wankomycyna, teofilina, fenytoina — NIGDY jako przyspieszony bolus zamiast kombinowania z linią</div>
+  <div class="card-body">
+    To nie jest kompromis — to jest zmiana ryzyka na gorsze. Klindamycyna bolus = NZK. Wankomycyna bolus = Red Man + hipotensja u niestabilnego pacjenta. Teofilina bolus = arytmia. Fenytoina szybka = asystolia.<br><br>
+    <b>Dla tych leków:</b> albo mam pompę i czas, albo szukam alternatywy farmakologicznej. Nie "daję szybciej żeby nie kombinować".
+  </div>
+</div>`;
+</script>

@@ -1,0 +1,388 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);font-size:13px;color:var(--color-text-primary)}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;padding-bottom:8px;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:1rem}
+.tab{padding:6px 14px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);cursor:pointer;font-size:12px;background:transparent;color:var(--color-text-secondary)}
+.tab.active{background:var(--color-background-secondary);color:var(--color-text-primary);font-weight:500}
+.panel{display:none}.panel.active{display:block}
+/* Algorithm tree */
+.algo-step{border-left:2px solid var(--color-border-secondary);margin-left:10px;padding-left:14px;margin-bottom:4px}
+.algo-node{border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:8px 12px;margin-bottom:5px;cursor:pointer;font-size:12px}
+.algo-node:hover{background:var(--color-background-secondary)}
+.algo-node.q{border-color:var(--color-border-info);background:var(--color-background-info);color:var(--color-text-info);font-weight:500}
+.algo-node.yes{border-left:3px solid #3B6D11;background:var(--color-background-success);color:var(--color-text-success)}
+.algo-node.no{border-left:3px solid #A32D2D;background:var(--color-background-danger);color:var(--color-text-danger)}
+.algo-node.warn{border-left:3px solid #854F0B;background:var(--color-background-warning);color:var(--color-text-warning)}
+.algo-node.action{border-left:3px solid var(--color-border-primary);font-weight:500}
+.algo-node .sub{font-size:10px;margin-top:3px;opacity:.8;font-weight:400}
+.branch{display:flex;gap:8px;margin:4px 0 4px 10px}
+.branch-arm{flex:1;min-width:0}
+.branch-label{font-size:10px;font-weight:500;margin-bottom:3px;color:var(--color-text-secondary)}
+/* Checklist */
+.cl-section{margin-bottom:14px}
+.cl-head{font-size:12px;font-weight:500;padding:6px 10px;border-radius:var(--border-radius-md) var(--border-radius-md) 0 0;margin-bottom:0}
+.cl-head-d{background:var(--color-background-danger);color:var(--color-text-danger)}
+.cl-head-w{background:var(--color-background-warning);color:var(--color-text-warning)}
+.cl-head-i{background:var(--color-background-info);color:var(--color-text-info)}
+.cl-head-s{background:var(--color-background-success);color:var(--color-text-success)}
+.cl-item{display:flex;gap:10px;align-items:flex-start;padding:6px 10px;border:0.5px solid var(--color-border-tertiary);border-top:none;font-size:11px;line-height:1.5;cursor:pointer;transition:background 0.1s}
+.cl-item:last-child{border-radius:0 0 var(--border-radius-md) var(--border-radius-md)}
+.cl-item:hover{background:var(--color-background-secondary)}
+.cl-item.checked{opacity:.5;text-decoration:line-through}
+.cl-box{width:14px;height:14px;border:0.5px solid var(--color-border-secondary);border-radius:3px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:10px}
+.cl-item.checked .cl-box{background:var(--color-background-success);color:var(--color-text-success);border-color:var(--color-border-success)}
+/* Rules */
+.rule-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:8px 0}
+.rule-col{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden}
+.rule-col-head{padding:6px 10px;font-size:11px;font-weight:500}
+.rule-col-head-g{background:#EAF3DE;color:#3B6D11}.rule-col-head-r{background:#FCEBEB;color:#A32D2D}.rule-col-head-o{background:#FAEEDA;color:#854F0B}
+.rule-item{padding:5px 10px;font-size:10px;line-height:1.5;border-top:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary)}
+.rule-item b{color:var(--color-text-primary)}
+/* Bolus table */
+.scroll{overflow:auto;max-height:520px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md)}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{padding:5px 8px;background:var(--color-background-secondary);font-weight:500;font-size:10px;color:var(--color-text-secondary);border-bottom:0.5px solid var(--color-border-tertiary);text-align:left;position:sticky;top:0;z-index:2}
+td{padding:5px 8px;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top;line-height:1.4}
+tr:hover td{background:var(--color-background-secondary)}
+.b{display:inline-block;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:500;white-space:nowrap}
+.br{background:#FCEBEB;color:#A32D2D}.bo{background:#FAEEDA;color:#854F0B}
+.bg{background:#EAF3DE;color:#3B6D11}.bi{background:#E6F1FB;color:#0C447C}
+.bx{background:#F1EFE8;color:#5F5E5A}
+.row-f{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.row-f input,.row-f select{font-size:12px;padding:5px 9px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary)}
+.row-f input{flex:1;min-width:120px}
+@media(prefers-color-scheme:dark){
+.rule-col-head-g{background:#173404;color:#C0DD97}.rule-col-head-r{background:#501313;color:#F7C1C1}.rule-col-head-o{background:#412402;color:#FAC775}
+.br{background:#501313;color:#F7C1C1}.bo{background:#412402;color:#FAC775}
+.bg{background:#173404;color:#C0DD97}.bi{background:#042C53;color:#B5D4F4}
+.bx{background:#2C2C2A;color:#B4B2A9}
+}
+</style>
+
+<h2 style="position:absolute;width:1px;height:1px;overflow:hidden">Algorytm decyzyjny OIT — lumeny, bolus, kompatybilność, checklista przy łóżku</h2>
+
+<div class="tabs">
+  <button class="tab active" onclick="show('algo')">Algorytmy</button>
+  <button class="tab" onclick="show('rules')">Reguły</button>
+  <button class="tab" onclick="show('bolus')">Bolus — reguły</button>
+  <button class="tab" onclick="show('check')">Checklista</button>
+</div>
+
+<div id="p-algo" class="panel active"></div>
+<div id="p-rules" class="panel"></div>
+<div id="p-bolus" class="panel"></div>
+<div id="p-check" class="panel"></div>
+
+<script>
+function show(id){
+  ['algo','rules','bolus','check'].forEach(x=>document.getElementById('p-'+x).classList.remove('active'));
+  document.getElementById('p-'+id).classList.add('active');
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['algo','rules','bolus','check'][i]===id));
+  if(id==='algo'&&!document.getElementById('p-algo').innerHTML) renderAlgo();
+  if(id==='rules'&&!document.getElementById('p-rules').innerHTML) renderRules();
+  if(id==='bolus'&&!document.getElementById('p-bolus').innerHTML) renderBolus();
+  if(id==='check'&&!document.getElementById('p-check').innerHTML) renderCheck();
+}
+
+function renderAlgo(){
+  const el=document.getElementById('p-algo');
+  el.innerHTML=`
+<div style="margin-bottom:16px">
+  <div style="font-size:12px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">A. Kończą się lumeny CVC</div>
+  <div class="algo-node q">Ile lumenów mam faktycznie wolnych / dostępnych?</div>
+  <div class="branch">
+    <div class="branch-arm">
+      <div class="branch-label">0 wolnych</div>
+      <div class="algo-node no">STOP — nie dodawaj leku do zajętego lumenu presyjnego / propofolu</div>
+      <div class="algo-step">
+        <div class="algo-node action">1. Wenflon 18G → amikacyna / fenytoina / CaCl₂ / NaHCO₃</div>
+        <div class="algo-node action">2. Drugi CVC lub PICC → leki wymagające izolacji</div>
+        <div class="algo-node action">3. Rozważ IOA (io intraosseous) w sytuacji NZK</div>
+        <div class="algo-node warn">Kompromis ostateczny: antybiotyk przez lumen sedacyjny (midazolam) — TYLKO po ocenie kompatybilności i z przepłukaniem 20 ml</div>
+      </div>
+    </div>
+    <div class="branch-arm">
+      <div class="branch-label">1 lumen wolny</div>
+      <div class="algo-node q">Czy lek należy do grupy absolutnej izolacji? (amikacyna, fenytoina, CaCl₂ gdy ceftriakson aktywny, NaHCO₃ gdy presyjne aktywne, propofol, Fibryga/Octaplex)</div>
+      <div class="branch" style="margin-left:0">
+        <div class="branch-arm">
+          <div class="branch-label">TAK</div>
+          <div class="algo-node no">Nie możesz dać go do ostatniego lumenu gdy jest zajęty niebezpieczną parą</div>
+          <div class="algo-node action">→ Wenflon / drugi dostęp. Nie ma wyjątku.</div>
+        </div>
+        <div class="branch-arm">
+          <div class="branch-label">NIE</div>
+          <div class="algo-node yes">Przypisz do wolnego lumenu z przepłukaniem. Monitoruj wizualnie.</div>
+        </div>
+      </div>
+    </div>
+    <div class="branch-arm">
+      <div class="branch-label">2+ lumenów</div>
+      <div class="algo-node yes">Hierarchia: A=presyjne, B=sedacja/propofol, C=antybiotyki, D=bolus/objawowe</div>
+      <div class="algo-node action">→ Amikacyna: wenflon (standard). Amiodaron: osobny dostęp non-PVC G5.</div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-bottom:16px">
+  <div style="font-size:12px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">B. Trzeba podać bolus</div>
+  <div class="algo-node q">Przez którą linię chcę podać bolus?</div>
+  <div class="algo-step">
+    <div class="algo-node no">Czy w tej linii jest aktywny wlew? → ZAWSZE sprawdź przed bolus</div>
+    <div class="branch">
+      <div class="branch-arm">
+        <div class="branch-label">Linia presyjna (noradrenalina, dopamina)</div>
+        <div class="algo-node no">STOP — bolus przez linię presyjną absolutnie NIE (wyjątek: NZK adrenalina)</div>
+        <div class="algo-node action">→ Znajdź inną drogę. Wenflon. Inny lumen.</div>
+      </div>
+      <div class="branch-arm">
+        <div class="branch-label">Linia sedacyjna (propofol)</div>
+        <div class="algo-node no">STOP — propofol = dedykowana. Bolus innego leku → NIGDY</div>
+      </div>
+      <div class="branch-arm">
+        <div class="branch-label">Linia antybiotyków / objawowa</div>
+        <div class="algo-node q">Czy aktywny wlew i nowy lek są kompatybilne fizycznie?</div>
+        <div class="branch" style="margin-left:0">
+          <div class="branch-arm">
+            <div class="branch-label">NIE / nie wiem</div>
+            <div class="algo-node warn">Zatrzymaj aktywny wlew. Przepłucz 10–20 ml NaCl. Podaj bolus. Przepłucz. Wznów wlew.</div>
+          </div>
+          <div class="branch-arm">
+            <div class="branch-label">TAK</div>
+            <div class="algo-node yes">Bolus przez Y-site lub sekwencyjnie. Monitoruj wizualnie miejsce kontaktu.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="algo-node warn">Po każdym bolusie: 10 ml NaCl flush (powolny) jeśli linia będzie dalej używana do innego leku</div>
+  </div>
+</div>
+
+<div style="margin-bottom:16px">
+  <div style="font-size:12px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">C. Konflikt kompatybilności — co robisz</div>
+  <div class="algo-node q">Czy wiem, że leki są niezgodne, czy tylko nie mam pewności?</div>
+  <div class="branch">
+    <div class="branch-arm">
+      <div class="branch-label">Wiem że NIEZGODNE</div>
+      <div class="algo-node no">NIGDY przez tę samą linię jednocześnie. Zawsze osobna droga.</div>
+      <div class="algo-step">
+        <div class="algo-node action">Pary absolutne: ceftriakson+CaCl₂, amikacyna+pip-taz, katecholaminy+NaHCO₃, fenytoina+cokolwiek, propofol+cokolwiek</div>
+        <div class="algo-node action">Jeśli sekwencyjnie: min. 20–30 ml NaCl flush + czas kontaktu < czas reakcji danej pary</div>
+      </div>
+    </div>
+    <div class="branch-arm">
+      <div class="branch-label">Nie mam pewności</div>
+      <div class="algo-node warn">Traktuj jako niezgodne dopóki nie zweryfikujesz</div>
+      <div class="algo-step">
+        <div class="algo-node action">1. Sprawdź Trissel's / baza danych kompatybilności</div>
+        <div class="algo-node action">2. Zadzwoń do farmaceuty klinicznego</div>
+        <div class="algo-node action">3. Jeśli brak czasu: osobna linia lub przepłukanie 20 ml między</div>
+        <div class="algo-node yes">Zasada: brak danych = niezgodność. Nie zakładaj zgodności przez analogię.</div>
+      </div>
+    </div>
+    <div class="branch-arm">
+      <div class="branch-label">Dane sprzeczne</div>
+      <div class="algo-node warn">Stosuj wariant bezpieczniejszy: osobna linia lub sekwencja z przepłukaniem</div>
+      <div class="algo-step">
+        <div class="algo-node action">Przykład: wankomycyna + pip+taz Y-site — dane sprzeczne → bezpieczniej osobno lub monitorowanie wizualne co 30 min</div>
+      </div>
+    </div>
+  </div>
+</div>`;
+}
+
+function renderRules(){
+  const el=document.getElementById('p-rules');
+  const ALWAYS_SEP=[
+    {d:"Amikacyna",r:"Inaktywacja przez WSZYSTKIE beta-laktamy natychmiastowo. Dead space trójnika wystarczy."},
+    {d:"Ceftriakson ↔ CaCl₂",r:"Śmiertelne wytrącenie (FDA Black Box). Nigdy przez wspólny port."},
+    {d:"Katecholaminy ↔ NaHCO₃",r:"Inaktywacja w sekundach. Żaden port wspólny — kiedykolwiek."},
+    {d:"Fenytoina",r:"pH 10–12 wytrąca się z każdym lekiem. Dedykowana linia NaCl. Absolutnie."},
+    {d:"Propofol",r:"Emulsja lipidowa + pożywka bakteryjna. Dedykowana linia, wymiana co 12h."},
+    {d:"Klindamycyna",r:"Szybki wlew/bolus = NZK. Pompa z limitem szybkości, osobna linia."},
+    {d:"Amiodaron ↔ NaCl",r:"Wytrącenie. TYLKO G5 non-PVC. Nigdy NaCl."},
+    {d:"Nitrogliceryna ↔ PVC",r:"Adsorpcja 50–80%. Tylko dedykowany non-PVC."},
+    {d:"Fibryga / Octaplex",r:"Absolutnie dedykowana linia jednorazowa. Żaden inny lek."},
+    {d:"Diazepam ↔ NaCl/PVC",r:"Wytrącenie w NaCl + adsorpcja 80–90% w PVC. Szkło/non-PVC + G5."},
+    {d:"NaHCO₃",r:"Własna linia. Nigdy wspólny port z katecholaminami, beta-laktamami."},
+    {d:"Bupiwakaina ↔ IV",r:"Absolutny zakaz IV. Ryzyko NZK opornego na resuscytację."},
+    {d:"Teofilina — pompa",r:"Wąski indeks. Bolus szybki = arytmia. Tylko pompa z limitem szybkości."},
+    {d:"Kaspofungina ↔ G5",r:"Utrata aktywności. Tylko NaCl. Flush tylko NaCl."},
+    {d:"Monofer ↔ G5",r:"Wytrącenie/niestabilność. Tylko NaCl."},
+    {d:"Nimodypina ↔ PVC",r:"Adsorpcja + DEHP. Tylko zestaw producenta."},
+  ];
+  const CAN_TOGETHER=[
+    {d:"Midazolam + fentanyl (strzykawka)",r:"Standard sedacji OIT. Potwierdzone dane."},
+    {d:"Midazolam + sufentanyl (strzykawka)",r:"Standard sedacji OIT."},
+    {d:"Midazolam + morfina (Y-site/strzykawka)",r:"OK przy standardowych stężeniach."},
+    {d:"Noradrenalina + midazolam (Y-site)",r:"Trissel's: zgodne Y-site."},
+    {d:"Noradrenalina + fentanyl (Y-site)",r:"Trissel's: zgodne."},
+    {d:"Noradrenalina + morfina (Y-site)",r:"Trissel's: zgodne."},
+    {d:"Noradrenalina + dobutamina (Y-site)",r:"Trissel's: zgodne."},
+    {d:"Deksametazon + midazolam/morfina/fentanyl (Y-site)",r:"Trissel's: zgodne."},
+    {d:"Lewetyracetam z większością leków (Y-site)",r:"Najszersza kompatybilność IV. Brak krytycznych."},
+    {d:"Flukonazol + wankomycyna (Y-site)",r:"Fizycznie OK. Pamiętaj: CYP3A4 — midazolam rośnie."},
+    {d:"Antybiotyki sekwencyjnie jeden lumen (z przepłukaniem)",r:"Standard praktyki. 20 ml NaCl między każdym."},
+    {d:"Hydrokortyzon/deksametazon — bolus przez dowolny kompatybilny lumen",r:"Szerokie Y-site. Bezpieczny bolus."},
+  ];
+  const LAST_RESORT=[
+    {d:"Amikacyna przez lumen antybiotyków po beta-laktamie",r:"TYLKO: 60 min przerwy + 30 ml NaCl flush + TDM amikacyny. Ostateczność."},
+    {d:"Amiodaron przez lumen CVC (G5 non-PVC)",r:"Możliwe jeśli: G5 + non-PVC + folia + własny port. Ale: adsorpcja i tak częściowa."},
+    {d:"CaCl₂ przez lumen po ceftriaksonie (30 ml flush + 5 min)",r:"Ryzyko resztek w dead space. Tylko gdy zero alternatywy. Monitoruj wizualnie."},
+    {d:"Fenytoina przez lumen C gdy wszystkie inne wstrzymane",r:"Absolutna ostateczność. 30 ml NaCl. Pompa. EKG+BP ciągłe. Lepiej: wenflon."},
+    {d:"Wankomycyna + pip+taz Y-site",r:"Dane sprzeczne. Jeśli konieczne: monitorowanie wizualne co 30 min, gotowość na zmianę."},
+    {d:"Propofol przez wenflon obwodowy (emulsja drażniąca)",r:"Bolesne, ryzyko zakrzepicy żylnej, adsorpcja. Lepiej: CVC z dedykowanym lumenem."},
+    {d:"NaHCO₃ + katecholaminy przez różne kanały CVC jednoczesnie",r:"Jeśli lumeny CVC są absolutnie rozdzielone: fizycznie OK. Ale: weryfikacja absolutna."},
+  ];
+
+  const mkCol=(items,title,hcls)=>`
+    <div class="rule-col">
+      <div class="rule-col-head ${hcls}">${title}</div>
+      ${items.map(i=>`<div class="rule-item"><b>${i.d}</b><br>${i.r}</div>`).join('')}
+    </div>`;
+
+  el.innerHTML=`<div class="rule-grid">
+    ${mkCol(ALWAYS_SEP,'Zawsze osobno — bez wyjątków','rule-col-head-r')}
+    ${mkCol(CAN_TOGETHER,'Można razem — potwierdzone','rule-col-head-g')}
+    ${mkCol(LAST_RESORT,'Tylko w ostateczności — z nadzorem','rule-col-head-o')}
+  </div>`;
+}
+
+const BOLUS_TABLE=[
+  {n:"Noradrenalina/Adrenalina",allowed:"NIE (NZK: TAK)",best:"wlew",time:"—",dilute:"—",never:"Flush przez tę linię. Push poza NZK.",better:"Nigdy lepszy niż wlew — tylko NZK"},
+  {n:"Dopamina/Dobutamina",allowed:"NIE",best:"wlew",time:"—",dilute:"—",never:"Bolus. Flush przez linię.",better:"Nigdy"},
+  {n:"Amiodaron",allowed:"NIE (NZK: TAK)",best:"wlew",time:"≥10 min (poza NZK)",dilute:"G5",never:"NaCl jako nośnik. PVC.",better:"NZK — bolus ratunkowy"},
+  {n:"Klindamycyna",allowed:"BEZWZGL. NIE",best:"wlew pompa",time:"min 60 min/600 mg",dilute:"do ≤6 mg/ml",never:"Jakikolwiek push. Flush przyspieszający.",better:"Wlew zawsze lepszy"},
+  {n:"Wankomycyna",allowed:"NIE",best:"wlew pompa",time:"min 60 min/1g",dilute:"≤5 mg/ml",never:"Szybszy niż 60 min (Red Man). Flush po wanko szybki.",better:"Wlew zawsze"},
+  {n:"Fenytoina",allowed:"BEZWZGL. NIE",best:"wlew pompa",time:"≤50 mg/min",dilute:"NaCl ≤10 mg/ml",never:"G5. Przez wspólną linię. Push.",better:"Wlew zawsze"},
+  {n:"Teofilina",allowed:"NIE",best:"wlew pompa",time:"≥30 min (ładowanie)",dilute:"NaCl/G5",never:"Push. Flush przez linię teofiliny.",better:"Wlew zawsze"},
+  {n:"Propofol",allowed:"WARUNKOWO (indukcja)",best:"wlew (titracja)",time:"Indukcja: wolna titracja",dilute:"NIE rozcieńczać NaCl",never:"Szybki push. Wspólna linia.",better:"Ciągły wlew titrowany > jednorazowy bolus"},
+  {n:"Midazolam",allowed:"TAK (warunkowo)",best:"wlew + bolus dodat.",time:"bolus: 2–3 min",dilute:"rozcieńczyć 1 mg/ml",never:"Szybki push (apnea). Przez linię furosemidu.",better:"Wlew > bolus dla sedacji ciągłej"},
+  {n:"Morfina",allowed:"TAK",best:"bolus lub wlew",time:"2–5 min",dilute:"do 1–2 mg/ml",never:"Szybki push (histamina, hipotensja).",better:"Bolus do analgezji. Wlew do sedacji."},
+  {n:"Fentanyl",allowed:"TAK",best:"bolus lub wlew",time:"1–2 min (wolno)",dilute:"opcjonalnie",never:"Duże dawki szybko (rigid chest).",better:"Bolus do procedur. Wlew ciągły OIT."},
+  {n:"Lorazepam",allowed:"TAK",best:"bolus",time:"2 min",dilute:"1:1",never:"Szybki push (apnea). Przez PVC długi zestaw.",better:"Bolus w status epilepticus > wlew"},
+  {n:"Diazepam",allowed:"TAK",best:"bolus",time:"2–5 min",dilute:"NIE w NaCl. G5 lub nierozcieńczony.",never:"NaCl (wytrącenie). PVC (adsorpcja 80%).",better:"Bolus w status epilepticus. Nie wlew."},
+  {n:"Furosemid",allowed:"TAK",best:"bolus (małe dawki) / wlew (duże)",time:"≤4 mg/min",dilute:"opcjonalnie",never:"Przez linię z midazolamem, haloperydolem.",better:"Bolus do 40 mg. Wlew gdy >80 mg/dobę."},
+  {n:"Hydrokortyzon",allowed:"TAK",best:"bolus",time:"1–2 min",dilute:"opcjonalnie",never:"Przez linię z heparyną.",better:"Bolus zawsze OK. Wlew opcjonalny."},
+  {n:"Deksametazon",allowed:"TAK",best:"bolus",time:"1–3 min",dilute:"opcjonalnie",never:"Przez linię z fenytoiną.",better:"Bolus zawsze OK."},
+  {n:"Metamizol",allowed:"WARUNKOWO",best:"wolny wlew 15 min",time:"min 15 min",dilute:"100 ml",never:"Szybki push (hipotensja). Stary roztwór >1h.",better:"Wolny wlew > szybki bolus"},
+  {n:"Kwas traneksamowy",allowed:"TAK (wolno)",best:"wlew 10 min",time:"1g/10 min",dilute:"opcjonalnie",never:"Szybki push (hipotensja, drgawki — duże dawki).",better:"Protokół TXA: 10 min zawsze"},
+  {n:"CaCl₂",allowed:"TAK (warunkowo)",best:"bolus (NZK/pilne)",time:"2–5 min rozcieńczony",dilute:"rozcieńczyć 1:10",never:"Przez linię z ceftriaksonem. Szybki push (asystolia).",better:"Bolus w NZK/hipocalcemia. Wlew w uzupełnianiu."},
+  {n:"NaHCO₃",allowed:"TAK (NZK)/wlew",best:"bolus NZK / wlew",time:"NZK: szybko",dilute:"opcjonalnie",never:"Przez linię z katecholaminami.",better:"Bolus tylko NZK. Poza NZK: wlew."},
+  {n:"Haloperydol",allowed:"TAK (warunkowo, IV poza ChPL)",best:"bolus powolny",time:"1–2 min",dilute:"opcjonalnie G5",never:"Przez linię furosemidu. Z amiodароnem (QT).",better:"Bolus do delirium. EKG monitoring."},
+  {n:"Digoksyna",allowed:"TAK (wolno)",best:"bolus bardzo wolny",time:"≥10 min",dilute:"rozcieńczyć 4×, szkło",never:"Szybki push (bradykardia, NZK). Plastik bez saturacji.",better:"Wolny bolus < szybki. Wlew rzadko stosowany."},
+  {n:"Kanavit",allowed:"NIE (wolny wlew)",best:"wlew ≥30 min",time:"min 30 min",dilute:"z osłoną świetlną",never:"Szybki bolus (anafilaksja). Bez osłony (degradacja).",better:"Wlew zawsze lepszy"},
+  {n:"Acetylocysteina",allowed:"NIE (protokół)",best:"wlew protokołowy",time:"15 min + 4h + 16h",dilute:"G5/NaCl",never:"Pominięcie protokołu 3-etapowego (anafilaksja).",better:"Protokół zawsze"},
+  {n:"Kaspofungina",allowed:"NIE",best:"wlew 60 min",time:"60 min",dilute:"NaCl 0,9%",never:"Bolus. G5 jako nośnik.",better:"Wlew zawsze"},
+  {n:"Monofer",allowed:"NIE",best:"wlew NaCl",time:"wg protokołu",dilute:"NaCl",never:"G5. Bolus.",better:"Wlew zawsze"},
+  {n:"Albumina 20%",allowed:"NIE (wlew)",best:"wlew kontrolowany",time:"1–4h",dilute:"—",never:"Szybki wlew (przeciążenie).",better:"Wlew kontrolowany zawsze"},
+  {n:"Insulina",allowed:"NIE (wlew)",best:"wlew ciągły pompa",time:"wlew ciągły",dilute:"NaCl 0,9%",never:"Bolus insuliny. Bez saturacji zestawu.",better:"Wlew ciągły zawsze"},
+  {n:"Fibryga/Octaplex",allowed:"NIE (wlew)",best:"wlew wg protokołu",time:"wg ChPL",dilute:"tylko dedyk. rozp.",never:"Przez wspólną linię. Bolus szybki.",better:"Wlew zawsze, dedykowana linia"},
+  {n:"Metoprolol",allowed:"TAK",best:"bolus wolny",time:"1–2 min",dilute:"opcjonalnie",never:"Szybki push (bradykardia, blok AV).",better:"Bolus do nagłej arytmii. OK."},
+  {n:"Urapidyl",allowed:"TAK",best:"bolus + wlew",time:"25 mg powoli",dilute:"opcjonalnie",never:"Przez linię z NaHCO₃ (wytrącenie).",better:"Bolus do nagłej hipertensji. OK."},
+  {n:"Lewetyracetam",allowed:"TAK (wlew 15 min)",best:"wlew 15 min",time:"15 min",dilute:"100 ml NaCl/G5",never:"Brak bezwzgl.",better:"Bezpieczny — jeden z najłatwiejszych IV."},
+  {n:"Etamsylat",allowed:"TAK",best:"bolus",time:"1–2 min",dilute:"opcjonalnie",never:"Przez linię z NaHCO₃.",better:"Bolus OK."},
+  {n:"Metoklopramid",allowed:"TAK",best:"bolus wolny",time:"1–2 min",dilute:"opcjonalnie",never:"Przez linię z furosemidem.",better:"Bolus OK. Wolno."},
+];
+
+function renderBolus(){
+  const el=document.getElementById('p-bolus');
+  const fEl=document.createElement('div');
+  fEl.className='row-f';
+  fEl.innerHTML='<input type="text" id="bq" placeholder="Szukaj leku..." oninput="filterBolus()"><select id="bs" onchange="filterBolus()"><option value="">Wszystkie</option><option value="TAK">Bolus TAK</option><option value="NIE">Bolus NIE</option><option value="WARUNKOWO">Warunkowo</option><option value="BEZWZGL">Bezwzgl. NIE</option></select>';
+  el.appendChild(fEl);
+  const wrap=document.createElement('div');
+  wrap.className='scroll';
+  wrap.innerHTML='<table><thead><tr><th>Lek</th><th>Bolus</th><th>Preferowane</th><th>Czas</th><th>Rozcieńczenie</th><th>Nigdy</th><th>Kiedy bolus lepszy</th></tr></thead><tbody id="btbody"></tbody></table>';
+  el.appendChild(wrap);
+  filterBolus();
+}
+function filterBolus(){
+  const q=(document.getElementById('bq')?.value||'').toLowerCase();
+  const s=document.getElementById('bs')?.value||'';
+  const rows=BOLUS_TABLE.filter(d=>{
+    const match = s===''||(s==='TAK'&&d.allowed.startsWith('TAK'))||(s==='NIE'&&d.allowed==='NIE')||(s==='WARUNKOWO'&&d.allowed.includes('WARUNKOWO'))||(s==='BEZWZGL'&&d.allowed.includes('BEZWZGL'));
+    return (!q||d.n.toLowerCase().includes(q))&&match;
+  });
+  const bCls=a=>a.startsWith('TAK')?'bg':a.includes('BEZWZGL')?'br':a.startsWith('NIE')?'br':'bo';
+  document.getElementById('btbody').innerHTML=rows.map(d=>`
+    <tr>
+      <td style="font-weight:500">${d.n}</td>
+      <td><span class="b ${bCls(d.allowed)}">${d.allowed}</span></td>
+      <td><span class="b bi">${d.best}</span></td>
+      <td style="font-size:10px">${d.time}</td>
+      <td style="font-size:10px">${d.dilute}</td>
+      <td style="font-size:10px;color:var(--color-text-danger)">${d.never}</td>
+      <td style="font-size:10px;color:var(--color-text-secondary)">${d.better}</td>
+    </tr>`).join('');
+}
+
+const CHECKLIST=[
+  {title:"PRZED każdym podaniem leku IV",cls:"cl-head-d",items:[
+    "Sprawdź aktywne wlewy w każdym lumenach — czy nowy lek jest kompatybilny?",
+    "Sprawdź nośnik: czy to NaCl czy G5? (kaspofungina, monofer — TYLKO NaCl; amiodaron, diazepam — TYLKO G5/brak NaCl)",
+    "Sprawdź materiał zestawu: PVC czy non-PVC? (nitrogliceryna, nimodypina, amiodaron, diazepam — non-PVC)",
+    "Sprawdź czy wymagana osłona świetlna: tigecyklina, kanavit, neurovit, noradrenalina/adrenalina",
+    "Sprawdź czy wymagana saturacja zestawu: insulina — 50 ml roboczego roztworu przez zestaw przed pacjentem",
+    "Sprawdź czas od przygotowania: metamizol — ważny tylko 1h. Propofol — wymiana co 12h.",
+    "Sprawdź drogę podania: bupiwakaina — NIGDY IV (zawsze potwierdzaj zewnątrzoponową/obwodową)",
+    "Sprawdź szybkość pompy — czy limit szybkości ustawiony dla: fenytoiny (≤50 mg/min), klindamycyny (≥60 min/600 mg), teofiliny (≥30 min ładowanie), wankomycyny (≥60 min/1g)?",
+  ]},
+  {title:"PRZY ZMIANIE STRZYKAWKI (presyjne / sedacja)",cls:"cl-head-w",items:[
+    "PRIMING nowej strzykawki: przesuń tłok aż lek pojawi się na końcówce zanim podłączysz do linii",
+    "Nie przerywaj ciągłości wlewu presyjnego — miej drugą strzykawkę gotową zanim pierwsza będzie pusta",
+    "Nie zmieniaj tempa pompy podczas wymiany strzykawki",
+    "Po zmianie strzykawki: monitoruj BP/HR przez 5 min (opóźnienie działania = dead space / przepływ)",
+    "Propofol: przy każdej wymianie strzykawki — aseptyka, nowa strzykawka, nowy przedłużacz co 12h",
+  ]},
+  {title:"PRZED każdym FLUSZEM",cls:"cl-head-w",items:[
+    "Co jest w dead space tej linii? (objętość dead space = opóźniony bolus skumulowanego leku)",
+    "Czy w linii jest lek dla którego flush jest niebezpieczny? (noradrenalina, klindamycyna, teofilina, fenytoina — NIE flush szybki)",
+    "Czy flush NaCl jest właściwy dla tej linii? (linia amiodaronu: flush G5, nie NaCl — wytrącenie w dead space)",
+    "Czy kaspofungina jest aktywna? Flush TYLKO NaCl — nigdy G5 przez tę linię",
+    "Wolny flush: max 10 ml w 2–3 min dla linii presyjnych i sedacyjnych. Nie push.",
+  ]},
+  {title:"MONITOROWANIE AKTYWNE (każda zmiana)",cls:"cl-head-i",items:[
+    "Flukonazol włączony? → Rozważ redukcję dawki midazolamu (CYP3A4 inhibicja — efekt zmienny, titruj wg efektu klinicznego RASS). Monitoruj RASS co 4h.",
+    "Amiodaron włączony? → Sprawdź EKG QTc. Rozważ redukcję dawki digoksyny (interakcja P-gp) — monitoruj stężenie i objawy toksyczności. Unikaj haloperydolu jednocześnie (QT addytywne).",
+    "Meropenem włączony? → Monitoruj stężenie VPA 2× dziennie. Przy VPA — rozważ zmianę AED lub antybiotyku.",
+    "Wankomycyna + amikacyna jednocześnie? → Monitorowanie kreatyniny co 24h (addytywna nefrotoksyczność). Nie przez tę samą linię.",
+    "Insulina: glikemia co 1–2h przy intensywnej terapii. Saturacja zestawu przy każdej wymianie strzykawki.",
+    "Digoksyna: TDM (szczególnie przy amiodaronie, furosemidzie). Sprawdzaj K⁺ (hipokaliemia → toksyczność digoksyny).",
+    "Haloperydol: EKG QTc przed i po każdej dawce. Nie stosować jednocześnie z amiodароnem (QT addytywne → TdP).",
+  ]},
+  {title:"KOŃCOWE SPRAWDZENIE (wizualnie — każdy wlew)",cls:"cl-head-s",items:[
+    "Widoczne zmętnienie lub osad w linii / pojemniku? → Zatrzymaj wlew. Wymień zestaw.",
+    "Zmiana barwy roztworu (brązowienie katecholaminy, różowienie propofolu)? → Wymień.",
+    "Osłona świetlna na miejscu? (tigecyklina, amiodaron, kanavit, nitrogliceryna, nimodypina)",
+    "Zestaw non-PVC dla nitrogliceryny i nimodypiny? Weryfikuj przy każdej wymianie.",
+    "Propofol: czy zestaw jest wymieniony w ciągu ostatnich 12h? Czy warunki aseptyczne zachowane?",
+    "Linia fenytoiny: czy to na pewno NaCl? Czy to na pewno dedykowana linia?",
+    "Dead space i opóźnienie: czy ostatnia zmiana dawki katecholaminy miała czas zadziałać? (oblicz: dead space ml / przepływ ml/h × 60 = minuty opóźnienia)",
+  ]},
+];
+
+function renderCheck(){
+  const el=document.getElementById('p-check');
+  el.innerHTML='<div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:10px">Kliknij element aby oznaczyć jako wykonany. Kliknij ponownie aby odznaczyć.</div>'+
+  CHECKLIST.map((s,si)=>`
+    <div class="cl-section">
+      <div class="cl-head ${s.cls}">${s.title}</div>
+      ${s.items.map((item,ii)=>`
+        <div class="cl-item" id="cl_${si}_${ii}" onclick="toggleCl(${si},${ii})">
+          <div class="cl-box" id="cb_${si}_${ii}"></div>
+          <div>${item}</div>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+function toggleCl(si,ii){
+  const row=document.getElementById('cl_'+si+'_'+ii);
+  const box=document.getElementById('cb_'+si+'_'+ii);
+  const checked=row.classList.toggle('checked');
+  box.textContent=checked?'✓':'';
+}
+
+renderAlgo();
+</script>

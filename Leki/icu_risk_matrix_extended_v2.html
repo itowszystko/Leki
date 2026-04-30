@@ -1,0 +1,480 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);font-size:13px;color:var(--color-text-primary)}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;padding-bottom:8px;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:1rem}
+.tab{padding:6px 13px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);cursor:pointer;font-size:12px;background:transparent;color:var(--color-text-secondary)}
+.tab.active{background:var(--color-background-secondary);color:var(--color-text-primary);font-weight:500}
+.panel{display:none}.panel.active{display:block}
+.scroll{overflow:auto;max-height:560px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md)}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{padding:5px 7px;background:var(--color-background-secondary);font-weight:500;font-size:10px;color:var(--color-text-secondary);border-bottom:0.5px solid var(--color-border-tertiary);text-align:left;position:sticky;top:0;z-index:2;white-space:nowrap}
+td{padding:5px 7px;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top;line-height:1.45}
+tr:hover td{background:var(--color-background-secondary)}
+.b{display:inline-block;padding:1px 6px;border-radius:8px;font-size:10px;font-weight:500;white-space:nowrap}
+.rc1{background:#FCEBEB;color:#A32D2D}.rc2{background:#FAEEDA;color:#854F0B}
+.rc3{background:#EAF3DE;color:#3B6D11}.rci{background:#E6F1FB;color:#0C447C}
+.sc1{background:#501313;color:#F0957F;padding:2px 6px;border-radius:6px;font-size:10px;font-weight:500}
+.sc2{background:#FAEEDA;color:#854F0B;padding:2px 6px;border-radius:6px;font-size:10px;font-weight:500}
+.sc3{background:#EAF3DE;color:#3B6D11;padding:2px 6px;border-radius:6px;font-size:10px;font-weight:500}
+.pc1{background:#FCEBEB;color:#A32D2D;padding:2px 5px;border-radius:5px;font-size:10px}
+.pc2{background:#FAEEDA;color:#854F0B;padding:2px 5px;border-radius:5px;font-size:10px}
+.pc3{background:#EAF3DE;color:#3B6D11;padding:2px 5px;border-radius:5px;font-size:10px}
+.risk-cell-crit{background:#FCEBEB}.risk-cell-high{background:#FEF4E6}.risk-cell-med{background:#F4FBF0}.risk-cell-low{background:#F8F8F6}
+.row-f{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
+.row-f input,.row-f select{font-size:12px;padding:5px 9px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary)}
+.row-f input{flex:1;min-width:140px}
+.cnt{font-size:11px;color:var(--color-text-secondary);margin-bottom:6px}
+.matrix-grid{display:grid;grid-template-columns:80px repeat(4,1fr);gap:3px;margin:10px 0}
+.mg-cell{padding:6px 8px;border-radius:var(--border-radius-md);font-size:10px;text-align:center;line-height:1.4}
+.mg-head{background:var(--color-background-secondary);font-weight:500;font-size:11px;display:flex;align-items:center;justify-content:center}
+.mg-low{background:#EAF3DE;color:#3B6D11}.mg-med{background:#FAEEDA;color:#633806}
+.mg-high{background:#FAC775;color:#412402}.mg-crit{background:#FCEBEB;color:#791F1F}
+.alert-strip{border-radius:var(--border-radius-md);padding:8px 12px;margin-bottom:6px;font-size:11px;line-height:1.5}
+.al-d{background:var(--color-background-danger);color:var(--color-text-danger)}
+.al-w{background:var(--color-background-warning);color:var(--color-text-warning)}
+.al-i{background:var(--color-background-info);color:var(--color-text-info)}
+.al-s{background:var(--color-background-success);color:var(--color-text-success)}
+.section-h{font-size:11px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.04em;margin:12px 0 5px}
+@media(prefers-color-scheme:dark){
+.rc1{background:#501313;color:#F7C1C1}.rc2{background:#412402;color:#FAC775}
+.rc3{background:#173404;color:#C0DD97}.rci{background:#042C53;color:#B5D4F4}
+.risk-cell-crit{background:#3a1010}.risk-cell-high{background:#2e1f08}.risk-cell-med{background:#0e2010}.risk-cell-low{background:#1c1c1a}
+.mg-low{background:#173404;color:#C0DD97}.mg-med{background:#412402;color:#FAC775}
+.mg-high{background:#633806;color:#FAC775}.mg-crit{background:#501313;color:#F7C1C1}
+.sc1{background:#501313;color:#F7C1C1}.sc2{background:#412402;color:#FAC775}.sc3{background:#173404;color:#C0DD97}
+}
+</style>
+
+<h2 style="position:absolute;width:1px;height:1px;overflow:hidden">Macierz ryzyka OIT — analiza fizyczna, farmakologiczna i proceduralna dla 65 leków</h2>
+
+<div class="tabs">
+  <button class="tab active" onclick="show('matrix')">Macierz ryzyka</button>
+  <button class="tab" onclick="show('phys')">Fizyczne</button>
+  <button class="tab" onclick="show('pharm')">Farmakologiczne</button>
+  <button class="tab" onclick="show('proc')">Proceduralne</button>
+  <button class="tab" onclick="show('top')">Najwyższe ryzyko</button>
+</div>
+
+<div id="p-matrix" class="panel active"></div>
+<div id="p-phys" class="panel"></div>
+<div id="p-pharm" class="panel"></div>
+<div id="p-proc" class="panel"></div>
+<div id="p-top" class="panel"></div>
+
+<script>
+const P={H:"Wysokie",M:"Umiarkowane",L:"Niskie",VH:"Bardzo wysokie"};
+const S={C:"Krytyczna",H:"Wysoka",M:"Umiarkowana",L:"Niska"};
+
+const DRUGS=[
+{n:"Ampicylina",
+ phys:{p:"M",s:"H",ev:"Wytrącenie z aminoglikozydami (natychmiastowe) i roztworami zasadowymi",mit:"Osobna linia od amikacyny. 20 ml NaCl flush między lekami w tym samym lumenie."},
+ pharm:{p:"H",s:"H",ev:"Inaktywacja amikacyny przez kontakt. Aminoglikozydy tracą do 100% aktywności.",mit:"Nigdy przez ten sam lumen co amikacyna. Minimum 60 min przerwy sekwencyjnej."},
+ proc:{p:"M",s:"M",ev:"pH ~10 — ból żylny przy szybkim podaniu. Przypadkowy szybki bolus = ból, drażnienie żyły.",mit:"Wolny wlew ≥15 min. Rozcieńczyć do 100 ml."}},
+{n:"Amp+sulbaktam",
+ phys:{p:"M",s:"H",ev:"Jak ampicylina. Sulbaktam niestabilny w G5.",mit:"Tylko NaCl. Osobna linia od aminoglikozydów."},
+ pharm:{p:"H",s:"H",ev:"Sulbaktam degraduje w G5 — utrata aktywności inhibitora beta-laktamaz.",mit:"NaCl wyłącznie. Weryfikuj nośnik."},
+ proc:{p:"L",s:"M",ev:"Błędny dobór nośnika (G5).",mit:"Label na strzykawce/worku z nazwą nośnika."}},
+{n:"Pip+tazobaktam",
+ phys:{p:"VH",s:"C",ev:"Natychmiastowe wytrącenie z amikacyną w dead space trójnika. Widoczne zmętnienie.",mit:"Absolutnie osobna linia od amikacyny. Brak Y-site. Nigdy sekwencyjnie bez 30 ml NaCl i 60 min przerwy."},
+ pharm:{p:"VH",s:"C",ev:"Inaktywacja amikacyny przez pip+taz — nawet w oddzielnych liniach przy krótkim odstępie czasowym.",mit:"Amikacyna wyłącznie przez osobną linię (wenflon). TDM amikacyny."},
+ proc:{p:"M",s:"H",ev:"Podanie amikacyny bezpośrednio po pip+taz przez ten sam lumen bez przepłukania.",mit:"Protokół obligatoryjny: 30 ml NaCl + 60 min przerwa minimum."}},
+{n:"Ceftriakson",
+ phys:{p:"VH",s:"C",ev:"Natychmiastowe wytrącenie soli Ca-ceftriaksonowej przy kontakcie z CaCl₂/Ca-glukonian. Mikrokryształy w linii. FDA Black Box.",mit:"Absolutnie osobna linia od wapnia. Nigdy przez ten sam lumen co CaCl₂."},
+ pharm:{p:"M",s:"H",ev:"Inaktywacja przy kontakcie z aminoglikozydami.",mit:"Osobna linia od amikacyny."},
+ proc:{p:"H",s:"C",ev:"Podanie CaCl₂ przez linię po ceftriaksonie bez przepłukania. Krzyżowe podanie przez wspólny trójnik.",mit:"Wizualna kontrola linii przed każdym bolusem wapnia. 30 ml NaCl flush po ceftriaksonie przed jakimkolwiek innym lekiem."}},
+{n:"Meropenem",
+ phys:{p:"M",s:"M",ev:"Degradacja w G5 po 1h (bez widocznych zmian). Niezgodność z NaHCO₃.",mit:"G5: wymiana worka co 1h lub preferuj NaCl. Nie mieszać z NaHCO₃."},
+ pharm:{p:"VH",s:"C",ev:"Obniżenie VPA o 60–100% przez inhibicję enzymatyczną — niezależne od linii IV.",mit:"Monitoring stężenia VPA 2×/dobę przy włączeniu meropenemu. Rozważyć zamianę AED."},
+ proc:{p:"M",s:"H",ev:"G5 jako nośnik przy ciągłym wlewie — lek degraduje bez widocznych zmian.",mit:"NaCl jako nośnik z wyboru. Jeśli G5 konieczne — wymiana co 1h."}},
+{n:"Wankomycyna",
+ phys:{p:"M",s:"H",ev:"Wytrącenie z fenytoiną, furosemidem, heparami przy wyższych stężeniach.",mit:"Osobna linia od fenytoiny. Rozcieńczyć do ≤5 mg/ml."},
+ pharm:{p:"H",s:"H",ev:"Addytywna nefrotoksyczność z amikacyną. Ototoksyczność. Red Man Syndrome przy szybkim podaniu.",mit:"TDM (vanko: AUC/MIC). Unikać jednoczesnej amikacyny bez monitorowania nerek. Wlew ≥60 min/1g."},
+ proc:{p:"H",s:"H",ev:"Zbyt szybki wlew (np. flush przez linię po wanko) → Red Man Syndrome. Hipotensja, bradykardia.",mit:"Pompa z ustawionym czasem. Flush po wanko powolny — max 20 ml NaCl w ciągu 5 min."}},
+{n:"Amikacyna",
+ phys:{p:"VH",s:"C",ev:"Inaktywacja przez WSZYSTKIE beta-laktamy w linii. Dead space trójnika wystarczy.",mit:"Absolutnie własna linia (wenflon). TDM."},
+ pharm:{p:"VH",s:"C",ev:"Inaktywacja przez beta-laktamy. Nefro- i ototoksyczność z wankomycyną.",mit:"TDM (peak/trough). Monitorowanie kreatyniny. Własna linia."},
+ proc:{p:"VH",s:"C",ev:"Podanie przez lumen z beta-laktamem — najczęstszy błąd proceduralny w OIT. Amikacyna wydaje się podana, ale jest nieaktywna.",mit:"Protokół bezwzględny: amikacyna TYLKO przez dedykowany dostęp."}},
+{n:"Klindamycyna",
+ phys:{p:"L",s:"M",ev:"Wytrącenie z aminoglikozydami przy bezpośrednim mieszaniu.",mit:"Osobna linia. Nie mieszać bezpośrednio."},
+ pharm:{p:"L",s:"M",ev:"Brak krytycznych interakcji farmakodynamicznych.",mit:"Standardowe monitorowanie."},
+ proc:{p:"VH",s:"C",ev:"BOLUS lub zbyt szybki wlew = blok nerwowo-mięśniowy + kardiotoksyczność → NZK. Najniebezpieczniejszy błąd proceduralny tej grupy.",mit:"Pompa obligatoryjna. Limit szybkości. Min 60 min/600 mg. Nigdy ręczny push. Nigdy flush przyspieszający."}},
+{n:"TMP+SMX",
+ phys:{p:"H",s:"H",ev:"Krystalizacja sulfametoksazolu w pH <8 — przy kontakcie z kwaśnymi lekami lub NaCl.",mit:"G5 lub NaCl przy pH odpowiednim. Osobna linia od leków kwaśnych."},
+ pharm:{p:"M",s:"H",ev:"Hamowanie metabolizmu VPA (TMP). Potencjalizacja działania leków nerkopochodnych.",mit:"Monitoring VPA przy jednoczesnym stosowaniu."},
+ proc:{p:"M",s:"M",ev:"Krystalizacja w linii nierozpoznana — zakrzep linii lub zator.",mit:"Wizualna kontrola każdego wlewu TMP+SMX."}},
+{n:"Tigecyklina",
+ phys:{p:"M",s:"H",ev:"Degradacja fotochemiczna bez zmiany barwy roztworu.",mit:"Folia aluminiowa na cały zestaw przez cały czas wlewu."},
+ pharm:{p:"L",s:"M",ev:"Ograniczone dane Y-site z lekami OIT.",mit:"Osobna linia gdy brak danych."},
+ proc:{p:"H",s:"H",ev:"Brak osłony świetlnej — lek nieaktywny ale pozornie podany. Najczęstszy błąd przy tigecyklinie.",mit:"Obowiązkowa folia. Protokół przygotowania uwzględnia osłonę."}},
+{n:"Fosfomycyna",
+ phys:{p:"M",s:"M",ev:"pH 9–11 — wytrącenie z aminoglikozydami. G5 — brak danych.",mit:"NaCl. Osobna linia od aminoglikozydów."},
+ pharm:{p:"M",s:"H",ev:"Duże ładunki Na⁺ (15 mmol/g) — hipersodemia, przeciążenie płynowe.",mit:"Bilans sodu. Uwaga u pacjentów z NS i hipernatremią."},
+ proc:{p:"L",s:"M",ev:"Nieuwzględnienie ładunku sodowego.",mit:"Kalkulacja bilansu Na przy dawkowaniu."}},
+{n:"Flukonazol",
+ phys:{p:"L",s:"L",ev:"Szeroka kompatybilność fizyczna.",mit:"Standardowe monitorowanie."},
+ pharm:{p:"VH",s:"H",ev:"Silna inhibicja CYP3A4 → istotny wzrost stężeń midazolamu i fentanylu (wielkość efektu jest zmienna osobniczo — może być kilkukrotna). Addytywne wydłużenie QT z amiodароnem i haloperydolem.",mit:"Po włączeniu flukonazolu: zmniejsz dawkę midazolamu i titruj wg efektu klinicznego (RASS). Nie stosuj automatycznej redukcji o stały %. EKG monitoring QT."},
+ proc:{p:"H",s:"H",ev:"Brak modyfikacji dawki midazolamu/fentanylu przy włączeniu flukonazolu — nadmierna sedacja, depresja oddechowa.",mit:"Protokół: weryfikacja sedacji co 4h po włączeniu flukonazolu."}},
+{n:"Kaspofungina",
+ phys:{p:"H",s:"H",ev:"Utrata aktywności w G5/G10 — niezgodność nośnikowa. Flush G5 przez linię kaspofunginy = dezaktywacja w dead space.",mit:"WYŁĄCZNIE NaCl 0,9%. Flush tylko NaCl."},
+ pharm:{p:"L",s:"M",ev:"Ograniczone interakcje farmakodynamiczne.",mit:"Standardowe."},
+ proc:{p:"H",s:"H",ev:"G5 jako nośnik lub do przepłukania — błąd wykonawczy powodujący utratę leku.",mit:"Wyraźny label na strzykawce/worku: NaCl ONLY."}},
+{n:"Mykafungina",
+ phys:{p:"L",s:"L",ev:"Szeroka kompatybilność. G5 i NaCl — OK.",mit:"Standardowe."},
+ pharm:{p:"L",s:"M",ev:"Addytywne QT z innymi lekami QT (niskie ryzyko).",mit:"Standard."},
+ proc:{p:"L",s:"L",ev:"Brak krytycznych.",mit:"Standard."}},
+{n:"Noradrenalina",
+ phys:{p:"VH",s:"C",ev:"Inaktywacja przez alkalia (NaHCO₃, furosemid, esomeprazol) w dead space trójnika — natychmiastowa.",mit:"Własny port dystalny CVC. Zero innych leków przez ten port."},
+ pharm:{p:"H",s:"C",ev:"Każda zmiana dawki opóźniona o dead space/przepływ. Niewidoczna przerwa przy zmianie strzykawki.",mit:"Minimalizacja dead space. Priming nowej strzykawki. Ciągłe monitorowanie hemodynamiczne."},
+ proc:{p:"VH",s:"C",ev:"Flush przez linię noradrenaliny = niecelowy bolus presyjny → nagła hipertensja, arytmia. Zmiana strzykawki bez primingu = przerwa w dawce.",mit:"Technika priming obligatoryjna. Bez flushu przez ten port. Protokół zmiany strzykawki."}},
+{n:"Adrenalina",
+ phys:{p:"VH",s:"C",ev:"Inaktywacja przez NaHCO₃ i alkalia. Oksydacja — brązowienie = nieaktywna.",mit:"Własna linia. Brak NaHCO₃ w tej samej linii."},
+ pharm:{p:"H",s:"C",ev:"Jak noradrenalina. Poza NZK — bolus = ciężka hipertensja.",mit:"Pompa ciągła. Bolus tylko w NZK."},
+ proc:{p:"H",s:"C",ev:"Bolus poza NZK przez niedopatrzenie (np. push przez linię) = nagła hipertensja/arytmia.",mit:"Własna linia. Zakaz ręcznego pusha."}},
+{n:"Dopamina",
+ phys:{p:"H",s:"C",ev:"Inaktywacja przez NaHCO₃ natychmiastowa. Niezgodna z furosemidem.",mit:"Własny port CVC. Brak alkaliów w tej linii."},
+ pharm:{p:"H",s:"H",ev:"Addytywna tachykardia z dobutaminą. Zmiany hemodynamiczne przy zmianie dawki.",mit:"Pompa. Monitorowanie HR."},
+ proc:{p:"H",s:"C",ev:"Bolus/flush → nagłe zmiany hemodynamiczne.",mit:"Pompa ciągła. Priming."}},
+{n:"Dobutamina",
+ phys:{p:"H",s:"H",ev:"Wytrącenie z furosemidem (natychmiastowe). Inaktywacja przez NaHCO₃.",mit:"Osobna linia od furosemidu."},
+ pharm:{p:"H",s:"H",ev:"Addytywna tachykardia/arytmia z innymi katecholaminami.",mit:"Monitorowanie EKG."},
+ proc:{p:"H",s:"H",ev:"Bolus = nagłe zmiany HR/BP.",mit:"Pompa ciągła."}},
+{n:"Digoksyna",
+ phys:{p:"H",s:"H",ev:"Adsorpcja do plastiku — utrata dawki. Wytrącenie przy pH zmienionym.",mit:"Zestaw szklany lub low-adsorption."},
+ pharm:{p:"VH",s:"C",ev:"Amiodaron znacząco podnosi stężenie digoksyny (hamowanie P-gp — efekt może być zbliżony do podwojenia, ale wartość zmienna). Furosemid → hipokaliemia → toksyczność digoksyny wzrasta. Wąski indeks terapeutyczny.",mit:"TDM digoksyny. Przy włączeniu amiodaronu: rozważ redukcję dawki digoksyny i monitoruj stężenie (wyjściowe 50% to startowy punkt, dostosuj wg TDM). Suplementacja K⁺."},
+ proc:{p:"H",s:"C",ev:"Szybki bolus = bradykardia, blok AV, NZK. Adsorpcja do plastiku nierozpoznana = zmienna dawka.",mit:"Szkło. Wolne IV ≥10 min. EKG monitoring."}},
+{n:"Metoprolol",
+ phys:{p:"L",s:"L",ev:"Brak istotnych.",mit:"Standardowe."},
+ pharm:{p:"H",s:"H",ev:"Addytywna bradykardia z digoksyną i amiodароnem.",mit:"Monitorowanie HR/EKG. Ostrożność u pacjentów na amiodaronie."},
+ proc:{p:"M",s:"H",ev:"Szybki bolus = bradykardia, blok AV.",mit:"Wolny bolus 1–2 min. Monitorowanie."}},
+{n:"Amiodaron",
+ phys:{p:"VH",s:"C",ev:"Wytrącenie w NaCl (natychmiastowe). Adsorpcja do PVC + ekstrakcja DEHP. Liniowy kontakt z innymi lekami w G5.",mit:"G5 + pojemnik szklany/non-PVC + folia aluminiowa. Własny port."},
+ pharm:{p:"VH",s:"C",ev:"Podwojenie stężenia digoksyny. QT addytywne z haloperydolem (TdP), flukonazolem. Wzrost stężenia teofiliny.",mit:"TDM. EKG monitoring QTc co 6h. Redukcja digoksyny 50%. Unikać jednoczesnego haloperydolu."},
+ proc:{p:"H",s:"H",ev:"Podanie w NaCl lub przez PVC — lek nieaktywny lub utracony. Bolus poza NZK = hipotensja.",mit:"Obowiązkowa weryfikacja nośnika (G5) i pojemnika (non-PVC) przed każdym podaniem."}},
+{n:"Nitrogliceryna",
+ phys:{p:"VH",s:"C",ev:"Adsorpcja do PVC — utrata 50–80% dawki. Niewidoczna.",mit:"Non-PVC specjalny. Szklany pojemnik."},
+ pharm:{p:"M",s:"H",ev:"Addytywna hipotensja z innymi wazodylatatorami.",mit:"Monitorowanie BP. Titracja."},
+ proc:{p:"VH",s:"C",ev:"Standardowy zestaw PVC = pozorna terapia. Pacjent nie otrzymuje skutecznej dawki — nierozpoznana nieskuteczność. Bolus = ciężka hipotensja.",mit:"Obowiązkowy non-PVC zestaw. Protokół weryfikacji zestawu przy każdej wymianie."}},
+{n:"Urapidyl",
+ phys:{p:"M",s:"M",ev:"Wytrącenie przy pH >8.",mit:"Osobna linia od NaHCO₃."},
+ pharm:{p:"M",s:"H",ev:"Addytywna hipotensja z innymi lekami hipotensyjnymi.",mit:"Monitorowanie BP."},
+ proc:{p:"M",s:"H",ev:"Szybki bolus = gwałtowna hipotensja.",mit:"Bolus powolny 25 mg. Monitorowanie."}},
+{n:"Furosemid",
+ phys:{p:"VH",s:"H",ev:"pH 9 — wytrąca WSZYSTKIE kwaśne leki natychmiastowo w dead space: midazolam, haloperydol, dobutaminę, metamizol, metoklopramid.",mit:"Własny lumen lub osobna droga od wszystkich leków o pH <5."},
+ pharm:{p:"H",s:"H",ev:"Hipokaliemia → toksyczność digoksyny, arytmie. Ototoksyczność (duże dawki, niewr. nerek).",mit:"Monitorowanie K⁺. Suplementacja. Ototoks. — max 4 mg/min."},
+ proc:{p:"H",s:"H",ev:"Bolus przez linię z midazolamem = wytrącenie. Duży bolus zbyt szybko = ototoksyczność.",mit:"Weryfikacja aktywnych leków w lumenach przed bolus furosemidu."}},
+{n:"Torasemid",
+ phys:{p:"H",s:"H",ev:"Jak furosemid — pH zasadowy.",mit:"Jak furosemid."},
+ pharm:{p:"M",s:"H",ev:"Hipokaliemia.",mit:"Monitorowanie K⁺."},
+ proc:{p:"M",s:"H",ev:"Jak furosemid.",mit:"Jak furosemid."}},
+{n:"Nimodypina",
+ phys:{p:"VH",s:"H",ev:"Adsorpcja do PVC + ekstrakcja DEHP. Utrata dawki niewidoczna.",mit:"Specjalny zestaw non-PVC producenta OBOWIĄZKOWO. CVC — drażliwa dla żył obwodowych."},
+ pharm:{p:"M",s:"H",ev:"Addytywna hipotensja z innymi wazodylatatorami.",mit:"Monitorowanie BP."},
+ proc:{p:"VH",s:"H",ev:"Standardowy zestaw PVC = utrata leku + narażenie na DEHP. Najczęstszy błąd przy nimodypinie.",mit:"Protokół: weryfikacja zestawu producenta przy każdym podaniu."}},
+{n:"Lewosimendan",
+ phys:{p:"L",s:"M",ev:"Brak danych Y-site z większością leków.",mit:"Własna linia."},
+ pharm:{p:"H",s:"H",ev:"Addytywna hipotensja z innymi wazodylatatorami i lekami presyjnymi obniżającymi SVR.",mit:"Monitorowanie hemodynamiczne. Gotowość na korekcję ciśnienia."},
+ proc:{p:"M",s:"H",ev:"Bolus ładujący → hipotensja (często pomijany u pacjentów z niskim BP).",mit:"Decyzja o bolusie ładującym uwzględnia wyjściowe BP."}},
+{n:"Cerebrolysin",
+ phys:{p:"M",s:"M",ev:"Wytrącenie z aminokwasami IV, emulsjami lipidów.",mit:"Osobna linia."},
+ pharm:{p:"L",s:"L",ev:"Brak krytycznych.",mit:"Standardowe."},
+ proc:{p:"L",s:"L",ev:"Brak krytycznych.",mit:"Standardowe."}},
+{n:"Fenytoina",
+ phys:{p:"VH",s:"C",ev:"Wytrącenie z każdym lekiem (pH 10–12). Kryształy w G5 natychmiastowo. Kryształy w linii po niewystarczającym przepłukaniu.",mit:"Absolutnie dedykowana linia NaCl. 20 ml NaCl flush przed i po. Zero G5."},
+ pharm:{p:"H",s:"H",ev:"Albumina wiąże fenytoinę — zmieniona farmakodynamika. Flukonazol podnosi stężenie fenytoiny.",mit:"Monitoring stężenia. Monitorowanie przy albuminie."},
+ proc:{p:"VH",s:"C",ev:"Przekroczenie 50 mg/min = asystolia. Przypadkowy bolus przez linię wspólną = kryształy w naczyniu. Brak limitu szybkości w pompie.",mit:"Pompa z twardym limitem szybkości. EKG+BP monitoring ciągły. Dedykowana linia — absolutnie."}},
+{n:"Kwas walproinowy",
+ phys:{p:"L",s:"L",ev:"Szeroka kompatybilność fizyczna.",mit:"Standardowe."},
+ pharm:{p:"VH",s:"C",ev:"Meropenem obniża VPA 60–100% — niezależnie od drogi IV, przez inhibicję enzymatyczną.",mit:"Monitoring VPA co 12h przy karbapenemach. Rozważyć zmianę na lewetyracetam."},
+ proc:{p:"M",s:"C",ev:"Brak monitorowania VPA po włączeniu meropenemu — wznowa napadów pomimo pozornej terapii.",mit:"Automatyczne zlecenie monitorowania VPA przy ordynowaniu karbapenemu."}},
+{n:"Lewetyracetam",
+ phys:{p:"L",s:"L",ev:"Szeroka kompatybilność.",mit:"Standardowe."},
+ pharm:{p:"L",s:"L",ev:"Brak krytycznych.",mit:"Standardowe."},
+ proc:{p:"L",s:"L",ev:"Wlew 15 min — krótki bolus akceptowalny.",mit:"Standardowe."}},
+{n:"Propofol 2%",
+ phys:{p:"VH",s:"C",ev:"Zerwanie emulsji przy kontakcie z NaCl, aminoglikozydami, NaHCO₃. Bakteryjne skażenie emulsji — pożywka.",mit:"Dedykowana linia bez wyjątku. Wymiana zestawu i resztek co 12h. Aseptyczne warunki przygotowania."},
+ pharm:{p:"H",s:"C",ev:"PRIS (Propofol Infusion Syndrome) przy dawkach >4 mg/kg/h przez >48h. Triglicerydy — monitorowanie.",mit:"Monitorowanie triglicerydów co 48h. Limit dawki. Rozważyć rotację na midazolam."},
+ proc:{p:"VH",s:"C",ev:"Wspólna linia z innymi lekami = zerwanie emulsji lub skażenie. Szybki bolus = apnea/hipotensja/PRIS. Niewystarczające monitorowanie przy długotrwałym stosowaniu.",mit:"Dedykowana linia bezwzględnie. Pompa. Limit dawki. Co 12h: zmiana zestawu i weryfikacja PRIS."}},
+{n:"Midazolam",
+ phys:{p:"H",s:"H",ev:"Wytrącenie z furosemidem, NaHCO₃, amiodароnem — natychmiastowe.",mit:"Osobna linia od furosemidu i zasadowości. Strzykawka z fentanylem — OK."},
+ pharm:{p:"VH",s:"H",ev:"Flukonazol → 3–5× wzrost stężenia midazolamu. Addytywna depresja OUN i oddechowa.",mit:"Redukcja dawki midazolamu o 50% przy flukonazolu. Monitorowanie RASS."},
+ proc:{p:"H",s:"H",ev:"Szybki bolus = apnea. Brak modyfikacji przy flukonazolu = przedłużona sedacja.",mit:"Wolny bolus rozcieńczony (1 mg/ml). Protokół ABCDEF budzenia."}},
+{n:"Diazepam",
+ phys:{p:"VH",s:"C",ev:"Wytrącenie w NaCl (natychmiastowe). Adsorpcja do PVC 80–90% — pozorna dawka.",mit:"G5 lub nierozcieńczony. Szkło lub non-PVC absolutnie."},
+ pharm:{p:"M",s:"H",ev:"Albumina wiąże diazepam — zmieniona farmakodynamika.",mit:"Monitorowanie efektu klinicznego."},
+ proc:{p:"VH",s:"C",ev:"Standardowy zestaw PVC = utrata 80–90% dawki = brak efektu terapeutycznego lub niespójna sedacja. Podanie w NaCl = wytrącenie.",mit:"Każde podanie: weryfikacja nośnika (G5/nierozcieńczony) i zestawu (non-PVC)."}},
+{n:"Lorazepam",
+ phys:{p:"M",s:"M",ev:"Umiarkowana adsorpcja do PVC.",mit:"Krótkie zestawy. Rozcieńczyć 1:1."},
+ pharm:{p:"M",s:"H",ev:"Addytywna depresja OUN.",mit:"Monitorowanie."},
+ proc:{p:"M",s:"H",ev:"Szybki bolus = apnea. Zwłaszcza z opioidami.",mit:"Wolny bolus 2 min. Zabezpieczenie dróg."}},
+{n:"Fentanyl",
+ phys:{p:"L",s:"L",ev:"Szeroka kompatybilność.",mit:"Standardowe."},
+ pharm:{p:"H",s:"H",ev:"Flukonazol hamuje CYP3A4 → wzrost stężeń fentanylu (wielkość efektu zmienna osobniczo). Rigid chest syndrome przy dużych dawkach szybko.",mit:"Redukcja dawki i titracja wg efektu klinicznego przy włączeniu flukonazolu. Powolne podanie dużych dawek."},
+ proc:{p:"M",s:"H",ev:"Duże dawki szybko → rigid chest syndrome (sztywność klatki, niemożność wentylacji).",mit:"Sedacja analgosedacja — titracja. Nalokson i środki zwiotczające dostępne."}},
+{n:"Sufentanyl",
+ phys:{p:"L",s:"L",ev:"Umiarkowana adsorpcja do PVC.",mit:"Strzykawki polietylenowe preferowane."},
+ pharm:{p:"H",s:"H",ev:"Jak fentanyl. Silniejszy — wyższe ryzyko przy szybkim podaniu.",mit:"Jak fentanyl."},
+ proc:{p:"M",s:"H",ev:"Pomylenie dawkowania sufentanyl/fentanyl — 10× silniejszy.",mit:"Wyraźne etykiety. Podwójna weryfikacja."}},
+{n:"Morfina",
+ phys:{p:"L",s:"L",ev:"Szeroka kompatybilność.",mit:"Standardowe."},
+ pharm:{p:"M",s:"H",ev:"Histaminoliberacja przy szybkim bolusie → hipotensja, skurcz oskrzeli.",mit:"Powolny bolus 2–5 min."},
+ proc:{p:"M",s:"H",ev:"Szybki bolus = nagła hipotensja i skurcz oskrzeli szczególnie u astmatyków.",mit:"Wolne podanie. Obserwacja 5 min."}},
+{n:"Metamizol",
+ phys:{p:"M",s:"M",ev:"Reaktywny — nie mieszać bezpośrednio. Degradacja po 1h.",mit:"Świeże przygotowanie. Podać w ciągu 1h od rozcieńczenia."},
+ pharm:{p:"M",s:"H",ev:"Histaminoliberacja → hipotensja przy szybkim wlewie.",mit:"Wolny wlew ≥15 min. Obserwacja BP."},
+ proc:{p:"H",s:"H",ev:"Szybki bolus zamiast wlewu 15 min = nagła hipotensja. Stary roztwór (>1h) = lek nieaktywny.",mit:"Protokół: rozcieńczaj bezpośrednio przed. Pompa. Min 15 min."}},
+{n:"Metoklopramid",
+ phys:{p:"M",s:"M",ev:"Wytrącenie z furosemidem.",mit:"Osobna linia od furosemidu."},
+ pharm:{p:"M",s:"M",ev:"Pozapiramidowe przy szybkim lub dużych dawkach.",mit:"Wolny bolus. Monitorowanie."},
+ proc:{p:"M",s:"M",ev:"Szybki bolus = objawy pozapiramidowe.",mit:"Powolny bolus 1–2 min."}},
+{n:"Esomeprazol",
+ phys:{p:"H",s:"H",ev:"pH 9–10 — wytrąca kwaśne leki natychmiastowo (midazolam, haloperydol, katecholaminy) w dead space trójnika.",mit:"Przepłukaj linię 10 ml NaCl przed każdym podaniem. Osobna linia od kwaśnych."},
+ pharm:{p:"L",s:"L",ev:"Brak krytycznych.",mit:"Standardowe."},
+ proc:{p:"H",s:"H",ev:"Podanie esomeprazolu przez linię katecholaminy = wytrącenie w trójniku + potencjalna inaktywacja katecholaminy.",mit:"Weryfikacja aktywnych wlewów w linii przed bolusem."}},
+{n:"Acetylocysteina",
+ phys:{p:"H",s:"H",ev:"Grupy tiolowe — wytrącenie z aminoglikozydami, CaCl₂, niektórymi metalami.",mit:"Osobna linia od amikacyny i CaCl₂."},
+ pharm:{p:"M",s:"M",ev:"Anafilaksja przy zbyt szybkim pierwszym wlewie (15 min).",mit:"Protokół 3-etapowy. Monitorowanie przez pierwsze 15 min."},
+ proc:{p:"H",s:"H",ev:"Pominięcie protokołu 3-etapowego lub podanie zbyt szybko = anafilaksja.",mit:"Pompa. Protokół obligatoryjny."}},
+{n:"CaCl₂",
+ phys:{p:"VH",s:"C",ev:"Wytrącenie z ceftriaksonem (śmiertelne u noworodków, FDA), fosforanami, węglanami. Natychmiastowe.",mit:"Absolutnie własna linia od ceftriaksonu. Osobna od fosforanów."},
+ pharm:{p:"M",s:"H",ev:"Hiperkalcemia przy szybkim bolus. Arytmia.",mit:"Wolny bolus. Monitorowanie Ca²⁺ i EKG."},
+ proc:{p:"H",s:"C",ev:"Bolus przez linię po ceftriaksonie bez przepłukania = wytrącenie w kaniuli.",mit:"Absolutna weryfikacja aktywności ceftriaksonu przed każdym podaniem CaCl₂."}},
+{n:"NaHCO₃",
+ phys:{p:"VH",s:"C",ev:"Inaktywacja katecholamin w SEKUNDACH przy kontakcie. Wytrącenie soli wapnia, magnezu.",mit:"Własna linia absolutnie. Zero wspólnego portu z presyjnymi."},
+ pharm:{p:"H",s:"H",ev:"Paradoksalna kwasica wewnątrzkomórkowa przy nadmiarze. Hiperosmolalność, hipokaliemia.",mit:"Monitorowanie gazometrii i elektrolitów."},
+ proc:{p:"VH",s:"C",ev:"Podanie przez linię katecholamin = natychmiastowa inaktywacja presyjnych bez widocznych zmian roztworu. Cichy błąd.",mit:"Protokół: NaHCO₃ ZAWSZE przez własną linię. Zero wyjątków."}},
+{n:"Etamsylat",
+ phys:{p:"L",s:"L",ev:"Unikać kontaktu z NaHCO₃.",mit:"Osobna linia od NaHCO₃."},
+ pharm:{p:"L",s:"L",ev:"Brak krytycznych.",mit:"Standardowe."},
+ proc:{p:"L",s:"L",ev:"Brak krytycznych.",mit:"Standardowe."}},
+{n:"Kwas traneksamowy",
+ phys:{p:"L",s:"L",ev:"Unikać z penicylinami.",mit:"Osobna linia od ampicyliny."},
+ pharm:{p:"M",s:"M",ev:"Drgawki przy dużych dawkach dożylnych.",mit:"Protokół TXA: 1g/10 min."},
+ proc:{p:"M",s:"H",ev:"Zbyt szybki bolus = hipotensja, drgawki (duże dawki).",mit:"10 min dla 1g. Pompa lub mierzony czas."}},
+{n:"Hydrokortyzon",
+ phys:{p:"M",s:"M",ev:"Wytrącenie z heparyną.",mit:"Osobna linia od heparyny."},
+ pharm:{p:"L",s:"L",ev:"Brak krytycznych.",mit:"Standardowe."},
+ proc:{p:"L",s:"L",ev:"Bezpieczny bolus.",mit:"Standardowe."}},
+{n:"Deksametazon",
+ phys:{p:"L",s:"L",ev:"Wytrącenie z fenytoiną.",mit:"Nie przez linię fenytoiny."},
+ pharm:{p:"L",s:"L",ev:"Brak krytycznych.",mit:"Standardowe."},
+ proc:{p:"L",s:"L",ev:"Bezpieczny bolus.",mit:"Standardowe."}},
+{n:"Haloperydol",
+ phys:{p:"H",s:"H",ev:"Wytrącenie z furosemidem natychmiastowe (pH 3,5 vs pH 9). Wytrącenie z zasadowymi.",mit:"Własna linia od furosemidu."},
+ pharm:{p:"VH",s:"C",ev:"QT addytywne z amiodароnem = Torsades de Pointes, migotanie komór. Flukonazol podnosi haloperydol (CYP3A4).",mit:"EKG monitoring QTc co 6h. Unikać jednoczesnego amiodaronu. Potassium>4,0, Mg²⁺>0,9."},
+ proc:{p:"H",s:"C",ev:"Podanie haloperydolu pacjentowi na amiodaronie bez monitorowania EKG.",mit:"Automatyczna weryfikacja: czy amiodaron aktywny? Jeśli tak — EKG przed podaniem haloperydolu."}},
+{n:"Hepa-Merz",
+ phys:{p:"M",s:"M",ev:"Brak danych Y-site.",mit:"Osobna linia."},
+ pharm:{p:"L",s:"L",ev:"Brak krytycznych.",mit:"Standardowe."},
+ proc:{p:"L",s:"L",ev:"Brak krytycznych.",mit:"Standardowe."}},
+{n:"Kanavit",
+ phys:{p:"M",s:"H",ev:"Fotodegradacja aktywna. Szybki bolus = anafilaksja.",mit:"Osłona świetlna obowiązkowa. Wolny wlew ≥30 min."},
+ pharm:{p:"L",s:"L",ev:"Brak krytycznych.",mit:"Standardowe."},
+ proc:{p:"H",s:"H",ev:"Podanie bez osłony = nieaktywny lek. Szybki bolus = reakcja anafilaktoidalna.",mit:"Folia obowiązkowa. Pompa ≥30 min."}},
+{n:"Monofer",
+ phys:{p:"H",s:"H",ev:"Wytrącenie w G5 (niezgodność nośnikowa). Niezgodność z CaCl₂.",mit:"WYŁĄCZNIE NaCl 0,9%. Osobna linia od CaCl₂."},
+ pharm:{p:"M",s:"M",ev:"Reakcja anafilaktoidalna — szczególnie pierwsze podanie.",mit:"Monitorowanie przez pierwsze 30 min. Adrenalina dostępna."},
+ proc:{p:"H",s:"H",ev:"G5 jako nośnik = wytrącenie/niestabilność. Niewystarczające monitorowanie przy pierwszym podaniu.",mit:"Label: NaCl ONLY. Monitorowanie reakcji."}},
+{n:"Runapriq",
+ phys:{p:"M",s:"M",ev:"Lek sierocy — brak danych.",mit:"Dedykowana linia."},
+ pharm:{p:"M",s:"M",ev:"Brak danych.",mit:"Ostrożność. Dedykowana linia."},
+ proc:{p:"M",s:"M",ev:"Brak danych — nieprzewidywalność.",mit:"Dedykowana linia. Ścisłe monitorowanie."}},
+{n:"Deksametazon TZF",
+ phys:{p:"L",s:"L",ev:"Jak Dexaven.",mit:"Standardowe."},
+ pharm:{p:"L",s:"L",ev:"Jak Dexaven.",mit:"Standardowe."},
+ proc:{p:"L",s:"L",ev:"Bezpieczny bolus.",mit:"Standardowe."}},
+{n:"Glicerol",
+ phys:{p:"L",s:"L",ev:"Szeroka kompatybilność.",mit:"Standardowe."},
+ pharm:{p:"L",s:"L",ev:"Brak krytycznych.",mit:"Standardowe."},
+ proc:{p:"L",s:"L",ev:"Brak krytycznych.",mit:"Standardowe."}},
+{n:"Neurovit B",
+ phys:{p:"M",s:"M",ev:"B1 i B12 fotolabilne.",mit:"Osłona świetlna."},
+ pharm:{p:"L",s:"L",ev:"Brak krytycznych.",mit:"Standardowe."},
+ proc:{p:"M",s:"M",ev:"Brak osłony = utrata aktywności B1.",mit:"Folia na strzykawkę/worek."}},
+{n:"Insulina",
+ phys:{p:"H",s:"H",ev:"Adsorpcja do PVC 20–30% — bez saturacji zestawu utrata dawki.",mit:"Saturacja zestawu: 50 ml roboczego roztworu przed podłączeniem."},
+ pharm:{p:"H",s:"H",ev:"Hipoglikemia przy przyspieszeniu przepływu lub nieintencjonalnym bolusie.",mit:"Pompa. Monitorowanie glikemii co 1–2h przy intensywnej insulinoterapii."},
+ proc:{p:"H",s:"H",ev:"Każda zmiana strzykawki = nowa saturacja niezbędna. Zmiana przepływu przez trójnik = bolus insuliny.",mit:"Protokół saturacji zestawu. Zakaz manualnego przyspieszania przepływu insuliny."}},
+{n:"Laktuloza",
+ phys:{p:"L",s:"L",ev:"Brak krytycznych.",mit:"Standardowe."},
+ pharm:{p:"L",s:"L",ev:"Brak krytycznych.",mit:"Standardowe."},
+ proc:{p:"L",s:"L",ev:"Brak krytycznych.",mit:"Standardowe."}},
+{n:"Fibryga",
+ phys:{p:"VH",s:"C",ev:"Inaktywacja czynników krzepnięcia przy kontakcie z KAŻDYM lekiem — denaturacja białka.",mit:"Absolutnie dedykowana linia. Tylko dedykowany rozpuszczalnik."},
+ pharm:{p:"M",s:"H",ev:"Brak aktywności prokoagulacyjnej po inaktywacji.",mit:"TEM/ROTEM przed/po podaniu."},
+ proc:{p:"VH",s:"C",ev:"Podanie przez linię z innym lekiem = inaktywacja bez widocznych zmian = brak efektu = krwawienie.",mit:"Obowiązkowy protokół: dedykowana linia jednorazowa, bez wyjątków."}},
+{n:"Octaplex",
+ phys:{p:"VH",s:"C",ev:"Jak Fibryga.",mit:"Jak Fibryga."},
+ pharm:{p:"M",s:"H",ev:"Ryzyko zakrzepicy przy nadmiernym podaniu.",mit:"Kontrola ROTEM. Ściśle wg wskazań."},
+ proc:{p:"VH",s:"C",ev:"Jak Fibryga. Max 8 ml/min — przekroczenie = anafilaksja.",mit:"Pompa z limitem szybkości."}},
+{n:"Teofilina",
+ phys:{p:"M",s:"M",ev:"Degradacja z NAC/wit.C. Zmiana pH zaburza stabilność.",mit:"Osobna linia od NAC."},
+ pharm:{p:"H",s:"C",ev:"Wąski indeks terapeutyczny. Amiodaron i flukonazol podnoszą stężenie (CYP1A2, CYP3A4).",mit:"TDM. Redukcja dawki przy amiodaronie/flukonazolu. EKG."},
+ proc:{p:"VH",s:"C",ev:"Szybki bolus / flush przez linię teofiliny = dawka ładująca niechciana → arytmia, drgawki.",mit:"Pompa z twardym limitem. Nigdy ręczny push. Dawka ładująca ≥30 min."}},
+{n:"Salbutamol",
+ phys:{p:"M",s:"M",ev:"Wytrącenie z zasadowymi lekami.",mit:"Osobna linia od NaHCO₃."},
+ pharm:{p:"M",s:"H",ev:"Tachykardia, hipokaliemia, arytmia. Addytywne z innymi lekami sympatykomimetycznymi.",mit:"Monitorowanie HR, K⁺."},
+ proc:{p:"M",s:"M",ev:"Zbyt szybki bolus = tachykardia.",mit:"Wolny wlew. Monitorowanie."}},
+{n:"Albumina 20%",
+ phys:{p:"M",s:"M",ev:"Wytrącenie z CaCl₂ (wysokie stężenia).",mit:"Osobna linia od CaCl₂."},
+ pharm:{p:"H",s:"H",ev:"Wiąże fenytoinę i diazepam — zmieniona farmakokinetyka wolnej frakcji.",mit:"Monitorowanie wolnej frakcji fenytoiny. Obserwacja efektu klinicznego."},
+ proc:{p:"M",s:"H",ev:"Zbyt szybki wlew = przeciążenie płynowe, obrzęk płuc.",mit:"Kontrolowana szybkość. Monitorowanie bilansu."}},
+{n:"Bupiwakaina",
+ phys:{p:"L",s:"L",ev:"Nie dotyczy IV.",mit:"Nie podawać IV."},
+ pharm:{p:"VH",s:"C",ev:"Przypadkowe IV = NZK oporne na resuscytację. Wysoka lipofilność = kumulacja w sercu.",mit:"Intralipid 20% ZAWSZE dostępny przy użyciu bupiwakainy. Podwójna weryfikacja drogi podania."},
+ proc:{p:"H",s:"C",ev:"Pomylenie drogi podania (zewnątrzoponowy vs IV) = śmierć. Aktywacja linii IV podczas znieczulenia zewnątrzoponowego.",mit:"Dedykowane zestawy zewnątrzoponowe (żółte). Podwójna weryfikacja przed każdym podaniem. Luer-Lock tylko dla IV."}},
+{n:"Fondaparynuks",
+ phys:{p:"L",s:"L",ev:"Brak danych Y-site.",mit:"Osobna linia."},
+ pharm:{p:"M",s:"H",ev:"Krwawienie — jak każdy antykoagulant. Brak antidotum.",mit:"Monitorowanie krzepnięcia. Protamina nieskuteczna — anty-Xa monitorowanie."},
+ proc:{p:"L",s:"M",ev:"Zasadniczo s.c. — pomyłka drogi podania (IV zamiast s.c.).",mit:"Weryfikacja drogi podania."}},
+];
+
+const PCLS={VH:"pc1",H:"pc1",M:"pc2",L:"pc3"};
+const SCLS={C:"sc1",H:"sc2",M:"sc2",L:"sc3"};
+
+function riskScore(p,s){
+  const pm={VH:4,H:3,M:2,L:1};
+  const sm={C:4,H:3,M:2,L:1};
+  return pm[p]*sm[s];
+}
+function rowBg(p,s){
+  const sc=riskScore(p,s);
+  if(sc>=12) return "risk-cell-crit";
+  if(sc>=6) return "risk-cell-high";
+  if(sc>=3) return "risk-cell-med";
+  return "risk-cell-low";
+}
+
+function show(id){
+  ['matrix','phys','pharm','proc','top'].forEach(x=>document.getElementById('p-'+x).classList.remove('active'));
+  document.getElementById('p-'+id).classList.add('active');
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['matrix','phys','pharm','proc','top'][i]===id));
+  if(id==='matrix' && !document.getElementById('p-matrix').innerHTML) renderMatrix();
+  if(id==='phys' && !document.getElementById('p-phys').innerHTML) renderCat('phys','Ryzyko fizyczne — wytrącenie i zator');
+  if(id==='pharm' && !document.getElementById('p-pharm').innerHTML) renderCat('pharm','Ryzyko farmakologiczne — interakcje i utrata działania');
+  if(id==='proc' && !document.getElementById('p-proc').innerHTML) renderCat('proc','Ryzyko proceduralne — bolus, pompa, tempo');
+  if(id==='top' && !document.getElementById('p-top').innerHTML) renderTop();
+}
+
+let mBuilt=false;
+function renderMatrix(){
+  if(mBuilt) return; mBuilt=true;
+  const el=document.getElementById('p-matrix');
+  const q_el=document.createElement('div');
+  q_el.className='row-f';
+  q_el.innerHTML='<input type="text" id="mq" placeholder="Szukaj leku..." oninput="filterMatrix()"><select id="ms" onchange="filterMatrix()"><option value="">Wszystkie</option><option value="VH">Bardzo wysokie</option><option value="H">Wysokie</option><option value="M">Umiarkowane</option><option value="L">Niskie</option></select>';
+  el.appendChild(q_el);
+  const cnt=document.createElement('div');
+  cnt.className='cnt'; cnt.id='mcnt';
+  el.appendChild(cnt);
+  const wrap=document.createElement('div');
+  wrap.className='scroll';
+  wrap.innerHTML=`<table><thead><tr>
+    <th style="min-width:120px">Lek</th>
+    <th>Fiz.P.</th><th>Fiz.C.</th>
+    <th>Farm.P.</th><th>Farm.C.</th>
+    <th>Proc.P.</th><th>Proc.C.</th>
+    <th style="min-width:220px">Kluczowy środek zapobiegawczy</th>
+  </tr></thead><tbody id="mbody"></tbody></table>`;
+  el.appendChild(wrap);
+  filterMatrix();
+}
+
+function filterMatrix(){
+  const q=(document.getElementById('mq')?.value||'').toLowerCase();
+  const s=document.getElementById('ms')?.value||'';
+  const rows=DRUGS.filter(d=>{
+    const maxP=[d.phys.p,d.pharm.p,d.proc.p].find(p=>p==='VH')||[d.phys.p,d.pharm.p,d.proc.p].find(p=>p==='H')||'L';
+    return (!q||d.n.toLowerCase().includes(q)) && (!s||d.phys.p===s||d.pharm.p===s||d.proc.p===s);
+  });
+  document.getElementById('mcnt').textContent='Wyświetlono: '+rows.length+' leków';
+  document.getElementById('mbody').innerHTML=rows.map(d=>{
+    const topMit=[d.phys,d.pharm,d.proc].reduce((a,b)=>riskScore(b.p,b.s)>riskScore(a.p,a.s)?b:a).mit;
+    return `<tr>
+      <td style="font-weight:500">${d.n}</td>
+      <td class="${rowBg(d.phys.p,d.phys.s)}"><span class="${PCLS[d.phys.p]}">${d.phys.p}</span></td>
+      <td class="${rowBg(d.phys.p,d.phys.s)}"><span class="${SCLS[d.phys.s]}">${d.phys.s}</span></td>
+      <td class="${rowBg(d.pharm.p,d.pharm.s)}"><span class="${PCLS[d.pharm.p]}">${d.pharm.p}</span></td>
+      <td class="${rowBg(d.pharm.p,d.pharm.s)}"><span class="${SCLS[d.pharm.s]}">${d.pharm.s}</span></td>
+      <td class="${rowBg(d.proc.p,d.proc.s)}"><span class="${PCLS[d.proc.p]}">${d.proc.p}</span></td>
+      <td class="${rowBg(d.proc.p,d.proc.s)}"><span class="${SCLS[d.proc.s]}">${d.proc.s}</span></td>
+      <td style="font-size:10px">${topMit}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderCat(cat, title){
+  const el=document.getElementById('p-'+cat);
+  const fEl=document.createElement('div');
+  fEl.className='row-f';
+  fEl.innerHTML=`<input type="text" id="${cat}q" placeholder="Szukaj leku..." oninput="filterCat('${cat}')">
+  <select id="${cat}s" onchange="filterCat('${cat}')">
+    <option value="">Wszystkie</option><option value="VH">Bardzo wysokie</option>
+    <option value="H">Wysokie</option><option value="M">Umiarkowane</option><option value="L">Niskie</option>
+  </select>`;
+  el.appendChild(fEl);
+  const cnt=document.createElement('div');
+  cnt.className='cnt'; cnt.id=cat+'cnt';
+  el.appendChild(cnt);
+  const wrap=document.createElement('div');
+  wrap.className='scroll';
+  wrap.innerHTML=`<table><thead><tr>
+    <th style="min-width:130px">Lek</th>
+    <th>Prawdopod.</th><th>Ciężkość</th>
+    <th style="min-width:200px">Zdarzenie</th>
+    <th style="min-width:200px">Jak ograniczyć</th>
+  </tr></thead><tbody id="${cat}body"></tbody></table>`;
+  el.appendChild(wrap);
+  filterCat(cat);
+}
+
+function filterCat(cat){
+  const q=(document.getElementById(cat+'q')?.value||'').toLowerCase();
+  const s=document.getElementById(cat+'s')?.value||'';
+  const rows=DRUGS.filter(d=>(!q||d.n.toLowerCase().includes(q))&&(!s||d[cat].p===s));
+  document.getElementById(cat+'cnt').textContent='Wyświetlono: '+rows.length+' leków';
+  document.getElementById(cat+'body').innerHTML=rows.map(d=>`
+    <tr>
+      <td style="font-weight:500">${d.n}</td>
+      <td class="${rowBg(d[cat].p,d[cat].s)}"><span class="${PCLS[d[cat].p]}">${d[cat].p}</span></td>
+      <td class="${rowBg(d[cat].p,d[cat].s)}"><span class="${SCLS[d[cat].s]}">${d[cat].s}</span></td>
+      <td style="font-size:10px">${d[cat].ev}</td>
+      <td style="font-size:10px">${d[cat].mit}</td>
+    </tr>`).join('');
+}
+
+function renderTop(){
+  const el=document.getElementById('p-top');
+  const sorted=[...DRUGS].sort((a,b)=>{
+    const sa=Math.max(riskScore(a.phys.p,a.phys.s),riskScore(a.pharm.p,a.pharm.s),riskScore(a.proc.p,a.proc.s));
+    const sb=Math.max(riskScore(b.phys.p,b.phys.s),riskScore(b.pharm.p,b.pharm.s),riskScore(b.proc.p,b.proc.s));
+    return sb-sa;
+  }).slice(0,20);
+
+  const cats=[
+    {k:'proc',label:'Proceduralne',cls:'al-d'},
+    {k:'phys',label:'Fizyczne',cls:'al-w'},
+    {k:'pharm',label:'Farmakologiczne',cls:'al-i'},
+  ];
+
+  let html='<div style="font-size:11px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Top 20 leków wg maksymalnego ryzyka (wszystkie kategorie)</div>';
+  sorted.forEach((d,i)=>{
+    const maxCat=cats.reduce((a,b)=>riskScore(d[b.k].p,d[b.k].s)>riskScore(d[a.k].p,d[a.k].s)?b:a);
+    const maxRisk=d[maxCat.k];
+    html+=`<div class="alert-strip ${maxCat.cls}" style="margin-bottom:5px">
+      <div style="display:flex;gap:8px;align-items:baseline;flex-wrap:wrap">
+        <span style="font-weight:500;min-width:26px">${i+1}.</span>
+        <span style="font-weight:500">${d.n}</span>
+        <span class="b ${PCLS[maxRisk.p]}" style="margin-left:4px">${maxRisk.p}</span>
+        <span class="b ${SCLS[maxRisk.s]}">${maxRisk.s}</span>
+        <span style="font-size:10px;opacity:.7">(${maxCat.label})</span>
+      </div>
+      <div style="font-size:10px;margin-top:3px;line-height:1.5">${maxRisk.ev}</div>
+      <div style="font-size:10px;margin-top:2px;font-weight:500">${maxRisk.mit}</div>
+    </div>`;
+  });
+  el.innerHTML=html;
+}
+
+show('matrix');
+</script>

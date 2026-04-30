@@ -1,0 +1,675 @@
+/*
+ * ╔══════════════════════════════════════════════════════════╗
+ * ║  BEZPIECZEŃSTWO PODAŃ IV W OIT — System wizualny v4.0  ║
+ * ║  Format: B5 pionowo (176 × 250 mm)                     ║
+ * ║  Inspiracja: Marino's ICU Book + BNF Injectable Drugs  ║
+ * ╚══════════════════════════════════════════════════════════╝
+ */
+
+:root {
+  /* Kolory bazowe */
+  --ink:         #1A1A2E;
+  --ink-2:       #52525B;
+  --ink-3:       #A1A1AA;
+  --surface:     #FFFFFF;
+  --surface-2:   #FAFAF9;
+  --surface-3:   #F4F4F0;
+  --border:      rgba(0,0,0,0.08);
+  --border-2:    rgba(0,0,0,0.14);
+
+  /* Branding v4 */
+  --navy:        #0C1F3F;
+  --navy-2:      #1D4775;
+  --gold:        #B8882A;
+  --gold-2:      #D4A840;
+
+  /* Aliasy wstecznej kompatybilności */
+  --brand:       #0C1F3F;
+  --brand-2:     #1D4775;
+  --accent:      #B8882A;
+  --accent-2:    #D4A840;
+
+  /* Statusy krytyczne */
+  --critical:    #991B1B;
+  --critical-bg: #FEF2F2;
+  --critical-bd: #FCA5A5;
+  --warn:        #92400E;
+  --warn-bg:     #FFFBEB;
+  --warn-bd:     #FCD34D;
+  --info:        #1E3A5F;
+  --info-bg:     #EFF6FF;
+  --info-bd:     #93C5FD;
+  --ok:          #14532D;
+  --ok-bg:       #F0FDF4;
+  --ok-bd:       #86EFAC;
+  --muted-bg:    #F9F9F7;
+  --muted-bd:    #D4D4D0;
+
+  /* Kompatybilność */
+  --compat-yes-bg: #F0FDF4; --compat-yes-tx: #166534; --compat-yes-bd: #4ADE80;
+  --compat-no-bg:  #FEF2F2; --compat-no-tx:  #991B1B; --compat-no-bd:  #F87171;
+  --compat-cd-bg:  #FFFBEB; --compat-cd-tx:  #92400E; --compat-cd-bd:  #FBBF24;
+  --compat-nd-bg:  #F4F4F5; --compat-nd-tx:  #52525B; --compat-nd-bd:  #A1A1AA;
+
+  /* Ryzyko QTc */
+  --risk-C-bg: #7F1D1D; --risk-C-tx: #FEF2F2;
+  --risk-H-bg: #DC2626; --risk-H-tx: #FFFFFF;
+  --risk-M-bg: #D97706; --risk-M-tx: #FFFFFF;
+  --risk-L-bg: #16A34A; --risk-L-tx: #FFFFFF;
+
+  /* Typografia */
+  --f-sans:  "Inter", "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
+  --f-mono:  "JetBrains Mono", "Fira Code", "Courier New", monospace;
+  --f-serif: "Georgia", serif;
+}
+
+/* ═══════════════════════════════════════
+   PAGINACJA — Format B5 pionowy
+   ═══════════════════════════════════════ */
+
+@page {
+  size: 176mm 250mm;
+  margin: 20mm 18mm 22mm 18mm;
+
+  @top-left {
+    content: string(chapter-label, first);
+    font: 7pt/1 var(--f-sans);
+    color: var(--ink-3);
+    letter-spacing: 0.06em;
+  }
+  @top-right {
+    content: string(part-label, first);
+    font: 7pt/1 var(--f-sans);
+    color: var(--gold);
+    font-weight: 500;
+  }
+  @bottom-left {
+    content: "Bezpieczeństwo podań IV w OIT";
+    font: 6.5pt/1 var(--f-sans);
+    color: var(--ink-3);
+  }
+  @bottom-right {
+    content: counter(page);
+    font: 7.5pt/1 var(--f-sans);
+    color: var(--ink-2);
+    font-weight: 600;
+  }
+}
+
+@page :left {
+  margin-left: 22mm;
+  margin-right: 18mm;
+}
+
+@page :right {
+  margin-left: 18mm;
+  margin-right: 22mm;
+}
+
+/* ═══════════════════════════════════════
+   TYPOGRAFIA BAZOWA
+   ═══════════════════════════════════════ */
+
+body {
+  font-family: var(--f-sans);
+  font-size: 9pt;
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--surface);
+  text-align: left;
+  hyphens: none;
+  word-break: normal;
+  overflow-wrap: normal;
+  orphans: 3;
+  widows: 3;
+}
+
+/* string-set dla nagłówków stron */
+h1 { string-set: chapter-label content(); }
+h2 { string-set: part-label content(); }
+
+/* ═══════════════════════════════════════
+   NAGŁÓWKI
+   ═══════════════════════════════════════ */
+
+.chapter-opener {
+  border-top: 3pt solid var(--navy);
+  padding-top: 4mm;
+  margin-bottom: 6mm;
+}
+.chapter-opener .ch-number {
+  font-size: 7.5pt;
+  font-weight: 500;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.chapter-opener h1 {
+  font-size: 18pt;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  margin: 2mm 0 0;
+}
+.chapter-opener .ch-tagline {
+  font-size: 8.5pt;
+  color: var(--ink-2);
+  margin-top: 1.5mm;
+}
+
+h2 {
+  font-size: 12pt;
+  font-weight: 700;
+  color: var(--navy);
+  margin: 6mm 0 2.5mm;
+  padding-left: 3mm;
+  border-left: 3.5pt solid var(--gold);
+  break-after: avoid;
+  line-height: 1.25;
+}
+
+h3 {
+  font-size: 10pt;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 4mm 0 1.5mm;
+  break-after: avoid;
+}
+
+h4 {
+  font-size: 8pt;
+  font-weight: 600;
+  color: var(--ink-2);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 3mm 0 1mm;
+  break-after: avoid;
+}
+
+/* ═══════════════════════════════════════
+   AKAPITY
+   ═══════════════════════════════════════ */
+
+p { margin: 0 0 2.5mm; }
+
+/* ═══════════════════════════════════════
+   TABELE
+   ═══════════════════════════════════════ */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 8pt;
+  line-height: 1.38;
+  margin: 3mm 0 4mm;
+  break-inside: auto;
+  table-layout: fixed;
+  hyphens: none;
+  word-break: normal;
+}
+
+/* Nagłówek tabeli powtarza się na każdej stronie */
+thead {
+  display: table-header-group;
+}
+
+/* Każdy wiersz trzymamy w całości, ale tabela może się łamać między wierszami */
+tr {
+  break-inside: avoid;
+  break-after: auto;
+}
+
+.tbl-title {
+  font-size: 7.5pt;
+  font-weight: 700;
+  color: var(--navy-2);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 1.5mm;
+}
+
+thead th {
+  background: var(--navy);
+  color: #FFFFFF;
+  padding: 2.2mm 2.5mm;
+  font-weight: 600;
+  font-size: 7.5pt;
+  text-align: left;
+  vertical-align: bottom;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+thead th:first-child {
+  min-width: 34mm;
+  width: 34mm;
+  white-space: nowrap;
+}
+thead th.center { text-align: center; }
+thead th.right  { text-align: right; }
+
+.tbl-group-hd td {
+  background: var(--navy-2);
+  color: #FFFFFF;
+  font-size: 7pt;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 1.5mm 2.5mm;
+}
+
+tbody tr:nth-child(odd)  td { background: var(--surface); }
+tbody tr:nth-child(even) td { background: var(--surface-3); }
+
+tbody td {
+  padding: 2mm 2.5mm;
+  border-bottom: 0.5pt solid var(--border);
+  vertical-align: top;
+  word-break: normal;
+  overflow-wrap: normal;
+  hyphens: none;
+}
+
+/* Pierwsza kolumna — nazwy leków nigdy nie łamane */
+tbody td:first-child {
+  white-space: nowrap;
+  min-width: 28mm;
+  width: 28mm;
+  font-weight: 500;
+}
+
+tbody td.center { text-align: center; vertical-align: middle; }
+tbody td.right  { text-align: right; font-variant-numeric: tabular-nums; }
+tbody td.mono   { font-family: var(--f-mono); font-size: 7pt; }
+
+.tbl-note {
+  font-size: 7pt;
+  color: var(--ink-3);
+  margin-top: 1mm;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+/* ═══════════════════════════════════════
+   STATUS KOMPATYBILNOŚCI
+   (działa zarówno na td jak i na span)
+   ═══════════════════════════════════════ */
+
+.c-ok, .c-yes {
+  background: var(--compat-yes-bg) !important;
+  color: var(--compat-yes-tx);
+  border-left: 2.5pt solid var(--compat-yes-bd);
+  font-weight: 700;
+  text-align: center;
+}
+.c-no {
+  background: var(--compat-no-bg) !important;
+  color: var(--compat-no-tx);
+  border-left: 2.5pt solid var(--compat-no-bd);
+  font-weight: 700;
+  text-align: center;
+}
+.c-cond, .c-cd {
+  background: var(--compat-cd-bg) !important;
+  color: var(--compat-cd-tx);
+  border-left: 2.5pt solid var(--compat-cd-bd);
+  font-weight: 600;
+  text-align: center;
+}
+.c-nd {
+  background: var(--compat-nd-bg) !important;
+  color: var(--compat-nd-tx);
+  text-align: center;
+}
+
+/* Wersja span — inline badge w komórce tabeli */
+span.c-ok, span.c-yes,
+span.c-no,
+span.c-cond, span.c-cd,
+span.c-nd {
+  display: inline-block;
+  border-radius: 2pt;
+  padding: 0.3mm 2mm;
+  font-size: 7pt;
+  font-weight: 700;
+  text-align: center;
+  border-left: none;
+  background: initial;
+  vertical-align: middle;
+}
+span.c-ok, span.c-yes {
+  background: var(--compat-yes-bg) !important;
+  color: var(--compat-yes-tx);
+  border: 0.8pt solid var(--compat-yes-bd);
+}
+span.c-no {
+  background: var(--compat-no-bg) !important;
+  color: var(--compat-no-tx);
+  border: 0.8pt solid var(--compat-no-bd);
+}
+span.c-cond, span.c-cd {
+  background: var(--compat-cd-bg) !important;
+  color: var(--compat-cd-tx);
+  border: 0.8pt solid var(--compat-cd-bd);
+}
+span.c-nd {
+  background: var(--compat-nd-bg) !important;
+  color: var(--compat-nd-tx);
+  border: 0.8pt solid var(--compat-nd-bd);
+}
+
+/* ═══════════════════════════════════════
+   BADGE RYZYKA (QTc i inne)
+   ═══════════════════════════════════════ */
+
+.rb {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 5mm;
+  height: 5mm;
+  border-radius: 50%;
+  font-size: 6.5pt;
+  font-weight: 800;
+  color: white;
+  vertical-align: middle;
+  line-height: 1;
+  letter-spacing: 0;
+}
+.rb-C, .risk-badge.C { background: var(--risk-C-bg); }
+.rb-H, .risk-badge.H { background: var(--risk-H-bg); }
+.rb-M, .risk-badge.M { background: var(--risk-M-bg); }
+.rb-L, .risk-badge.L { background: var(--risk-L-bg); }
+
+/* Alias wsteczny */
+.risk-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 5mm;
+  height: 5mm;
+  border-radius: 50%;
+  font-size: 6.5pt;
+  font-weight: 800;
+  color: #FFFFFF;
+  padding: 0 1mm;
+  line-height: 1;
+  vertical-align: middle;
+  letter-spacing: 0;
+}
+
+/* ═══════════════════════════════════════
+   RAMKI EKSPERCKIE
+   ═══════════════════════════════════════ */
+
+.box-kicker {
+  font-size: 6.5pt;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 1mm;
+  display: block;
+}
+
+/* box-never: bezwzględny zakaz */
+.box-never {
+  background: var(--critical-bg);
+  border-left: 4pt solid var(--critical);
+  border-radius: 3pt;
+  padding: 3mm 4mm;
+  margin: 3.5mm 0;
+}
+.box-never .box-kicker { color: var(--critical); }
+
+/* box-critical: alias wsteczny */
+.box-critical {
+  background: var(--critical-bg);
+  border-left: 4pt solid var(--critical);
+  border-radius: 3pt;
+  padding: 3mm 4mm;
+  margin: 3.5mm 0;
+}
+.box-critical::before {
+  content: "UWAGA KRYTYCZNA";
+  font-size: 6.5pt;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--critical);
+  display: block;
+  margin-bottom: 1mm;
+}
+
+/* box-warn: wysokie ryzyko */
+.box-warn {
+  background: var(--warn-bg);
+  border-left: 4pt solid var(--warn);
+  border-radius: 3pt;
+  padding: 3mm 4mm;
+  margin: 3.5mm 0;
+}
+.box-warn .box-kicker { color: var(--warn); }
+
+/* box-warning: alias wsteczny */
+.box-warning {
+  background: var(--warn-bg);
+  border-left: 4pt solid var(--warn);
+  border-radius: 3pt;
+  padding: 3mm 4mm;
+  margin: 3.5mm 0;
+}
+.box-warning::before {
+  content: "UWAGA";
+  font-size: 6.5pt;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--warn);
+  display: block;
+  margin-bottom: 1mm;
+}
+
+/* box-info: informacyjny */
+.box-info {
+  background: var(--info-bg);
+  border-left: 4pt solid var(--info-bd);
+  border-radius: 3pt;
+  padding: 3mm 4mm;
+  margin: 3.5mm 0;
+}
+.box-info .box-kicker { color: var(--info); }
+
+/* box-practice: alias wsteczny dla protokołu */
+.box-practice {
+  background: var(--info-bg);
+  border-left: 4pt solid var(--info-bd);
+  border-radius: 3pt;
+  padding: 3mm 4mm;
+  margin: 3.5mm 0;
+}
+.box-practice::before {
+  content: "PROTOKÓŁ";
+  font-size: 6.5pt;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--info);
+  display: block;
+  margin-bottom: 1mm;
+}
+
+/* box-ok: bezpieczne */
+.box-ok {
+  background: var(--ok-bg);
+  border-left: 4pt solid var(--ok-bd);
+  border-radius: 3pt;
+  padding: 3mm 4mm;
+  margin: 3.5mm 0;
+}
+.box-ok .box-kicker { color: var(--ok); }
+
+/* box-dark: kluczowa zasada na ciemnym tle */
+.box-dark {
+  background: var(--navy);
+  border-left: none;
+  border-radius: 3pt;
+  padding: 3.5mm 4.5mm;
+  margin: 3.5mm 0;
+}
+.box-dark .box-kicker { color: var(--gold-2); }
+.box-dark p { color: rgba(255,255,255,0.88); font-size: 8.5pt; }
+.box-dark strong { color: #FFFFFF; }
+
+/* box-nd: brak danych */
+.box-nd {
+  background: var(--muted-bg);
+  border: 0.5pt dashed var(--muted-bd);
+  border-left: 3pt dashed var(--muted-bd);
+  border-radius: 3pt;
+  padding: 3mm 4mm;
+  margin: 3.5mm 0;
+}
+.box-nd .box-kicker { color: var(--ink-3); }
+
+/* box-scale: legenda skali ryzyka przed tabelą QTc */
+.box-scale {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2mm 5mm;
+  background: var(--surface-3);
+  border: 0.5pt solid var(--border-2);
+  border-radius: 3pt;
+  padding: 2.5mm 3.5mm;
+  margin: 2mm 0 3mm;
+  font-size: 7.5pt;
+  align-items: center;
+}
+.box-scale .scale-item {
+  display: flex;
+  align-items: center;
+  gap: 1.5mm;
+  white-space: nowrap;
+  color: var(--ink-2);
+}
+.box-scale .scale-label {
+  font-size: 7pt;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-right: 2mm;
+}
+
+/* ═══════════════════════════════════════
+   CHECKLIST
+   ═══════════════════════════════════════ */
+
+.cl { list-style: none; padding: 0; margin: 2mm 0; }
+.cl li {
+  padding: 1.5mm 0 1.5mm 6mm;
+  border-bottom: 0.5pt solid var(--border);
+  font-size: 8.5pt;
+  line-height: 1.45;
+  position: relative;
+}
+.cl li::before {
+  content: "";
+  position: absolute; left: 0; top: 2.5mm;
+  width: 3.2mm; height: 3.2mm;
+  border: 1.2pt solid var(--navy-2);
+  border-radius: 1.5pt;
+}
+
+/* ═══════════════════════════════════════
+   LEGENDA INLINE
+   ═══════════════════════════════════════ */
+
+.legend-inline {
+  display: flex; flex-wrap: wrap; gap: 3mm;
+  font-size: 7pt; color: var(--ink-2);
+  margin: 2mm 0 3mm;
+}
+.li-item { display: flex; align-items: center; gap: 1.5mm; }
+.li-dot {
+  width: 2.5mm; height: 2.5mm;
+  border-radius: 50%; flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════
+   PRZYPIS
+   ═══════════════════════════════════════ */
+
+.fn {
+  font-size: 7pt;
+  color: var(--ink-3);
+  border-top: 0.5pt solid var(--border-2);
+  padding-top: 1.5mm;
+  margin-top: 2.5mm;
+  line-height: 1.45;
+}
+
+/* ═══════════════════════════════════════
+   FIGURY / ILUSTRACJE
+   ═══════════════════════════════════════ */
+
+figure {
+  margin: 3.5mm 0;
+}
+figcaption {
+  font-size: 7pt;
+  color: var(--ink-3);
+  font-style: italic;
+  margin-top: 2mm;
+  line-height: 1.4;
+}
+figure img, figure svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ═══════════════════════════════════════
+   SEPARATOR SEKCJI
+   ═══════════════════════════════════════ */
+
+.section-break { margin: 5mm 0; }
+.section-break hr {
+  border: none;
+  border-top: 1pt solid var(--gold);
+  opacity: 0.35;
+}
+
+/* ═══════════════════════════════════════
+   STRONA TYTUŁOWA
+   ═══════════════════════════════════════ */
+
+.cover {
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
+  min-height: 200mm;
+  padding: 8mm 0;
+}
+.cover .cover-part {
+  font-size: 7.5pt; font-weight: 600; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--gold);
+}
+.cover h1 {
+  font-size: 30pt; font-weight: 800; color: var(--navy);
+  line-height: 1.05; letter-spacing: -0.04em;
+  align-self: center;
+}
+.cover .cover-sub {
+  font-size: 11pt; color: var(--ink-2);
+  margin-top: 4mm; line-height: 1.4;
+}
+.cover .cover-meta {
+  font-size: 7.5pt; color: var(--ink-3);
+  border-top: 0.5pt solid var(--border-2); padding-top: 3.5mm;
+}
+
+/* ═══════════════════════════════════════
+   PEŁNOSTRONNE TABELE
+   ═══════════════════════════════════════ */
+
+.full, .full-page { width: 100%; }
