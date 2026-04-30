@@ -198,6 +198,7 @@ p { margin: 0 0 2.5mm; }
    ═══════════════════════════════════════ */
 
 table {
+  display: table;
   width: 100%;
   border-collapse: collapse;
   font-size: 8pt;
@@ -209,15 +210,26 @@ table {
   word-break: normal;
 }
 
-/* Nagłówek tabeli powtarza się na każdej stronie */
 thead {
   display: table-header-group;
 }
 
-/* Każdy wiersz trzymamy w całości, ale tabela może się łamać między wierszami */
+tbody {
+  display: table-row-group;
+}
+
 tr {
+  display: table-row;
   break-inside: avoid;
   break-after: auto;
+}
+
+th {
+  display: table-cell;
+}
+
+td {
+  display: table-cell;
 }
 
 .tbl-title {
@@ -237,15 +249,17 @@ thead th {
   font-size: 7.5pt;
   text-align: left;
   vertical-align: bottom;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  word-break: normal;
+  hyphens: none;
 }
+
 thead th:first-child {
-  min-width: 34mm;
-  width: 34mm;
+  width: 44mm;
+  min-width: 44mm;
   white-space: normal;
 }
+
 thead th.center { text-align: center; }
 thead th.right  { text-align: right; }
 
@@ -271,16 +285,16 @@ tbody td {
   hyphens: none;
 }
 
-/* Pierwsza kolumna — nazwy leków nigdy nie łamane */
 tbody td:first-child {
+  width: 44mm;
+  min-width: 44mm;
+  max-width: 44mm;
   white-space: normal;
-  min-width: 34mm;
-  width: 34mm;
   font-weight: 600;
   color: var(--navy);
   word-break: normal;
   hyphens: none;
-  overflow-wrap: normal
+  overflow-wrap: normal;
 }
 
 tbody td.center { text-align: center; vertical-align: middle; }
@@ -294,6 +308,7 @@ tbody td.mono   { font-family: var(--f-mono); font-size: 7pt; }
   font-style: italic;
   line-height: 1.4;
 }
+
 
 /* ═══════════════════════════════════════
    STATUS KOMPATYBILNOŚCI
