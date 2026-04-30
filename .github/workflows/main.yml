@@ -88,25 +88,43 @@ jobs:
           print(f"Razem: {fixed} plików")
           PYEOF
 
+
       - name: Build PDF
         run: |
-          find book_icu_iv/chapters -name "*.md" | sort > /tmp/filelist.txt
-          echo "Pliki do złączenia:"
+          echo "=== SZUKAM WSZYSTKICH PLIKÓW MD ==="
+          find . -name "*.md" | sort
+
+          echo "=== SZUKAM CSS ==="
+          find . -name "*.css" | sort
+
+          CSS=$(find . -name "book_style.css" | head -1)
+          echo "CSS: $CSS"
+
+          find . -name "*.md" \
+            | grep -v "README\|PLAN\|readme\|plan" \
+            | sort \
+            > /tmp/filelist.txt
+
+          echo "=== PLIKI DO PDF ==="
           cat /tmp/filelist.txt
+          echo "=== LICZBA PLIKÓW ==="
+          wc -l /tmp/filelist.txt
+
           xargs cat < /tmp/filelist.txt > /tmp/book_master.md
-          echo "Rozmiar: $(wc -c < /tmp/book_master.md) bajtów"
+          echo "=== ROZMIAR MASTER ==="
+          wc -c /tmp/book_master.md
+
           pandoc /tmp/book_master.md \
             -o ksiazka_v5.pdf \
             --pdf-engine=weasyprint \
-            --css=book_icu_iv/assets/book_style.css \
+            --css="$CSS" \
             --toc \
             --toc-depth=3 \
             --metadata title="Bezpieczenstwo podan IV w OIT" \
             --metadata lang=pl
 
-      - name: Upload PDF
-        uses: actions/upload-artifact@v4
-        with:
-          name: ksiazka-pdf
-          path: ksiazka_v5.pdf
-          retention-days: 30
+          ls -lh ksiazka_v5.pdf
+
+
+
+      
