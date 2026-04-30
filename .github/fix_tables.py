@@ -2,7 +2,7 @@ import os
 import re
 
 def convert_table(match):
-lines = match.group(0).strip().split(’\n’)
+lines = match.group(0).strip().split('\n')
 rows = []
 for line in lines:
 if re.match(r’^|[-:\s|]+|$’, line.strip()):
