@@ -13,42 +13,92 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Debug — show everything
-        run: |
-          echo "=== PWD ==="
-          pwd
-          echo "=== ALL FILES ==="
-          find . -type f | sort
-          echo "=== MD FILES ==="
-          find . -name "*.md" | sort
-          echo "=== CSS FILES ==="
-          find . -name "*.css" | sort
-
       - name: Install dependencies
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y pandoc
           pip install weasyprint
 
+      - name: Fix CSS
+        run: |
+          cat >> book_icu_iv/assets/book_style.css << 'CSSEOF'
+          /* TABELE v5 — CSS Grid — nadpisuje stare reguły */
+          table, thead, tbody, tr { display: block; width: 100%; border: none; margin: 0; }
+          thead th, tbody td { display: inline; border: none; padding: 0; background: none !important; }
+          .tbl-grid { display: grid; width: 100%; border: 0.5pt solid #D0D0E0; border-radius: 4pt; overflow: hidden; margin: 3mm 0 5mm; font-size: 8pt; line-height: 1.45; break-inside: auto; }
+          .tbl-grid.cols-2 { grid-template-columns: minmax(42mm,35%) 1fr; }
+          .tbl-grid.cols-3 { grid-template-columns: minmax(42mm,30%) minmax(35mm,35%) 1fr; }
+          .tbl-grid.cols-4 { grid-template-columns: minmax(38mm,25%) minmax(30mm,25%) minmax(30mm,25%) 1fr; }
+          .tbl-grid.cols-5 { grid-template-columns: minmax(35mm,22%) minmax(25mm,20%) minmax(25mm,20%) minmax(25mm,20%) 1fr; }
+          .th { background:#0C1F3F; color:#fff; padding:2.5mm 3mm; font-size:7.5pt; font-weight:600; word-break:normal; hyphens:none; overflow-wrap:anywhere; line-height:1.3; }
+          .th-group { grid-column:1/-1; background:#1D4775; color:#fff; padding:1.5mm 3mm; font-size:7pt; font-weight:600; text-transform:uppercase; letter-spacing:0.07em; }
+          .td { padding:2.2mm 3mm; border-top:0.5pt solid #E8E8F0; word-break:normal; hyphens:none; overflow-wrap:anywhere; line-height:1.48; }
+          .td-lek { padding:2.2mm 3mm; border-top:0.5pt solid #E8E8F0; font-weight:600; color:#0C1F3F; word-break:normal; hyphens:none; overflow-wrap:anywhere; line-height:1.48; }
+          CSSEOF
+
+      - name: Fix all tables
+        run: |
+          python3 << 'PYEOF'
+          import os, re
+
+          def convert_table(match):
+              lines = match.group(0).strip().split('\n')
+              rows = []
+              for line in lines:
+                  if re.match(r'^\|[-:\s|]+\|$', line.strip()):
+                      continue
+                  cells = [c.strip() for c in line.strip().strip('|').split('|')]
+                  if cells:
+                      rows.append(cells)
+              if not rows:
+                  return match.group(0)
+              ncols = max(len(r) for r in rows)
+              cls = f"cols-{min(ncols, 5)}"
+              out = [f'<div class="tbl-grid {cls}">']
+              for cell in rows[0]:
+                  out.append(f'  <div class="th">{cell}</div>')
+              for row in rows[1:]:
+                  while len(row) < ncols:
+                      row.append('')
+                  out.append(f'  <div class="td-lek">{row[0]}</div>')
+                  for cell in row[1:]:
+                      out.append(f'  <div class="td">{cell}</div>')
+              out.append('</div>')
+              return '\n'.join(out)
+
+          pattern = re.compile(
+              r'(?:^\|.+\|\s*\n)+',
+              re.MULTILINE
+          )
+
+          fixed = 0
+          for root, dirs, files in os.walk('book_icu_iv/chapters'):
+              for fname in sorted(files):
+                  if not fname.endswith('.md'):
+                      continue
+                  path = os.path.join(root, fname)
+                  with open(path, 'r', encoding='utf-8') as f:
+                      content = f.read()
+                  new_content = pattern.sub(convert_table, content)
+                  if new_content != content:
+                      with open(path, 'w', encoding='utf-8') as f:
+                          f.write(new_content)
+                      fixed += 1
+                      print(f"NAPRAWIONO: {path}")
+          print(f"Razem: {fixed} plików")
+          PYEOF
+
       - name: Build PDF
         run: |
-          CSS=$(find . -name "book_style.css" | head -1)
-          echo "CSS: $CSS"
-          
-          find . -name "*.md" | grep -i "preface\|chapter\|ch0\|ch1\|ch2\|ch3\|ch4\|ch5\|ch6\|appendix" | sort > /tmp/filelist.txt
-          echo "=== FILES TO MERGE ==="
+          find book_icu_iv/chapters -name "*.md" | sort > /tmp/filelist.txt
+          echo "Pliki do złączenia:"
           cat /tmp/filelist.txt
-          echo "=== LINE COUNT ==="
-          wc -l /tmp/filelist.txt
-          
           xargs cat < /tmp/filelist.txt > /tmp/book_master.md
-          echo "=== MASTER SIZE ==="
-          wc -c /tmp/book_master.md
-          
+          echo "Rozmiar: $(wc -c < /tmp/book_master.md) bajtów"
           pandoc /tmp/book_master.md \
-            -o ksiazka_oit_iv.pdf \
+            -o ksiazka_v5.pdf \
             --pdf-engine=weasyprint \
-            --css="$CSS" \
+            --css=book_icu_iv/assets/book_style.css \
             --toc \
             --toc-depth=3 \
             --metadata title="Bezpieczenstwo podan IV w OIT" \
@@ -58,5 +108,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ksiazka-pdf
-          path: ksiazka_oit_iv.pdf
+          path: ksiazka_v5.pdf
           retention-days: 30
