@@ -244,7 +244,7 @@ thead th {
 thead th:first-child {
   min-width: 34mm;
   width: 34mm;
-  white-space: nowrap;
+  white-space: normal;
 }
 thead th.center { text-align: center; }
 thead th.right  { text-align: right; }
@@ -273,10 +273,13 @@ tbody td {
 
 /* Pierwsza kolumna — nazwy leków nigdy nie łamane */
 tbody td:first-child {
-  white-space: nowrap;
-  min-width: 28mm;
-  width: 28mm;
+  white-space: normal;
+  min-width: 34mm;
+  width: 34mm;
   font-weight: 500;
+  word-break: normal;
+  hyphens: none;
+  overflow-wram:normal
 }
 
 tbody td.center { text-align: center; vertical-align: middle; }
