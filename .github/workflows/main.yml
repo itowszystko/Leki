@@ -1,4 +1,4 @@
-      - name: Fix all tables
+      - name: Generate PDF
         run: |
           python3 << 'PYEOF'
           import os, re
