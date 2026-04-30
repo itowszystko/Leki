@@ -21,10 +21,9 @@ jobs:
 
       - name: Fix CSS
         run: |
-          cat >> book_icu_iv/assets/book_style.css << 'CSSEOF'
-          /* TABELE v5 — CSS Grid — nadpisuje stare reguły */
-          table, thead, tbody, tr { display: block; width: 100%; border: none; margin: 0; }
-          thead th, tbody td { display: inline; border: none; padding: 0; background: none !important; }
+          CSS=$(find . -name "book_style.css" | head -1)
+          echo "CSS znaleziony: $CSS"
+          cat >> "$CSS" << 'CSSEOF'
           .tbl-grid { display: grid; width: 100%; border: 0.5pt solid #D0D0E0; border-radius: 4pt; overflow: hidden; margin: 3mm 0 5mm; font-size: 8pt; line-height: 1.45; break-inside: auto; }
           .tbl-grid.cols-2 { grid-template-columns: minmax(42mm,35%) 1fr; }
           .tbl-grid.cols-3 { grid-template-columns: minmax(42mm,30%) minmax(35mm,35%) 1fr; }
@@ -34,10 +33,15 @@ jobs:
           .th-group { grid-column:1/-1; background:#1D4775; color:#fff; padding:1.5mm 3mm; font-size:7pt; font-weight:600; text-transform:uppercase; letter-spacing:0.07em; }
           .td { padding:2.2mm 3mm; border-top:0.5pt solid #E8E8F0; word-break:normal; hyphens:none; overflow-wrap:anywhere; line-height:1.48; }
           .td-lek { padding:2.2mm 3mm; border-top:0.5pt solid #E8E8F0; font-weight:600; color:#0C1F3F; word-break:normal; hyphens:none; overflow-wrap:anywhere; line-height:1.48; }
+          table, thead, tbody, tr { display: block; width: 100%; border: none; margin: 0; }
+          thead th, tbody td { display: inline; border: none; padding: 0; background: none !important; }
           CSSEOF
 
       - name: Fix all tables
         run: |
+          CSS=$(find . -name "book_style.css" | head -1)
+          echo "CSS: $CSS"
+
           python3 << 'PYEOF'
           import os, re
 
@@ -48,7 +52,7 @@ jobs:
                   if re.match(r'^\|[-:\s|]+\|$', line.strip()):
                       continue
                   cells = [c.strip() for c in line.strip().strip('|').split('|')]
-                  if cells:
+                  if any(cells):
                       rows.append(cells)
               if not rows:
                   return match.group(0)
@@ -66,15 +70,15 @@ jobs:
               out.append('</div>')
               return '\n'.join(out)
 
-          pattern = re.compile(
-              r'(?:^\|.+\|\s*\n)+',
-              re.MULTILINE
-          )
+          pattern = re.compile(r'(?:^\|.+\|\s*\n)+', re.MULTILINE)
 
           fixed = 0
-          for root, dirs, files in os.walk('book_icu_iv/chapters'):
+          for root, dirs, files in os.walk('.'):
+              dirs[:] = [d for d in dirs if d not in ['.git']]
               for fname in sorted(files):
                   if not fname.endswith('.md'):
+                      continue
+                  if fname.upper() in ['README.MD'] or 'PLAN' in fname.upper():
                       continue
                   path = os.path.join(root, fname)
                   with open(path, 'r', encoding='utf-8') as f:
@@ -88,30 +92,21 @@ jobs:
           print(f"Razem: {fixed} plików")
           PYEOF
 
-
       - name: Build PDF
         run: |
-          echo "=== SZUKAM WSZYSTKICH PLIKÓW MD ==="
-          find . -name "*.md" | sort
-
-          echo "=== SZUKAM CSS ==="
-          find . -name "*.css" | sort
-
           CSS=$(find . -name "book_style.css" | head -1)
           echo "CSS: $CSS"
 
           find . -name "*.md" \
-            | grep -v "README\|PLAN\|readme\|plan" \
-            | sort \
-            > /tmp/filelist.txt
+            | grep -v "README\|PLAN\|readme\|plan\|\.git" \
+            | sort > /tmp/filelist.txt
 
-          echo "=== PLIKI DO PDF ==="
+          echo "=== PLIKI ==="
           cat /tmp/filelist.txt
-          echo "=== LICZBA PLIKÓW ==="
+          echo "=== LICZBA ==="
           wc -l /tmp/filelist.txt
 
           xargs cat < /tmp/filelist.txt > /tmp/book_master.md
-          echo "=== ROZMIAR MASTER ==="
           wc -c /tmp/book_master.md
 
           pandoc /tmp/book_master.md \
@@ -125,6 +120,9 @@ jobs:
 
           ls -lh ksiazka_v5.pdf
 
-
-
-      
+      - name: Upload PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: ksiazka-pdf
+          path: ksiazka_v5.pdf
+          retention-days: 30
