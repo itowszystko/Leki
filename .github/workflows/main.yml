@@ -1,0 +1,41 @@
+name: Generate PDF
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-pdf:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y pandoc
+          pip install weasyprint
+
+      - name: Find book_master
+        run: find . -name "book_master.md" | head -5
+
+      - name: Build PDF
+        run: |
+          pandoc book_icu_iv/book_master.md \
+            -o book_icu_iv/pdf/ksiazka_oit_iv.pdf \
+            --pdf-engine=weasyprint \
+            --css=book_icu_iv/assets/book_style.css \
+            --toc \
+            --toc-depth=3 \
+            --metadata title="Bezpieczenstwo podan IV w OIT" \
+            --metadata lang=pl
+
+      - name: Upload PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: ksiazka-oit-iv-pdf
+          path: book_icu_iv/pdf/ksiazka_oit_iv.pdf
+          retention-days: 30
