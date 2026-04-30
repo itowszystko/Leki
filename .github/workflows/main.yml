@@ -1,76 +1,37 @@
-name: Generate PDF
-
-on:
-  push:
-    branches: [main]
-  workflow_dispatch:
-
-jobs:
-  build-pdf:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y pandoc
-          pip install weasyprint
-
-      - name: Fix CSS
-        run: |
-          CSS=$(find . -name "book_style.css" | head -1)
-          echo "CSS znaleziony: $CSS"
-          cat >> "$CSS" << 'CSSEOF'
-          .tbl-grid { display: grid; width: 100%; border: 0.5pt solid #D0D0E0; border-radius: 4pt; overflow: hidden; margin: 3mm 0 5mm; font-size: 8pt; line-height: 1.45; break-inside: auto; }
-          .tbl-grid.cols-2 { grid-template-columns: minmax(42mm,35%) 1fr; }
-          .tbl-grid.cols-3 { grid-template-columns: minmax(42mm,30%) minmax(35mm,35%) 1fr; }
-          .tbl-grid.cols-4 { grid-template-columns: minmax(38mm,25%) minmax(30mm,25%) minmax(30mm,25%) 1fr; }
-          .tbl-grid.cols-5 { grid-template-columns: minmax(35mm,22%) minmax(25mm,20%) minmax(25mm,20%) minmax(25mm,20%) 1fr; }
-          .th { background:#0C1F3F; color:#fff; padding:2.5mm 3mm; font-size:7.5pt; font-weight:600; word-break:normal; hyphens:none; overflow-wrap:anywhere; line-height:1.3; }
-          .th-group { grid-column:1/-1; background:#1D4775; color:#fff; padding:1.5mm 3mm; font-size:7pt; font-weight:600; text-transform:uppercase; letter-spacing:0.07em; }
-          .td { padding:2.2mm 3mm; border-top:0.5pt solid #E8E8F0; word-break:normal; hyphens:none; overflow-wrap:anywhere; line-height:1.48; }
-          .td-lek { padding:2.2mm 3mm; border-top:0.5pt solid #E8E8F0; font-weight:600; color:#0C1F3F; word-break:normal; hyphens:none; overflow-wrap:anywhere; line-height:1.48; }
-          table, thead, tbody, tr { display: block; width: 100%; border: none; margin: 0; }
-          thead th, tbody td { display: inline; border: none; padding: 0; background: none !important; }
-          CSSEOF
-
       - name: Fix all tables
         run: |
-          CSS=$(find . -name "book_style.css" | head -1)
-          echo "CSS: $CSS"
-
           python3 << 'PYEOF'
           import os, re
 
-          def convert_table(match):
-              lines = match.group(0).strip().split('\n')
-              rows = []
-              for line in lines:
-                  if re.match(r'^\|[-:\s|]+\|$', line.strip()):
-                      continue
-                  cells = [c.strip() for c in line.strip().strip('|').split('|')]
-                  if any(cells):
-                      rows.append(cells)
-              if not rows:
-                  return match.group(0)
-              ncols = max(len(r) for r in rows)
-              cls = f"cols-{min(ncols, 5)}"
-              out = [f'<div class="tbl-grid {cls}">']
-              for cell in rows[0]:
-                  out.append(f'  <div class="th">{cell}</div>')
-              for row in rows[1:]:
-                  while len(row) < ncols:
-                      row.append('')
-                  out.append(f'  <div class="td-lek">{row[0]}</div>')
-                  for cell in row[1:]:
-                      out.append(f'  <div class="td">{cell}</div>')
-              out.append('</div>')
-              return '\n'.join(out)
+          def add_colgroup(match):
+              table_html = match.group(0)
+              # Policz kolumny z pierwszego <tr>
+              headers = re.findall(r'<th[^>]*>', table_html)
+              n = len(headers)
+              if n == 0 or '<colgroup>' in table_html:
+                  return table_html
+              
+              # Oblicz szerokości
+              if n == 2:
+                  widths = ['44mm', '1fr']
+              elif n == 3:
+                  widths = ['44mm', '35%', '1fr']
+              elif n == 4:
+                  widths = ['44mm', '25%', '25%', '1fr']
+              else:
+                  w = str(round(100/n))+'%'
+                  widths = ['44mm'] + [w]*(n-2) + ['1fr']
+              
+              cols = '\n'.join([f'  <col style="width:{w}">' for w in widths])
+              colgroup = f'<colgroup>\n{cols}\n</colgroup>\n'
+              
+              return table_html.replace('<table', '<table', 1).replace(
+                  '<thead>', colgroup + '<thead>', 1)
 
-          pattern = re.compile(r'(?:^\|.+\|\s*\n)+', re.MULTILINE)
+          # Pandoc generuje HTML z tabel Markdown
+          # Użyj pandoc do konwersji MD->HTML, dodaj colgroup, zapisz z powrotem
+          
+          import subprocess, tempfile
 
           fixed = 0
           for root, dirs, files in os.walk('.'):
@@ -78,51 +39,65 @@ jobs:
               for fname in sorted(files):
                   if not fname.endswith('.md'):
                       continue
-                  if fname.upper() in ['README.MD'] or 'PLAN' in fname.upper():
+                  if any(x in fname.upper() for x in ['README','PLAN']):
                       continue
                   path = os.path.join(root, fname)
                   with open(path, 'r', encoding='utf-8') as f:
                       content = f.read()
-                  new_content = pattern.sub(convert_table, content)
+                  
+                  # Znajdź tabele Markdown i zamień na HTML z colgroup
+                  def convert_md_table(m):
+                      lines = m.group(0).strip().split('\n')
+                      rows = []
+                      for line in lines:
+                          if re.match(r'^\|[-:\s|]+\|$', line.strip()):
+                              continue
+                          cells = [c.strip() for c in line.strip().strip('|').split('|')]
+                          if any(cells):
+                              rows.append(cells)
+                      if not rows:
+                          return m.group(0)
+                      
+                      n = len(rows[0])
+                      if n == 2:
+                          widths = ['44mm', 'auto']
+                      elif n == 3:
+                          widths = ['44mm', '35%', 'auto']
+                      elif n == 4:
+                          widths = ['44mm', '22%', '22%', 'auto']
+                      else:
+                          widths = ['44mm'] + ['18%']*(n-2) + ['auto']
+                      
+                      cols = ''.join([f'<col style="width:{w}">' for w in widths])
+                      
+                      out = []
+                      out.append(f'<table style="width:100%;table-layout:fixed;border-collapse:collapse;">')
+                      out.append(f'<colgroup>{cols}</colgroup>')
+                      out.append('<thead><tr>')
+                      for cell in rows[0]:
+                          out.append(f'<th style="background:#0C1F3F;color:#fff;padding:2.5mm 3mm;font-size:7.5pt;font-weight:600;text-align:left;vertical-align:bottom;word-break:normal;hyphens:none;">{cell}</th>')
+                      out.append('</tr></thead>')
+                      out.append('<tbody>')
+                      for i, row in enumerate(rows[1:]):
+                          while len(row) < n:
+                              row.append('')
+                          bg = '#FFFFFF' if i % 2 == 0 else '#F4F4F0'
+                          out.append(f'<tr style="background:{bg};">')
+                          out.append(f'<td style="padding:2.2mm 3mm;border-bottom:0.5pt solid #E8E8F0;font-weight:600;color:#0C1F3F;vertical-align:top;word-break:normal;hyphens:none;overflow-wrap:normal;">{row[0]}</td>')
+                          for cell in row[1:]:
+                              out.append(f'<td style="padding:2.2mm 3mm;border-bottom:0.5pt solid #E8E8F0;vertical-align:top;word-break:normal;hyphens:none;overflow-wrap:normal;">{cell}</td>')
+                          out.append('</tr>')
+                      out.append('</tbody></table>')
+                      return '\n'.join(out)
+                  
+                  pattern = re.compile(r'(?:^\|.+\|\s*\n)+', re.MULTILINE)
+                  new_content = pattern.sub(convert_md_table, content)
+                  
                   if new_content != content:
                       with open(path, 'w', encoding='utf-8') as f:
                           f.write(new_content)
                       fixed += 1
                       print(f"NAPRAWIONO: {path}")
+          
           print(f"Razem: {fixed} plików")
           PYEOF
-
-      - name: Build PDF
-        run: |
-          CSS=$(find . -name "book_style.css" | head -1)
-          echo "CSS: $CSS"
-
-          find . -name "*.md" \
-            | grep -v "README\|PLAN\|readme\|plan\|\.git" \
-            | sort > /tmp/filelist.txt
-
-          echo "=== PLIKI ==="
-          cat /tmp/filelist.txt
-          echo "=== LICZBA ==="
-          wc -l /tmp/filelist.txt
-
-          xargs cat < /tmp/filelist.txt > /tmp/book_master.md
-          wc -c /tmp/book_master.md
-
-          pandoc /tmp/book_master.md \
-            -o ksiazka_v5.pdf \
-            --pdf-engine=weasyprint \
-            --css="$CSS" \
-            --toc \
-            --toc-depth=3 \
-            --metadata title="Bezpieczenstwo podan IV w OIT" \
-            --metadata lang=pl
-
-          ls -lh ksiazka_v5.pdf
-
-      - name: Upload PDF
-        uses: actions/upload-artifact@v4
-        with:
-          name: ksiazka-pdf
-          path: ksiazka_v5.pdf
-          retention-days: 30
