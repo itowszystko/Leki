@@ -40,10 +40,12 @@ jobs:
 
       - name: Build PDF
         run: |
+          CSS=$(find . -name "book_style.css" | head -1)
+          echo "CSS found at: $CSS"
           pandoc /tmp/book_master.md \
             -o ksiazka_oit_iv.pdf \
             --pdf-engine=weasyprint \
-            --css=book_icu_iv/assets/book_style.css \
+            --css="$CSS" \
             --toc \
             --toc-depth=3
 
