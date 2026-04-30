@@ -19,24 +19,34 @@ jobs:
           sudo apt-get install -y pandoc
           pip install weasyprint
 
-      - name: Find book_master
-        run: find . -name "book_master.md" | head -5
+      - name: Combine chapters
+        run: |
+          cat \
+            book_icu_iv/chapters/00_preface/*.md \
+            book_icu_iv/chapters/01_fundamentals/*.md \
+            book_icu_iv/chapters/02_compatibility/*.md \
+            book_icu_iv/chapters/03_bolus_prep/*.md \
+            book_icu_iv/chapters/04_lines/*.md \
+            book_icu_iv/chapters/05_risk/*.md \
+            book_icu_iv/chapters/06_tools/*.md \
+            book_icu_iv/chapters/appendix_A_stability.md \
+            book_icu_iv/chapters/appendix_B_compat.md \
+            book_icu_iv/chapters/appendix_D_bolus.md \
+            book_icu_iv/chapters/appendix_E_lumen.md \
+            > /tmp/book_master.md 2>/dev/null || true
 
       - name: Build PDF
         run: |
-          pandoc book_icu_iv/book_master.md \
-            -o book_icu_iv/pdf/ksiazka_oit_iv.pdf \
+          pandoc /tmp/book_master.md \
+            -o ksiazka_oit_iv.pdf \
             --pdf-engine=weasyprint \
             --css=book_icu_iv/assets/book_style.css \
             --toc \
-            --toc-depth=3 \
-            --metadata title="Bezpieczenstwo podan IV w OIT" \
-            --metadata lang=pl
+            --toc-depth=3
 
       - name: Upload PDF
         uses: actions/upload-artifact@v4
         with:
-          name: ksiazka-oit-iv-pdf
-          path: book_icu_iv/pdf/ksiazka_oit_iv.pdf
+          name: ksiazka-pdf
+          path: ksiazka_oit_iv.pdf
           retention-days: 30
-
