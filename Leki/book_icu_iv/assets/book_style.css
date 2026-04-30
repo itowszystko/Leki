@@ -276,10 +276,11 @@ tbody td:first-child {
   white-space: normal;
   min-width: 34mm;
   width: 34mm;
-  font-weight: 500;
+  font-weight: 600;
+  color: var(--navy);
   word-break: normal;
   hyphens: none;
-  overflow-wram:normal
+  overflow-wrap: normal
 }
 
 tbody td.center { text-align: center; vertical-align: middle; }
